@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roo.Azure.Configuration.Common", "Roo.Azure.Configuration.Common\Roo.Azure.Configuration.Common.csproj", "{11D77E36-0A68-4129-AA5E-B5BE32391E8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11D77E36-0A68-4129-AA5E-B5BE32391E8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D77E36-0A68-4129-AA5E-B5BE32391E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D77E36-0A68-4129-AA5E-B5BE32391E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D77E36-0A68-4129-AA5E-B5BE32391E8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5EEC217C-5F91-4198-8208-8370CF12F8E0}
+	EndGlobalSection
+EndGlobal
