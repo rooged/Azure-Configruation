@@ -10,15 +10,15 @@ namespace Roo.Azure.Configuration.Common.Logging
 {
     /// <summary>
     /// ILogger wrapper to add custom headers to logs, allowing better tracking in App Insights.
-    /// session-id: Stays constant throughout a session.
-    /// transaction-id: Unique to each HTTP request.
-    /// channel-id: Where a request is coming from.
+    /// <list type="table">session-id: Stays constant throughout a session.<br/>
+    /// transaction-id: Unique to each HTTP request.<br/>
+    /// channel-id: Where a request is coming from.</list>
     /// HttpContext is required since the headers are default in context. If used for logging in non-HTTP applications, such as batch jobs, use DefaultHttpContext in startup to set headers.
     /// </summary>
     public interface IRooLogger
     {
         /// <summary>
-        /// Log information
+        /// Create formatted log at the information level
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -26,7 +26,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogInformation(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Log error
+        /// Create formatted log at the error level
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -34,7 +34,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogError(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Log warning
+        /// Create formatted log at the warning level
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -42,7 +42,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogWarning(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Log trace
+        /// Create formatted log at the trace level
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -50,7 +50,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogTrace(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Log critical
+        /// Create formatted log at the critical level
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -58,7 +58,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogCritical(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Log debug
+        /// Create formatted log at the debug level
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
