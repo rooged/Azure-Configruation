@@ -5,7 +5,8 @@ using Roo.Azure.Configuration.Common.Models;
 namespace Roo.Azure.Configuration.Common.Services
 {
     /// <summary>
-    /// Handles the custom headers in HttpContext. Headers: session-id, transaction-id, channel-id, user-info.
+    /// Handles the custom headers in HttpContext.<br/>
+    /// Headers: session-id, transaction-id, channel-id, user-info.
     /// </summary>
     public interface IHeaderService
     {

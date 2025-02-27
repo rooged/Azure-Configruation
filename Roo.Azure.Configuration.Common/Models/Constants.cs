@@ -24,5 +24,15 @@
         /// User info header name.
         /// </summary>
         public const string UserInfoHeaderName = "user-info";
+
+        /// <summary>
+        /// SessionId environment variable name.
+        /// </summary>
+        public const string SessionId = "SessionId";
+
+        /// <summary>
+        /// ChannelId environment variable name.
+        /// </summary>
+        public const string ChannelId = "ChannelId";
     }
 }

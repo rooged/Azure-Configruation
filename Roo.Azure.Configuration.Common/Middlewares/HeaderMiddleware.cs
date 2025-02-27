@@ -1,0 +1,75 @@
+﻿using Microsoft.AspNetCore.Http;
+using Roo.Azure.Configuration.Common.Logging;
+using Roo.Azure.Configuration.Common.Models;
+using Roo.Azure.Configuration.Common.Services;
+using System.Net;
+using System.Text;
+
+namespace Roo.Azure.Configuration.Common.Middlewares
+{
+    /// <summary>
+    /// Validates that the custom headers are on every HTTP request.
+    /// </summary>
+    public class HeaderMiddleware
+    {
+        private readonly RequestDelegate next;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HeaderMiddleware"/> class.
+        /// </summary>
+        /// <param name="next">Next request.</param>
+        public HeaderMiddleware(RequestDelegate next) => this.next = next;
+
+        /// <summary>
+        /// Validates that the custom headers are on every HTTP request.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="header"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
+        public async Task Invoke(HttpContext context, IHeaderService header, IRooLogger logger)
+        {
+            if (!string.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.Contains("swagger"))
+            {
+                await next(context).ConfigureAwait(false);
+                return;
+            }
+
+            var requestHeaders = context.Request.Headers;
+
+            //Check if standard headers are there and valid
+            if (!header.IsSessionIdValid(requestHeaders) || !header.IsTransactionIdValid(requestHeaders) || !header.IsChannelIdValid(requestHeaders))
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                var message = $"Error: Header(s) not found or invalid. {Constants.SessionIdHeaderName} valid: {header.IsSessionIdValid(requestHeaders)}. {Constants.TransactionIdHeaderName} valid: {header.IsTransactionIdValid(requestHeaders)}. {Constants.ChannelIdHeaderName} valid: {header.IsChannelIdValid(requestHeaders)}.";
+                var encodedMessage = Encoding.UTF8.GetBytes(message);
+                using var stream = new MemoryStream(encodedMessage);
+                context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
+                stream.Dispose();
+                logger.LogWarning(context, message);
+                return;
+            }
+
+            //Set SessionId in HttpContext if its not there
+            if (string.IsNullOrEmpty(context.Session.GetString(Constants.SessionId)))
+            {
+                context.Session.SetString(Constants.SessionId, header.GetSessionId(requestHeaders) ?? "");
+            }
+
+            //Check if user is authenticated and if the user info header has been set and is valid
+            if (context.User.Claims.Any() && !header.DoesUserInfoHaveInfo(requestHeaders))
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                var message = $"Error: Header(s) not found or invalid. {Constants.UserInfoHeaderName} valid: {header.DoesUserInfoHaveInfo(requestHeaders)}. {Constants.SessionIdHeaderName} valid: {header.IsSessionIdValid(requestHeaders)}. {Constants.TransactionIdHeaderName} valid: {header.IsTransactionIdValid(requestHeaders)}. {Constants.ChannelIdHeaderName} valid: {header.IsChannelIdValid(requestHeaders)}.";
+                var encodedMessage = Encoding.UTF8.GetBytes(message);
+                using var stream = new MemoryStream(encodedMessage);
+                context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
+                stream.Dispose();
+                logger.LogWarning(context, message);
+                return;
+            }
+
+            await next(context).ConfigureAwait(false);
+        }
+    }
+}
