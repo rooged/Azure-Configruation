@@ -87,6 +87,19 @@ namespace Roo.Azure.Configuration.Common.Startup
 
             //Add middlewares
             
+            if (model.UseHeaderValidation)
+            {
+                app.UseMiddleware<HeaderMiddleware>();
+            }
+
+            if (model.UseCertificateForwarding)
+            {
+                app.MapControllers().RequireAuthorization();
+            }
+            else
+            {
+                app.MapControllers();
+            }
 
             return app;
         }

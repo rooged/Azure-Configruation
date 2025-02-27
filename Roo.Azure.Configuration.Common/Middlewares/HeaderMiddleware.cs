@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.VisualBasic;
 using Roo.Azure.Configuration.Common.Logging;
 using Roo.Azure.Configuration.Common.Models;
 using Roo.Azure.Configuration.Common.Services;
@@ -16,7 +15,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         private readonly RequestDelegate next;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HeaderMiddleware"/> class
+        /// Initializes a new instance of the <see cref="HeaderMiddleware"/> class.
         /// </summary>
         /// <param name="next">Next request.</param>
         public HeaderMiddleware(RequestDelegate next) => this.next = next;
@@ -30,25 +29,47 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         /// <returns></returns>
         public async Task Invoke(HttpContext context, IHeaderService header, IRooLogger logger)
         {
-            if (context.Request.Path.Value?.Contains("swagger") == true)
+            if (!string.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.Contains("swagger"))
             {
                 await next(context).ConfigureAwait(false);
                 return;
             }
 
-            var headers = context.Request.Headers;
+            var requestHeaders = context.Request.Headers;
 
-            if (!header.IsSessionIdValid(headers) || !header.IsTransactionIdValid(headers) || !header.IsChannelIdValid(headers))
+            //Check if standard headers are there and valid
+            if (!header.IsSessionIdValid(requestHeaders) || !header.IsTransactionIdValid(requestHeaders) || !header.IsChannelIdValid(requestHeaders))
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                var responseMessage = $"Headers in request: {Models.Constants.SessionIdHeaderName} {header.IsSessionIdValid(headers)}, {Models.Constants.TransactionIdHeaderName} {header.IsTransactionIdValid(headers)}, {Models.Constants.ChannelIdHeaderName} {header.IsChannelIdValid(headers)}";
-                var originalStream = context.Response.Body;
-                var encodedMessage = Encoding.UTF8.GetBytes(responseMessage);
+                var message = $"Error: Header(s) not found or invalid. {Constants.SessionIdHeaderName} valid: {header.IsSessionIdValid(requestHeaders)}. {Constants.TransactionIdHeaderName} valid: {header.IsTransactionIdValid(requestHeaders)}. {Constants.ChannelIdHeaderName} valid: {header.IsChannelIdValid(requestHeaders)}.";
+                var encodedMessage = Encoding.UTF8.GetBytes(message);
                 using var stream = new MemoryStream(encodedMessage);
-                context.Response.Body = stream;
+                context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
                 stream.Dispose();
+                logger.LogWarning(context, message);
+                return;
             }
+
+            //Set SessionId in HttpContext if its not there
+            if (string.IsNullOrEmpty(context.Session.GetString(Constants.SessionId)))
+            {
+                context.Session.SetString(Constants.SessionId, header.GetSessionId(requestHeaders) ?? "");
+            }
+
+            //Check if user is authenticated and if the user info header has been set and is valid
+            if (context.User.Claims.Any() && !header.DoesUserInfoHaveInfo(requestHeaders))
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                var message = $"Error: Header(s) not found or invalid. {Constants.UserInfoHeaderName} valid: {header.DoesUserInfoHaveInfo(requestHeaders)}. {Constants.SessionIdHeaderName} valid: {header.IsSessionIdValid(requestHeaders)}. {Constants.TransactionIdHeaderName} valid: {header.IsTransactionIdValid(requestHeaders)}. {Constants.ChannelIdHeaderName} valid: {header.IsChannelIdValid(requestHeaders)}.";
+                var encodedMessage = Encoding.UTF8.GetBytes(message);
+                using var stream = new MemoryStream(encodedMessage);
+                context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
+                stream.Dispose();
+                logger.LogWarning(context, message);
+                return;
+            }
+
+            await next(context).ConfigureAwait(false);
         }
     }
 }
