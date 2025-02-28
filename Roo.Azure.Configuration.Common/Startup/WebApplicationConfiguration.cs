@@ -6,7 +6,7 @@ using Roo.Azure.Configuration.Common.Models;
 namespace Roo.Azure.Configuration.Common.Startup
 {
     /// <summary>
-    /// Application startup configuration for a web application.
+    /// Application startup configuration for a web application. Use in conjuction with <see cref="ApplicationConfiguration"/>.
     /// </summary>
     public static class WebApplicationConfiguration
     {

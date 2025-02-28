@@ -75,7 +75,7 @@ namespace Roo.Azure.Configuration.Common.Services
     }
 
     /// <summary>
-    /// Implementation of IHeaderService
+    /// Implementation of <see cref="IHeaderService"/>
     /// </summary>
     public class HeaderService : IHeaderService
     {
