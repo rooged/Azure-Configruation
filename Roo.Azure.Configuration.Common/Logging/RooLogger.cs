@@ -18,7 +18,7 @@ namespace Roo.Azure.Configuration.Common.Logging
     public interface IRooLogger
     {
         /// <summary>
-        /// Create formatted log at the information level
+        /// Create formatted log at the information level.
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -26,7 +26,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogInformation(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Create formatted log at the error level
+        /// Create formatted log at the error level.
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -34,7 +34,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogError(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Create formatted log at the warning level
+        /// Create formatted log at the warning level.
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -42,7 +42,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogWarning(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Create formatted log at the trace level
+        /// Create formatted log at the trace level.
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -50,7 +50,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogTrace(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Create formatted log at the critical level
+        /// Create formatted log at the critical level.
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -58,7 +58,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         public void LogCritical(HttpContext context, string? message = null, Exception? ex = null);
 
         /// <summary>
-        /// Create formatted log at the debug level
+        /// Create formatted log at the debug level.
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -82,7 +82,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         private const string encodePattern = @"\s+";
 
         /// <summary>
-        /// Log information
+        /// <inheritdoc/>
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -111,7 +111,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         }
 
         /// <summary>
-        /// Log error
+        /// <inheritdoc/>
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -145,7 +145,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         }
 
         /// <summary>
-        /// Log warning
+        /// <inheritdoc/>
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -179,7 +179,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         }
 
         /// <summary>
-        /// Log trace
+        /// <inheritdoc/>
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -213,7 +213,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         }
 
         /// <summary>
-        /// Log critical
+        /// <inheritdoc/>
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
@@ -247,7 +247,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         }
 
         /// <summary>
-        /// Log debug
+        /// <inheritdoc/>
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>

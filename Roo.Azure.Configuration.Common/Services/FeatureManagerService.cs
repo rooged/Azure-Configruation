@@ -29,14 +29,14 @@ namespace Roo.Azure.Configuration.Common.Services
     }
 
     /// <summary>
-    /// Implementation of <see cref="IFeatureManagerService"/>
+    /// Implementation of <see cref="IFeatureManagerService"/>.
     /// </summary>
     public class FeatureManagerService : IFeatureManagerService
     {
         private readonly IFeatureManager _featureManager;
 
         /// <summary>
-        /// Initialize <see cref="FeatureManagerService"/>
+        /// Initialize <see cref="FeatureManagerService"/>.
         /// </summary>
         /// <param name="featureManager"></param>
         public FeatureManagerService(IFeatureManager featureManager)

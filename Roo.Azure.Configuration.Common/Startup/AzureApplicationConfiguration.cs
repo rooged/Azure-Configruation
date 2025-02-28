@@ -35,7 +35,7 @@ namespace Roo.Azure.Configuration.Common.Startup
             {
                 options.Connect(model.AppConfigurationConnectionString);
                 model.AppConfigurationSections?.ForEach(x => options.Select(x));
-                options.ConfigureRefresh(x => x.Register(model.RefreshTriggerKey, refreshAll: true));
+                options.ConfigureRefresh(x => x.Register(model.AppConfigRefreshTriggerKey, refreshAll: true));
 
                 options.UseFeatureFlags(x =>
                 {
