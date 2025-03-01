@@ -42,9 +42,10 @@
         /// </summary>
         public List<string>? AppConfigurationSections { get; set; }
         /// <summary>
-        /// Refresh App Configuration key.
+        /// The key-value in App Configuration to be refreshed whenever one is triggered.<br/>
+        /// Defaults to the Sentinel settings key.
         /// </summary>
-        public string? RefreshTriggerKey { get; set; } = "Settings:Sentinel";
+        public string? AppConfigRefreshTriggerKey { get; set; } = "Settings:Sentinel";
 
 
         //Swagger specific values.

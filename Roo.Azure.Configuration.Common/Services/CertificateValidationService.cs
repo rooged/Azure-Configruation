@@ -1,45 +1,54 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Security.Cryptography.X509Certificates;
 
 namespace Roo.Azure.Configuration.Common.Services
 {
     /// <summary>
-    /// Configuration for basic client certificate authorization.
+    /// Certificate authentication methods
     /// </summary>
-    public static class CertificateValidationService
+    public interface ICertificateValidationService
     {
-        private const string ASECERTIFICATEHEADER = "X-ARR-ClientCert";
-        private const string CONFIGNAMEALLOWEDCERTIFICATETYPES = "CERTIFICATE_VALIDATION_ALLOWED_CERTIFICATE_TYPES";
-        private const string CONFIGNAMEX509REVOCATIONFLAG = "CERTIFICATE_VALIDATION_X509_REVOCATION_FLAGS";
-        private const string CONFIGNAMEX509REVOCATIONMODE = "CERTIFICATE_VALIDATION_X509_REVOCATION_MODE";
-        private const string CONFIGNAMEVALIDTHUMBPRINT = "VALID_THUMBPRINT";
-        private const string VALIDTHUMBPRINT = "validThumbPrint";
-        
         /// <summary>
-        /// Sets up client certificate validaiton.
+        /// Valid thumbprint response.
         /// </summary>
-        /// <param name="services"></param>
-        public static void AddCertificateValidation(this IServiceCollection services)
+        public const string VALIDTHUMBPRINT = "validThumbPrint";
+
+        /// <summary>
+        /// Validates the certificate against already authorized certs in the applications.<br/>
+        /// Does NOT do root chain validation or check dates.
+        /// </summary>
+        /// <param name="clientCertificate">Client cert to be validated.</param>
+        /// <returns>Whether certificate is valid or not.</returns>
+        bool ValidateCertificate(X509Certificate2 clientCertificate);
+    }
+
+    /// <summary>
+    /// Implementation of <see cref="ICertificateValidationService"/>.
+    /// </summary>
+    public class CertificateValidationService : ICertificateValidationService
+    {
+        private readonly string thumbprintValues;
+
+        /// <summary>
+        /// Initialize <see cref="CertificateValidationService"/>.
+        /// </summary>
+        /// <param name="validCertificateValues"></param>
+        public CertificateValidationService(Dictionary<string, string> validCertificateValues)
         {
-            using var provider = services.BuildServiceProvider();
-            var config = provider.GetService<IConfiguration>();
-
-            if (config == null)
-            {
-                return;
-            }
-
-            var validCertificateValues = GetValidCertificateValuesFromSetting(config);
-            //services.AddSingleton
+            thumbprintValues = validCertificateValues[ICertificateValidationService.VALIDTHUMBPRINT];
         }
 
-        private static Dictionary<string, string> GetValidCertificateValuesFromSetting(IConfiguration config)
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="clientCertificate"></param>
+        /// <returns></returns>
+        public bool ValidateCertificate(X509Certificate2 clientCertificate)
         {
-            var validThumbprint = new[] { config.GetValue<string>(CONFIGNAMEVALIDTHUMBPRINT) ?? "", config["DefaultThumbprint"] ?? "" }.First();
+            var isValidCertificate = clientCertificate.Verify();
 
-            var validCertificateValues = new Dictionary<string, string>() { { VALIDTHUMBPRINT, validThumbprint } };
+            var isThumbprintMatch = string.Equals(clientCertificate.Thumbprint, thumbprintValues, StringComparison.OrdinalIgnoreCase);
 
-            return validCertificateValues;
+            return isValidCertificate && isThumbprintMatch;
         }
     }
 }
