@@ -1,36 +1,9 @@
-﻿using System.Runtime.Serialization;
-
-namespace Roo.Azure.Configuration.Common.ServiceExceptions
+﻿namespace Roo.Azure.Configuration.Common.ServiceExceptions
 {
     /// <summary>
     /// Custom exception model to relate the custom headers to the exception to create better exception logs.
     /// </summary>
-    public interface IServiceException
-    {
-        /// <summary>
-        /// Convert an Exception to a ServiceException.
-        /// </summary>
-        /// <param name="exception">Exception that occured.</param>
-        /// <param name="transactionId">Transaction Id associated with the exception.</param>
-        /// <returns>A ServiceException with additional details for logging.</returns>
-        ServiceException ConvertToServiceException(Exception exception, string? transactionId = null);
-
-        /// <summary>
-        /// Create a new ServiceException.
-        /// </summary>
-        /// <param name="code">Custom error code associated with exception.</param>
-        /// <param name="message">Brief description of the exception.</param>
-        /// <param name="details">Key-value pairs associated with the exception.</param>
-        /// <param name="innerException">Inner exception that triggered this.</param>
-        /// <param name="transactionId">Transaction Id associated with the exception.</param>
-        /// <returns>A ServiceException with additional details for logging.</returns>
-        ServiceException CreateServiceException(ErrorCode code, string? message = null, Dictionary<string, string>? details = null, Exception? innerException = null, string? transactionId = null);
-    }
-
-    /// <summary>
-    /// Implementation of <see cref="IServiceException"/>.
-    /// </summary>
-    public class ServiceException : Exception, IServiceException
+    public class ServiceException : Exception
     {
         /// <summary>
         /// The <see cref="ServiceError"/> for this exception.
@@ -65,23 +38,14 @@ namespace Roo.Azure.Configuration.Common.ServiceExceptions
         }
 
         /// <summary>
-        /// 
+        /// Initialize an exception with a ServiceError.
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        protected ServiceException(SerializationInfo info, StreamingContext context)
+        /// <param name="error">ServiceError associated with exception.</param>
+        /// <param name="innerException">Inner exception that triggered this.</param>
+        public ServiceException(ServiceError error, Exception? innerException = null)
         {
-            Error = new ServiceError(0);
-        }
-
-        public ServiceException ConvertToServiceException(Exception exception, string? transactionId = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ServiceException CreateServiceException(ErrorCode code, string? message = null, Dictionary<string, string>? details = null, Exception? innerException = null, string? transactionId = null)
-        {
-            throw new NotImplementedException();
+            Error = error;
+            InnerException = innerException;
         }
     }
 }

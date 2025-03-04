@@ -59,7 +59,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
                 using var stream = new MemoryStream(encodedMessage);
                 context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
                 stream.Dispose();
-                logger.LogWarning(context, message);
+                logger.LogError(context, message, new ServiceException((ErrorCode)errorCodes.First(), message, null, null, header.GetTransactionId(requestHeaders)));
                 return;
             }
 
@@ -78,7 +78,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
                 using var stream = new MemoryStream(encodedMessage);
                 context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
                 stream.Dispose();
-                logger.LogWarning(context, message);
+                logger.LogError(context, message, new ServiceException(ErrorCode.UserInfoHeaderNotFound, message, null, null, header.GetTransactionId(requestHeaders)));
                 return;
             }
 

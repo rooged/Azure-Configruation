@@ -86,7 +86,10 @@ namespace Roo.Azure.Configuration.Common.Startup
             app.UseForwardedHeaders();
 
             //Add middlewares
-            
+            if (model.UseExceptionFilter)
+            {
+                app.UseMiddleware<ServiceExceptionMiddleware>();
+            }
             if (model.UseHeaderValidation)
             {
                 app.UseMiddleware<HeaderMiddleware>();
