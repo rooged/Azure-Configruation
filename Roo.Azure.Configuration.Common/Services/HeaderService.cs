@@ -222,7 +222,7 @@ namespace Roo.Azure.Configuration.Common.Services
 
         private static string? ExtractHeader(IHeaderDictionary headers, string headerName)
         {
-            if (headers.TryGetValue(headerName, out var values) || values.Count < 1)
+            if (!headers.TryGetValue(headerName, out var values) || values.Count < 1)
             {
                 return null;
             }
@@ -232,7 +232,7 @@ namespace Roo.Azure.Configuration.Common.Services
 
         private static UserInfo? ExtractUserInfoHeader(IHeaderDictionary headers)
         {
-            if (headers.TryGetValue(Constants.UserInfoHeaderName, out var values) || values.Count < 1)
+            if (!headers.TryGetValue(Constants.UserInfoHeaderName, out var values) || values.Count < 1)
             {
                 return null;
             }

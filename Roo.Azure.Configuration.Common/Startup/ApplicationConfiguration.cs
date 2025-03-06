@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Roo.Azure.Configuration.Common.Logging;
 using Roo.Azure.Configuration.Common.Middlewares;
 using Roo.Azure.Configuration.Common.Models;
+using Roo.Azure.Configuration.Common.ServiceExceptions;
 using Roo.Azure.Configuration.Common.Services;
 using Roo.Azure.Configuration.Common.Telemetry;
 using StackExchange.Redis;
@@ -37,7 +38,7 @@ namespace Roo.Azure.Configuration.Common.Startup
             {
                 services.AddMvc(options =>
                 {
-                    //options.Filters.Add(new ExceptionFilterAttribute());
+                    options.Filters.Add(new ServiceExceptionFilter());
                 });
             }
 
@@ -119,7 +120,6 @@ namespace Roo.Azure.Configuration.Common.Startup
             services.TryAddSingleton<IHeaderService, HeaderService>();
             services.TryAddSingleton<IRooLogger, RooLogger>();
             services.TryAddSingleton<IRooTelemetryLogger, RooTelemetryLogger>();
-            //services.TryAddSingleton<IServicesException, ServiceException>();
 
             //Add & configure Redis cache
             if (model.RedisConnectionString != null)

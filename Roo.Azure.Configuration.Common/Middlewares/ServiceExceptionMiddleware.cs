@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Roo.Azure.Configuration.Common.Logging;
+using Roo.Azure.Configuration.Common.ServiceExceptions;
 using Roo.Azure.Configuration.Common.Services;
 
 namespace Roo.Azure.Configuration.Common.Middlewares
@@ -24,16 +27,38 @@ namespace Roo.Azure.Configuration.Common.Middlewares
             this.env = env;
         }
 
-        public async Task InvokeAsync(HttpContext context, IHeaderService header, IRooLogger logger)
+        /// <summary>
+        /// Invoked if exception occurs during request.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="header"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
+        public async Task InvokeAsync(HttpContext context, IHeaderService headerService, IRooLogger logger)
         {
 
             try
             {
-                await this.next(context).ConfigureAwait(false);
+                await next(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
+                var serviceException = ServiceExceptionConverter.ConvertTo(ex, headerService.GetTransactionId(context.Request.Headers));
+                logger.LogError(context, $"An error occured while handling a request.", serviceException);
+                
+                //Clear exception details in production
+                if (env.IsProduction() && serviceException.Error.Details is { } details)
+                {
+                    details.Clear();
+                }
 
+                //Write exception to response
+                context.Response.Clear();
+                context.Response.StatusCode = (int)serviceException.Error.Code;
+                context.Response.ContentType = "application/json";
+                var errorResponse = JsonConvert.SerializeObject(serviceException.Error);
+
+                await context.Response.WriteAsync(errorResponse).ConfigureAwait(false);
             }
         }
     }

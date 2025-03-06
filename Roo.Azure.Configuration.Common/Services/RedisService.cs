@@ -182,6 +182,10 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task SetObject<T>(string key, T value)
         {
+            if (value == null)
+            {
+                return;
+            }
             var result = ObjectToHashEntry(value);
             await _redis.GetDatabase().HashSetAsync(key, result);
         }
