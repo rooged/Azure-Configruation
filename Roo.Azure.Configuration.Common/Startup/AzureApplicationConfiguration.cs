@@ -19,6 +19,12 @@ namespace Roo.Azure.Configuration.Common.Startup
         /// </summary>
         public static IConfigurationRefresher? ConfigurationRefresher { get; set; }
 
+        /// <summary>
+        /// Azure App Config and Feature Management setup and configuration.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="model"></param>
+        /// <returns><see cref="WebApplicationBuilder"/> for further service configuration.</returns>
         public static WebApplicationBuilder AddAzureAppConfiguration(this WebApplicationBuilder builder, StartupModel model)
         {
             //Add App Configuration
