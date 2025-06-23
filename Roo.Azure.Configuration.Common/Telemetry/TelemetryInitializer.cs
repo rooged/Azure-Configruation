@@ -97,7 +97,7 @@ namespace Roo.Azure.Configuration.Common.Telemetry
                         break;
 
                     case Constants.UserInfoUsername:
-                        telemetryValue = HeaderService.GetUserInfoUsername(headers);
+                        telemetryValue = HeaderService.GetUserInfoLoginId(headers);
                         break;
 
                     default:
