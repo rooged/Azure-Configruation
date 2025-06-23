@@ -53,7 +53,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
             {
                 var userInfo = new UserInfo()
                 {
-                    Username = HttpContextAccessor.HttpContext.User.FindFirstValue(Constants.UserInfoUsername) ?? "",
+                    LoginId = HttpContextAccessor.HttpContext.User.FindFirstValue(Constants.UserInfoUsername) ?? "",
                     Email = HttpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email) ?? "",
                     UserId = HttpContextAccessor.HttpContext.User.FindFirstValue("UserId") ?? "",
                     IsAuthenticated = HttpContextAccessor.HttpContext.User.Identity?.IsAuthenticated ?? false

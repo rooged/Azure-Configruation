@@ -23,7 +23,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogInformation(HttpContext context, string? message = null, Exception? ex = null);
+        public void LogInformation(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
         /// Create formatted log at the error level.
@@ -31,7 +31,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogError(HttpContext context, string? message = null, Exception? ex = null);
+        public void LogError(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
         /// Create formatted log at the warning level.
@@ -39,7 +39,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogWarning(HttpContext context, string? message = null, Exception? ex = null);
+        public void LogWarning(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
         /// Create formatted log at the trace level.
@@ -47,7 +47,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogTrace(HttpContext context, string? message = null, Exception? ex = null);
+        public void LogTrace(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
         /// Create formatted log at the critical level.
@@ -55,7 +55,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogCritical(HttpContext context, string? message = null, Exception? ex = null);
+        public void LogCritical(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
         /// Create formatted log at the debug level.
@@ -63,7 +63,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogDebug(HttpContext context, string? message = null, Exception? ex = null);
+        public void LogDebug(HttpContext? context = null, string? message = null, Exception? ex = null);
     }
 
     /// <summary>
@@ -74,10 +74,11 @@ namespace Roo.Azure.Configuration.Common.Logging
     /// </remarks>
     /// <param name="logger"></param>
     /// <param name="headerService"></param>
-    public partial class RooLogger(ILogger<RooLogger> logger, IHeaderService headerService) : IRooLogger
+    public partial class RooLogger(ILogger<RooLogger> logger, IHeaderService headerService, IHttpContextAccessor httpContextAccessor) : IRooLogger
     {
         private readonly ILogger<RooLogger> _logger = logger;
         private readonly IHeaderService _headerService = headerService;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         private const string encodePattern = @"\s+";
 
@@ -87,26 +88,35 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="ex">Exception</param>
-        public void LogInformation(HttpContext context, string? message = null, Exception? ex = null)
+        public void LogInformation(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers) && !string.IsNullOrEmpty(message))
+            if (context == null)
+            {
+                context = _httpContextAccessor.HttpContext;
+            }
+            if (context == null)
+            {
+                return;
+            }
+
+            if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers) && !string.IsNullOrEmpty(message))
             {
                 _logger.LogInformation(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
-            } else if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers)) {
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+            } else if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers)) {
                 _logger.LogInformation(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)));
             } else if (!string.IsNullOrEmpty(message)) {
                 _logger.LogInformation(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             } else
             {
                 _logger.LogInformation(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers));
             }
         }
 
@@ -116,31 +126,40 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="ex">Exception</param>
-        public void LogError(HttpContext context, string? message = null, Exception? ex = null)
+        public void LogError(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers) && !string.IsNullOrEmpty(message))
+            if (context == null)
+            {
+                context = _httpContextAccessor.HttpContext;
+            }
+            if (context == null)
+            {
+                return;
+            }
+
+            if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers) && !string.IsNullOrEmpty(message))
             {
                 _logger.LogError(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
-            else if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers))
+            else if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers))
             {
                 _logger.LogError(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)));
             }
             else if (!string.IsNullOrEmpty(message))
             {
                 _logger.LogError(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
             else
             {
                 _logger.LogError(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers));
             }
         }
 
@@ -150,31 +169,40 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogWarning(HttpContext context, string? message = null, Exception? ex = null)
+        public void LogWarning(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers) && !string.IsNullOrEmpty(message))
+            if (context == null)
+            {
+                context = _httpContextAccessor.HttpContext;
+            }
+            if (context == null)
+            {
+                return;
+            }
+
+            if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers) && !string.IsNullOrEmpty(message))
             {
                 _logger.LogWarning(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
-            else if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers))
+            else if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers))
             {
                 _logger.LogWarning(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)));
             }
             else if (!string.IsNullOrEmpty(message))
             {
                 _logger.LogWarning(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
             else
             {
                 _logger.LogWarning(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers));
             }
         }
 
@@ -184,31 +212,40 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogTrace(HttpContext context, string? message = null, Exception? ex = null)
+        public void LogTrace(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers) && !string.IsNullOrEmpty(message))
+            if (context == null)
+            {
+                context = _httpContextAccessor.HttpContext;
+            }
+            if (context == null)
+            {
+                return;
+            }
+
+            if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers) && !string.IsNullOrEmpty(message))
             {
                 _logger.LogTrace(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
-            else if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers))
+            else if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers))
             {
                 _logger.LogTrace(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)));
             }
             else if (!string.IsNullOrEmpty(message))
             {
                 _logger.LogTrace(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
             else
             {
                 _logger.LogTrace(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers));
             }
         }
 
@@ -218,31 +255,40 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogCritical(HttpContext context, string? message = null, Exception? ex = null)
+        public void LogCritical(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers) && !string.IsNullOrEmpty(message))
+            if (context == null)
+            {
+                context = _httpContextAccessor.HttpContext;
+            }
+            if (context == null)
+            {
+                return;
+            }
+
+            if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers) && !string.IsNullOrEmpty(message))
             {
                 _logger.LogCritical(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
-            else if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers))
+            else if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers))
             {
                 _logger.LogCritical(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)));
             }
             else if (!string.IsNullOrEmpty(message))
             {
                 _logger.LogCritical(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
             else
             {
                 _logger.LogCritical(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers));
             }
         }
 
@@ -252,31 +298,40 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
         /// <param name="e">Exception</param>
-        public void LogDebug(HttpContext context, string? message = null, Exception? ex = null)
+        public void LogDebug(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers) && !string.IsNullOrEmpty(message))
+            if (context == null)
+            {
+                context = _httpContextAccessor.HttpContext;
+            }
+            if (context == null)
+            {
+                return;
+            }
+
+            if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers) && !string.IsNullOrEmpty(message))
             {
                 _logger.LogDebug(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
-            else if (_headerService.DoesUserInfoHaveInfo(context.Request.Headers))
+            else if (_headerService.DoesUserInfoHaveInfo(context?.Request.Headers))
             {
                 _logger.LogDebug(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, {UserInfoHeaderName}: {GetUserInfo}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context.Request.Headers)));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), Constants.UserInfoHeaderName, JsonConvert.SerializeObject(_headerService.GetUserInfo(context?.Request.Headers)));
             }
             else if (!string.IsNullOrEmpty(message))
             {
                 _logger.LogDebug(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}, message: {message}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers), HttpUtility.HtmlEncode(EncodeLogRegex().Replace(message ?? "", " ")));
             }
             else
             {
                 _logger.LogDebug(ex, "{SessionIdHeaderName}: {GetSessionId}, {TransactionIdHeaderName}: {GetTransactionId}, {ChannelIdHeaderName}: {GetChannelId}",
-                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context.Request.Headers), Constants.ChannelIdHeaderName,
-                    _headerService.GetChannelId(context.Request.Headers));
+                    Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
+                    _headerService.GetChannelId(context?.Request.Headers));
             }
         }
 

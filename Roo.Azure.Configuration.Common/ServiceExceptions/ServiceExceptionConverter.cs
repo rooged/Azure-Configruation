@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Roo.Azure.Configuration.Common.ServiceExceptions
@@ -228,7 +229,13 @@ namespace Roo.Azure.Configuration.Common.ServiceExceptions
                 ErrorCode.UnauthorizedAccess => new UnauthorizedAccessException(ex.Message, ex.InnerException),
                 ErrorCode.ValidationFailure => ex.Error.Details != null && ex.Error.Details.TryGetValue("Value", out string? value) && ex.Error.Details.TryGetValue("ResultMemberNames", out string? resultMemberNames) ?
                     new ValidationException(new ValidationResult(ex.Message, resultMemberNames.Split(", ").ToList()), null, value) : ex.Error.Details != null && ex.Error.Details.TryGetValue("Value", out string? valueNoMember) ? new ValidationException(ex.Message, null, valueNoMember) : new ValidationException(ex.Message, ex.InnerException),
-                ErrorCode.None => new Exception(ex.Message, ex.InnerException)
+                ErrorCode.None => new Exception(ex.Message, ex.InnerException),
+                ErrorCode.BadRequest => new BadHttpRequestException(ex.Message, ex.InnerException ?? new()),
+                ErrorCode.SessionIdHeaderNotFound => new Exception("Session Id header (session-id) is missing from the headers.", ex.InnerException),
+                ErrorCode.TransactionIdHeaderNotFound => new Exception("Transaction Id header (transaction-id) is missing from the headers.", ex.InnerException),
+                ErrorCode.ChannelIdHeaderNotFound => new Exception("Channel Id header (channel-id) is missing from the headers.", ex.InnerException),
+                ErrorCode.UserInfoHeaderNotFound => new Exception("User Info header (user-info) is missing from the headers.", ex.InnerException),
+                _ => new Exception(ex.Message)
             };
         }
     }

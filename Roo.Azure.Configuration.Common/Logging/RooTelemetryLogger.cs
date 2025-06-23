@@ -3,11 +3,6 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.Metrics;
 using Roo.Azure.Configuration.Common.Models;
-using static IdentityModel.OidcConstants;
-using System.Security.Policy;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System;
-using Microsoft.ApplicationInsights.Channel;
 
 namespace Roo.Azure.Configuration.Common.Logging
 {
@@ -444,7 +439,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <returns></returns>
         public async Task<bool> TelemetryFlushAsync(CancellationToken? token)
         {
-            return await _telemetryClient.FlushAsync(token ?? new CancellationToken());
+            return await _telemetryClient.FlushAsync(token ?? new CancellationToken()).ConfigureAwait(false);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// </summary>
         /// <param name="headers"></param>
         /// <returns>username value</returns>
-        public string? GetUserInfoUsername(IHeaderDictionary? headers);
+        public string? GetUserInfoLoginId(IHeaderDictionary? headers);
 
         /// <summary>
         /// Get user-info header
@@ -174,7 +174,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// </summary>
         /// <param name="headers"></param>
         /// <returns>username value</returns>
-        public string? GetUserInfoUsername(IHeaderDictionary? headers)
+        public string? GetUserInfoLoginId(IHeaderDictionary? headers)
         {
             if (headers != null)
             {
@@ -182,7 +182,7 @@ namespace Roo.Azure.Configuration.Common.Services
 
                 if (userInfo != null)
                 {
-                    return userInfo.Username;
+                    return userInfo.LoginId;
                 }
             }
 

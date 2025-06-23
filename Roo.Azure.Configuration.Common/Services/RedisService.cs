@@ -115,7 +115,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<string?> Get(string key)
         {
-            return await _redis.GetDatabase().StringGetAsync(key);
+            return await _redis.GetDatabase().StringGetAsync(key).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<(string? token, TimeSpan? expirationTimeSpan)> GetWithExpiration(string key)
         {
-            var result = await _redis.GetDatabase().StringGetWithExpiryAsync(key);
+            var result = await _redis.GetDatabase().StringGetWithExpiryAsync(key).ConfigureAwait(false);
             return (result.Value, result.Expiry);
         }
 
@@ -136,7 +136,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<T?> GetObject<T>(string key)
         {
-            var result = await _redis.GetDatabase().HashGetAllAsync(key);
+            var result = await _redis.GetDatabase().HashGetAllAsync(key).ConfigureAwait(false);
             return HashEntryToObject<T>(result);
         }
 
@@ -148,7 +148,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<string?> GetField(string key, string field)
         {
-            return await _redis.GetDatabase().HashGetAsync(key, field);
+            return await _redis.GetDatabase().HashGetAsync(key, field).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<bool> Set(string key, string value)
         {
-            return await _redis.GetDatabase().StringSetAsync(key, value, null);
+            return await _redis.GetDatabase().StringSetAsync(key, value, null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<bool> Set(string key, string value, TimeSpan expiration)
         {
-            return await _redis.GetDatabase().StringSetAsync(key, value, expiration);
+            return await _redis.GetDatabase().StringSetAsync(key, value, expiration).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Roo.Azure.Configuration.Common.Services
                 return;
             }
             var result = ObjectToHashEntry(value);
-            await _redis.GetDatabase().HashSetAsync(key, result);
+            await _redis.GetDatabase().HashSetAsync(key, result).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<bool> SetField(string key, string field, string value)
         {
-            return await _redis.GetDatabase().HashSetAsync(key, field, value);
+            return await _redis.GetDatabase().HashSetAsync(key, field, value).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<bool> Delete(string key)
         {
-            return await _redis.GetDatabase().KeyDeleteAsync(key);
+            return await _redis.GetDatabase().KeyDeleteAsync(key).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<bool> DeleteField(string key, string field)
         {
-            return await _redis.GetDatabase().HashDeleteAsync(key, field);
+            return await _redis.GetDatabase().HashDeleteAsync(key, field).ConfigureAwait(false);
         }
 
         /// <summary>
