@@ -120,7 +120,7 @@ namespace Roo.Azure.Configuration.Common.Startup
             services.TryAddSingleton<IHeaderService, HeaderService>();
             services.TryAddSingleton<IRooLogger, RooLogger>();
             services.TryAddSingleton<IRooTelemetryLogger, RooTelemetryLogger>();
-            //services.TryAddSingleton<IServicesException, ServiceException>();
+            services.TryAddSingleton<IServiceBusService, ServiceBusService>();
 
             //Add & configure Redis cache
             if (model.RedisConnectionString != null)

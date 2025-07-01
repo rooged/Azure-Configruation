@@ -635,7 +635,7 @@ namespace Roo.Azure.Configuration.Common.Http
                 {
                     userInfo = new()
                     {
-                        LoginId = UserInfo?.LoginId ?? HttpContext?.User.FindFirstValue(Constants.UserInfoUsername),
+                        LoginId = UserInfo?.LoginId ?? HttpContext?.User.FindFirstValue(Constants.UserInfoLoginId),
                         Email = UserInfo?.Email ?? HttpContext?.User.FindFirstValue(ClaimTypes.Email),
                         UserId = UserInfo?.UserId,
                         SubId = UserInfo?.SubId,

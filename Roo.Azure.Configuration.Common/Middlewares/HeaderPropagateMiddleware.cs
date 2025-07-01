@@ -10,13 +10,16 @@ using System.Security.Claims;
 namespace Roo.Azure.Configuration.Common.Middlewares
 {
     /// <summary>
-    /// Propagate custom headers for all HTTP requests.
+    /// Propagate custom headers for all outgoing HTTP requests, not just ones that go through RooClient.<br/>
+    /// Additional headers can be configured with HeaderPropagateOptions.<br/>
+    /// Additional header values set in order of importance: HttpConext.Request.Headers, Configuration, HttpContext.Session.
     /// </summary>
     public class HeaderPropagateMiddleware : DelegatingHandler
     {
         private IHttpContextAccessor HttpContextAccessor { get; }
         private IConfiguration Configuration { get; }
         private IHeaderService HeaderService { get; }
+        private HeaderPropagateOptions _headerPropagateOptions { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HeaderPropagateMiddleware"/> class.
@@ -24,11 +27,12 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         /// <param name="httpContextAccessor">HTTPContext accessor.</param>
         /// <param name="configuration">Configuration for access envrionment variables.</param>
         /// <param name="headerService">Header service for accessing custom headers.</param>
-        public HeaderPropagateMiddleware(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IHeaderService headerService)
+        public HeaderPropagateMiddleware(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IHeaderService headerService, HeaderPropagateOptions? headerPropagateOptions = null)
         {
             HttpContextAccessor = httpContextAccessor;
             Configuration = configuration;
             HeaderService = headerService;
+            _headerPropagateOptions = headerPropagateOptions ?? new HeaderPropagateOptions();
         }
 
         /// <summary>
@@ -39,26 +43,9 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         {
             //Note: HttpContextAccessor.HttpContext.Request is the incoming request from the client, whereas "request" is the outgoing request.
 
-            //Append "SessionId" if not found in a request header
-            CheckIfHeaderIsEmpty(request.Headers, Constants.SessionIdHeaderName);
-
-            //Append "TransactionId" if not found in a request header
-            CheckIfHeaderIsEmpty(request.Headers, Constants.TransactionIdHeaderName);
-
-            //Append "ChannelId" if not found in a request header
-            CheckIfHeaderIsEmpty(request.Headers, Constants.ChannelIdHeaderName);
-
-            //Append "UserInfo" if not found in a request header
-            if (HttpContextAccessor.HttpContext != null && HttpContextAccessor.HttpContext.User.Claims.Any() && !request.Headers.TryGetValues(Constants.UserInfoHeaderName, out _))
+            foreach (var header in _headerPropagateOptions.Headers)
             {
-                var userInfo = new UserInfo()
-                {
-                    LoginId = HttpContextAccessor.HttpContext.User.FindFirstValue(Constants.UserInfoUsername) ?? "",
-                    Email = HttpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email) ?? "",
-                    UserId = HttpContextAccessor.HttpContext.User.FindFirstValue("UserId") ?? "",
-                    IsAuthenticated = HttpContextAccessor.HttpContext.User.Identity?.IsAuthenticated ?? false
-                };
-                request.Headers.Add(Constants.UserInfoHeaderName, JsonConvert.SerializeObject(userInfo));
+                CheckIfHeaderIsEmpty(request.Headers, header);
             }
         }
 
@@ -88,10 +75,48 @@ namespace Roo.Azure.Configuration.Common.Middlewares
                         break;
 
                     case Constants.ChannelIdHeaderName:
-                        requestHeaders.Add(Constants.ChannelIdHeaderName, Configuration[Constants.ChannelId]);
+                        var channelId = Configuration[Constants.ChannelId];
+                        if (!string.IsNullOrEmpty(channelId))
+                        {
+                            requestHeaders.Add(Constants.ChannelIdHeaderName, Configuration[Constants.ChannelId]);
+                        }
+                        break;
+
+                    case Constants.UserInfoHeaderName:
+                        if (HttpContextAccessor.HttpContext != null && HttpContextAccessor.HttpContext.User.Claims.Any() && !requestHeaders.TryGetValues(Constants.UserInfoHeaderName, out _))
+                        {
+                            var userInfo = HeaderService.GetUserInfo(HttpContextAccessor.HttpContext.Request.Headers);
+                            if (userInfo == null)
+                            {
+                                userInfo = new UserInfo()
+                                {
+                                    LoginId = HttpContextAccessor.HttpContext.User.FindFirstValue(Constants.UserInfoLoginId) ?? "",
+                                    Email = HttpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email) ?? "",
+                                    UserId = HttpContextAccessor.HttpContext.User.FindFirstValue("UserId") ?? "",
+                                    IsAuthenticated = HttpContextAccessor.HttpContext.User.Identity?.IsAuthenticated ?? false
+                                };
+                            }
+                            requestHeaders.Add(Constants.UserInfoHeaderName, JsonConvert.SerializeObject(userInfo));
+                        }
                         break;
 
                     default:
+                        if (HttpContextAccessor.HttpContext != null)
+                        {
+                            string? headerValue = null;
+                            if (HttpContextAccessor.HttpContext.Request.Headers.TryGetValue(headerName, out var headerStringValue))
+                            {
+                                if (headerStringValue.Count > 1)
+                                {
+                                    requestHeaders.Add(headerName, (IEnumerable<string?>)headerStringValue);
+                                }
+                                else if (headerStringValue.Count > 0)
+                                {
+                                    headerValue = headerStringValue.First();
+                                }
+                            }
+                            requestHeaders.Add(headerName, headerValue ?? Configuration[headerName] ?? HttpContextAccessor.HttpContext.Session.GetString(headerName));
+                        }
                         break;
                 }
             }

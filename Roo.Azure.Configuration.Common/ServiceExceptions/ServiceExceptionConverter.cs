@@ -33,6 +33,27 @@ namespace Roo.Azure.Configuration.Common.ServiceExceptions
         }
 
         /// <summary>
+        /// <inheritdoc cref="ConvertTo(Exception, string?)"/>
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <param name="transactionId"></param>
+        /// <returns></returns>
+        public static ServiceException ConvertToServiceException(this Exception exception, string? transactionId)
+        {
+            return ConvertTo(exception, transactionId);
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="ConvertFrom(ServiceException)"/>
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public static Exception ConvertFromServiceException(this ServiceException exception)
+        {
+            return ConvertFrom(exception);
+        }
+
+        /// <summary>
         /// Convert an <see cref="Exception"/> to a <see cref="ServiceException"/>.
         /// </summary>
         /// <param name="exception">Exception to convert.</param>
@@ -174,68 +195,68 @@ namespace Roo.Azure.Configuration.Common.ServiceExceptions
                 ErrorCode.AppDomainUnloaded => new AppDomainUnloadedException(ex.Error.Message, ex.InnerException),
                 ErrorCode.ArgumentNull => ex.Error.Details != null && ex.Error.Details.TryGetValue("ParamName", out string? paramName) ? new ArgumentNullException(paramName, ex.Error.Message) : new ArgumentNullException(ex.Error.Message, ex.InnerException),
                 ErrorCode.ArgumentOutOfRange => ex.Error.Details != null && ex.Error.Details.TryGetValue("ParamName", out string? paramName) ? ex.Error.Details.TryGetValue("Value", out string? value) ? new ArgumentOutOfRangeException(paramName, value, ex.Error.Message) : new ArgumentOutOfRangeException(paramName, ex.Error.Message) : new ArgumentOutOfRangeException(ex.Message, ex.InnerException),
-                ErrorCode.DuplicateWaitObject => ex.Error.Details != null && ex.Error.Details.TryGetValue("ParamName", out string? paramName) ? new DuplicateWaitObjectException(paramName, ex.Message) : new DuplicateWaitObjectException(ex.Message, ex.InnerException),
-                ErrorCode.ArgumentInvalid => ex.Error.Details != null && ex.Error.Details.TryGetValue("ParamName", out string? paramName) ? new ArgumentException(ex.Message, paramName, ex.InnerException) : new ArgumentException(ex.Message, ex.InnerException),
-                ErrorCode.DivideByZero => new DivideByZeroException(ex.Message, ex.InnerException),
-                ErrorCode.NotFiniteNumber => ex.Error.Details != null && ex.Error.Details.TryGetValue("OffendingNumber", out string? offendingNumber) ? new NotFiniteNumberException(ex.Message, Convert.ToDouble(offendingNumber), ex.InnerException) : new NotFiniteNumberException(ex.Message, ex.InnerException),
-                ErrorCode.OverflowFailure => new OverflowException(ex.Message, ex.InnerException),
-                ErrorCode.ArithmeticInvalid => new ArithmeticException(ex.Message, ex.InnerException),
-                ErrorCode.ArrayTypeMismatch => new ArrayTypeMismatchException(ex.Message, ex.InnerException),
-                ErrorCode.BadImageFormat => ex.Error.Details != null && ex.Error.Details.TryGetValue("FileName", out string? fileName) ? new BadImageFormatException(ex.Message, fileName, ex.InnerException) : new BadImageFormatException(ex.Message, ex.InnerException),
-                ErrorCode.CannotUnloadAppDomain => new CannotUnloadAppDomainException(ex.Message, ex.InnerException),
-                ErrorCode.ContextMashalFailure => new ContextMarshalException(ex.Message, ex.InnerException),
-                ErrorCode.DataMisaligned => new DataMisalignedException(ex.Message, ex.InnerException),
-                ErrorCode.DbUpdateConcurrency => new DbUpdateConcurrencyException(ex.Message, ex.InnerException),
-                ErrorCode.DbUpdateFailure => new DbUpdateException(ex.Message, ex.InnerException),
-                ErrorCode.DirectoryNotFound => new DirectoryNotFoundException(ex.Message, ex.InnerException),
-                ErrorCode.DllNotFound => new DllNotFoundException(ex.Message, ex.InnerException),
-                ErrorCode.EndOfStream => new EndOfStreamException(ex.Message, ex.InnerException),
-                ErrorCode.EntryPointNotFound => new EntryPointNotFoundException(ex.Message, ex.InnerException),
-                ErrorCode.FieldAccessInvalid => new FieldAccessException(ex.Message, ex.InnerException),
-                ErrorCode.FileNotFound => ex.Error.Details != null && ex.Error.Details.TryGetValue("FileName", out string? fileName) ? new FileNotFoundException(ex.Message, fileName, ex.InnerException) : new FileNotFoundException(ex.Message, ex.InnerException),
-                ErrorCode.UriFormatException => new UriFormatException(ex.Message, ex.InnerException),
-                ErrorCode.FormatInvalid => new FormatException(ex.Message, ex.InnerException),
-                ErrorCode.HttpIOFailure => ex.Error.Details != null && ex.Error.Details.TryGetValue("HttpRequestError", out string? httpRequestError) ? new HttpIOException((HttpRequestError)Convert.ToInt32(httpRequestError), ex.Message, ex.InnerException) : new IOException(ex.Message, ex.InnerException),
-                ErrorCode.IndexOutOfRange => new IndexOutOfRangeException(ex.Message, ex.InnerException),
-                ErrorCode.InsufficientExecutionStack => new InsufficientExecutionStackException(ex.Message, ex.InnerException),
-                ErrorCode.InsufficientMemory => new InsufficientMemoryException(ex.Message, ex.InnerException),
-                ErrorCode.InvalidCast => new InvalidCastException(ex.Message, ex.InnerException),
-                ErrorCode.InvalidData => new InvalidDataException(ex.Message, ex.InnerException),
-                ErrorCode.ObjectDisposed => ex.Error.Details != null && ex.Error.Details.TryGetValue("ObjectName", out string? objectName) ? new ObjectDisposedException(objectName, ex.Message) : new ObjectDisposedException(ex.Message, ex.InnerException),
-                ErrorCode.InvalidOperation => new InvalidOperationException(ex.Message, ex.InnerException),
-                ErrorCode.InvalidTimeZone => new InvalidTimeZoneException(ex.Message, ex.InnerException),
-                ErrorCode.KeyNotFound => new KeyNotFoundException(ex.Message, ex.InnerException),
-                ErrorCode.LockRecursionFailure => new LockRecursionException(ex.Message, ex.InnerException),
-                ErrorCode.MissingMethod => new MissingMethodException(ex.Message, ex.InnerException),
-                ErrorCode.MethodAccessInvalid => new MethodAccessException(ex.Message, ex.InnerException),
-                ErrorCode.MissingField => new MissingFieldException(ex.Message, ex.InnerException),
-                ErrorCode.MissingMember => new MissingMemberException(ex.Message, ex.InnerException),
-                ErrorCode.MemberAcessInvalid => new MemberAccessException(ex.Message, ex.InnerException),
-                ErrorCode.NotImplemented => new NotImplementedException(ex.Message, ex.InnerException),
-                ErrorCode.PlatformNotSupported => new PlatformNotSupportedException(ex.Message, ex.InnerException),
-                ErrorCode.NotSupported => new NotSupportedException(ex.Message, ex.InnerException),
-                ErrorCode.NullReference => new NullReferenceException(ex.Message, ex.InnerException),
-                ErrorCode.OperationCanceled => new OperationCanceledException(ex.Message, ex.InnerException),
-                ErrorCode.OutOfMemory => new OutOfMemoryException(ex.Message, ex.InnerException),
-                ErrorCode.PathTooLongFileName => new PathTooLongException(ex.Message, ex.InnerException),
-                ErrorCode.RankArray => new RankException(ex.Message, ex.InnerException),
-                ErrorCode.StackOverflow => new StackOverflowException(ex.Message, ex.InnerException),
-                ErrorCode.Timeout => new TimeoutException(ex.Message, ex.InnerException),
-                ErrorCode.TimeZoneNotFound => new TimeZoneNotFoundException(ex.Message, ex.InnerException),
-                ErrorCode.TypeAccessInvalid => new TypeAccessException(ex.Message, ex.InnerException),
+                ErrorCode.DuplicateWaitObject => ex.Error.Details != null && ex.Error.Details.TryGetValue("ParamName", out string? paramName) ? new DuplicateWaitObjectException(paramName, ex.Error.Message) : new DuplicateWaitObjectException(ex.Error.Message, ex.InnerException),
+                ErrorCode.ArgumentInvalid => ex.Error.Details != null && ex.Error.Details.TryGetValue("ParamName", out string? paramName) ? new ArgumentException(ex.Error.Message, paramName, ex.InnerException) : new ArgumentException(ex.Error.Message, ex.InnerException),
+                ErrorCode.DivideByZero => new DivideByZeroException(ex.Error.Message, ex.InnerException),
+                ErrorCode.NotFiniteNumber => ex.Error.Details != null && ex.Error.Details.TryGetValue("OffendingNumber", out string? offendingNumber) ? new NotFiniteNumberException(ex.Error.Message, Convert.ToDouble(offendingNumber), ex.InnerException) : new NotFiniteNumberException(ex.Error.Message, ex.InnerException),
+                ErrorCode.OverflowFailure => new OverflowException(ex.Error.Message, ex.InnerException),
+                ErrorCode.ArithmeticInvalid => new ArithmeticException(ex.Error.Message, ex.InnerException),
+                ErrorCode.ArrayTypeMismatch => new ArrayTypeMismatchException(ex.Error.Message, ex.InnerException),
+                ErrorCode.BadImageFormat => ex.Error.Details != null && ex.Error.Details.TryGetValue("FileName", out string? fileName) ? new BadImageFormatException(ex.Error.Message, fileName, ex.InnerException) : new BadImageFormatException(ex.Error.Message, ex.InnerException),
+                ErrorCode.CannotUnloadAppDomain => new CannotUnloadAppDomainException(ex.Error.Message, ex.InnerException),
+                ErrorCode.ContextMashalFailure => new ContextMarshalException(ex.Error.Message, ex.InnerException),
+                ErrorCode.DataMisaligned => new DataMisalignedException(ex.Error.Message, ex.InnerException),
+                ErrorCode.DbUpdateConcurrency => new DbUpdateConcurrencyException(ex.Error.Message ?? ex.Message, ex.InnerException),
+                ErrorCode.DbUpdateFailure => new DbUpdateException(ex.Error.Message ?? ex.Message, ex.InnerException),
+                ErrorCode.DirectoryNotFound => new DirectoryNotFoundException(ex.Error.Message, ex.InnerException),
+                ErrorCode.DllNotFound => new DllNotFoundException(ex.Error.Message, ex.InnerException),
+                ErrorCode.EndOfStream => new EndOfStreamException(ex.Error.Message, ex.InnerException),
+                ErrorCode.EntryPointNotFound => new EntryPointNotFoundException(ex.Error.Message, ex.InnerException),
+                ErrorCode.FieldAccessInvalid => new FieldAccessException(ex.Error.Message, ex.InnerException),
+                ErrorCode.FileNotFound => ex.Error.Details != null && ex.Error.Details.TryGetValue("FileName", out string? fileName) ? new FileNotFoundException(ex.Error.Message, fileName, ex.InnerException) : new FileNotFoundException(ex.Error.Message, ex.InnerException),
+                ErrorCode.UriFormatException => new UriFormatException(ex.Error.Message, ex.InnerException),
+                ErrorCode.FormatInvalid => new FormatException(ex.Error.Message, ex.InnerException),
+                ErrorCode.HttpIOFailure => ex.Error.Details != null && ex.Error.Details.TryGetValue("HttpRequestError", out string? httpRequestError) ? new HttpIOException((HttpRequestError)Convert.ToInt32(httpRequestError), ex.Error.Message, ex.InnerException) : new IOException(ex.Error.Message, ex.InnerException),
+                ErrorCode.IndexOutOfRange => new IndexOutOfRangeException(ex.Error.Message, ex.InnerException),
+                ErrorCode.InsufficientExecutionStack => new InsufficientExecutionStackException(ex.Error.Message, ex.InnerException),
+                ErrorCode.InsufficientMemory => new InsufficientMemoryException(ex.Error.Message, ex.InnerException),
+                ErrorCode.InvalidCast => new InvalidCastException(ex.Error.Message, ex.InnerException),
+                ErrorCode.InvalidData => new InvalidDataException(ex.Error.Message, ex.InnerException),
+                ErrorCode.ObjectDisposed => ex.Error.Details != null && ex.Error.Details.TryGetValue("ObjectName", out string? objectName) ? new ObjectDisposedException(objectName, ex.Error.Message) : new ObjectDisposedException(ex.Error.Message, ex.InnerException),
+                ErrorCode.InvalidOperation => new InvalidOperationException(ex.Error.Message, ex.InnerException),
+                ErrorCode.InvalidTimeZone => new InvalidTimeZoneException(ex.Error.Message, ex.InnerException),
+                ErrorCode.KeyNotFound => new KeyNotFoundException(ex.Error.Message, ex.InnerException),
+                ErrorCode.LockRecursionFailure => new LockRecursionException(ex.Error.Message, ex.InnerException),
+                ErrorCode.MissingMethod => new MissingMethodException(ex.Error.Message, ex.InnerException),
+                ErrorCode.MethodAccessInvalid => new MethodAccessException(ex.Error.Message, ex.InnerException),
+                ErrorCode.MissingField => new MissingFieldException(ex.Error.Message, ex.InnerException),
+                ErrorCode.MissingMember => new MissingMemberException(ex.Error.Message, ex.InnerException),
+                ErrorCode.MemberAcessInvalid => new MemberAccessException(ex.Error.Message, ex.InnerException),
+                ErrorCode.NotImplemented => new NotImplementedException(ex.Error.Message, ex.InnerException),
+                ErrorCode.PlatformNotSupported => new PlatformNotSupportedException(ex.Error.Message, ex.InnerException),
+                ErrorCode.NotSupported => new NotSupportedException(ex.Error.Message, ex.InnerException),
+                ErrorCode.NullReference => new NullReferenceException(ex.Error.Message, ex.InnerException),
+                ErrorCode.OperationCanceled => new OperationCanceledException(ex.Error.Message, ex.InnerException),
+                ErrorCode.OutOfMemory => new OutOfMemoryException(ex.Error.Message, ex.InnerException),
+                ErrorCode.PathTooLongFileName => new PathTooLongException(ex.Error.Message, ex.InnerException),
+                ErrorCode.RankArray => new RankException(ex.Error.Message, ex.InnerException),
+                ErrorCode.StackOverflow => new StackOverflowException(ex.Error.Message, ex.InnerException),
+                ErrorCode.Timeout => new TimeoutException(ex.Error.Message, ex.InnerException),
+                ErrorCode.TimeZoneNotFound => new TimeZoneNotFoundException(ex.Error.Message, ex.InnerException),
+                ErrorCode.TypeAccessInvalid => new TypeAccessException(ex.Error.Message, ex.InnerException),
                 ErrorCode.TypeInitializationFailure => ex.Error.Details != null && ex.Error.Details.TryGetValue("TypeName", out string? typeName) ? new TypeInitializationException(typeName, ex.InnerException) : new TypeInitializationException(null, ex.InnerException),
-                ErrorCode.TypeLoadFailure => new TypeLoadException(ex.Message, ex.InnerException),
-                ErrorCode.TypeUnloaded => new TypeUnloadedException(ex.Message, ex.InnerException),
-                ErrorCode.UnauthorizedAccess => new UnauthorizedAccessException(ex.Message, ex.InnerException),
+                ErrorCode.TypeLoadFailure => new TypeLoadException(ex.Error.Message, ex.InnerException),
+                ErrorCode.TypeUnloaded => new TypeUnloadedException(ex.Error.Message, ex.InnerException),
+                ErrorCode.UnauthorizedAccess => new UnauthorizedAccessException(ex.Error.Message, ex.InnerException),
                 ErrorCode.ValidationFailure => ex.Error.Details != null && ex.Error.Details.TryGetValue("Value", out string? value) && ex.Error.Details.TryGetValue("ResultMemberNames", out string? resultMemberNames) ?
-                    new ValidationException(new ValidationResult(ex.Message, resultMemberNames.Split(", ").ToList()), null, value) : ex.Error.Details != null && ex.Error.Details.TryGetValue("Value", out string? valueNoMember) ? new ValidationException(ex.Message, null, valueNoMember) : new ValidationException(ex.Message, ex.InnerException),
-                ErrorCode.None => new Exception(ex.Message, ex.InnerException),
-                ErrorCode.BadRequest => new BadHttpRequestException(ex.Message, ex.InnerException ?? new()),
+                    new ValidationException(new ValidationResult(ex.Error.Message, resultMemberNames.Split(", ").ToList()), null, value) : ex.Error.Details != null && ex.Error.Details.TryGetValue("Value", out string? valueNoMember) ? new ValidationException(ex.Error.Message, null, valueNoMember) : new ValidationException(ex.Error.Message, ex.InnerException),
+                ErrorCode.None => new Exception(ex.Error.Message, ex.InnerException),
+                ErrorCode.BadRequest => new BadHttpRequestException(ex.Error.Message ?? ex.Message, ex.InnerException ?? new()),
                 ErrorCode.SessionIdHeaderNotFound => new Exception("Session Id header (session-id) is missing from the headers.", ex.InnerException),
                 ErrorCode.TransactionIdHeaderNotFound => new Exception("Transaction Id header (transaction-id) is missing from the headers.", ex.InnerException),
                 ErrorCode.ChannelIdHeaderNotFound => new Exception("Channel Id header (channel-id) is missing from the headers.", ex.InnerException),
                 ErrorCode.UserInfoHeaderNotFound => new Exception("User Info header (user-info) is missing from the headers.", ex.InnerException),
-                _ => new Exception(ex.Message)
+                _ => new Exception(ex.Error.Message)
             };
         }
     }
