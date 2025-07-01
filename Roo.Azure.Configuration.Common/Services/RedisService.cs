@@ -19,7 +19,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// </summary>
         /// <param name="key">Key of value stored in cache.</param>
         /// <returns>Cached string with expiration time in Epoch from cache.</returns>
-        Task<(string? token, TimeSpan? expirationTimeSpan)> GetWithExpiration(string key);
+        Task<(string? Token, TimeSpan? ExpirationTimeSpan)> GetWithExpiration(string key);
         /// <summary>
         /// Get cached object of type T based on key.
         /// </summary>
@@ -35,20 +35,13 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns>Field in object from cache.</returns>
         Task<string?> GetField(string key, string field);
         /// <summary>
-        /// Set string in cache.
-        /// </summary>
-        /// <param name="key">Key to store value under in cache.</param>
-        /// <param name="value">Value to store in cache.</param>
-        /// <returns>Whether value was cached.</returns>
-        Task<bool> Set(string key, string value);
-        /// <summary>
-        /// Set string with expiration in cache.
+        /// Set string with optional expiration in cache.
         /// </summary>
         /// <param name="key">Key to store value under in cache.</param>
         /// <param name="value">Value to store in cache.</param>
         /// <param name="expiration">Expiration time of value.</param>
         /// <returns>Whether value was cached.</returns>
-        Task<bool> Set(string key, string value, TimeSpan expiration);
+        Task<bool> Set(string key, string value, TimeSpan? expiration = null);
         /// <summary>
         /// Set object in cache, overwrites the object if key already exists in cache.
         /// </summary>
@@ -123,7 +116,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public async Task<(string? token, TimeSpan? expirationTimeSpan)> GetWithExpiration(string key)
+        public async Task<(string? Token, TimeSpan? ExpirationTimeSpan)> GetWithExpiration(string key)
         {
             var result = await _redis.GetDatabase().StringGetWithExpiryAsync(key).ConfigureAwait(false);
             return (result.Value, result.Expiry);
@@ -156,20 +149,9 @@ namespace Roo.Azure.Configuration.Common.Services
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <returns></returns>
-        public async Task<bool> Set(string key, string value)
-        {
-            return await _redis.GetDatabase().StringSetAsync(key, value, null).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
         /// <param name="expiration"></param>
         /// <returns></returns>
-        public async Task<bool> Set(string key, string value, TimeSpan expiration)
+        public async Task<bool> Set(string key, string value, TimeSpan? expiration = null)
         {
             return await _redis.GetDatabase().StringSetAsync(key, value, expiration).ConfigureAwait(false);
         }
