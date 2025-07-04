@@ -20,11 +20,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="services"></param>
         /// <param name="channelId">Channel Id of application.</param>
         /// <param name="httpClients">List of HttpClient names (as strings) and base URLs to configure.</param>
-        /// <param name="useMemoryCache">Whether to use memory cache when storing tokens. Redis takes precedence if Redis connection string is passed in.</param>
+        /// <param name="useMemoryCache">Whether to use memory cache when storing tokens. Redis takes precedence if Redis connection string is passed in too. Memory cache will be used with Azure APIM if neither is passed in.</param>
         /// <param name="redisConnectionString">Connection string to Redis, controls whether to use Redis when storing tokens. Takes precedence over memory cache.</param>
         /// <param name=""></param>
         /// <returns></returns>
-        public static IServiceCollection RooHttpClientConfig(this IServiceCollection services, string channelId, List<(string Name, string BaseUrl)> httpClients, bool useMemoryCache = false, string? redisConnectionString = null)
+        public static IServiceCollection RooHttpClientConfig(this IServiceCollection services, string channelId, List<(string Name, string BaseUrl)> httpClients, string? redisConnectionString = null, bool useMemoryCache = false)
         {
             //Iterate through client list and create named client for each item
             foreach (var httpClient in httpClients)
@@ -38,7 +38,7 @@ namespace Roo.Azure.Configuration.Common.Http
                     config.BaseAddress = new Uri(httpClient.BaseUrl);
                 }).AddHttpMessageHandler<HeaderPropagateMiddleware>();
             }
-            return CreateHttpClient(services, channelId, useMemoryCache, redisConnectionString);
+            return CreateHttpClient(services, channelId, redisConnectionString, useMemoryCache);
         }
 
         /// <summary>
@@ -47,11 +47,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="services"></param>
         /// <param name="channelId">Channel Id of application.</param>
         /// <param name="httpClients">List of HttpClient names (as enums) and base URLs to configure.</param>
-        /// <param name="useMemoryCache">Whether to use memory cache when storing tokens. Redis takes precedence if Redis connection string is passed in.</param>
+        /// <param name="useMemoryCache">Whether to use memory cache when storing tokens. Redis takes precedence if Redis connection string is passed in too. Memory cache will be used with Azure APIM if neither is passed in.</param>
         /// <param name="redisConnectionString">Connection string to Redis, controls whether to use Redis when storing tokens. Takes precedence over memory cache.</param>
         /// <param name=""></param>
         /// <returns></returns>
-        public static IServiceCollection RooHttpClientConfig(this IServiceCollection services, string channelId, List<(Enum Name, string BaseUrl)> httpClients, bool useMemoryCache = false, string? redisConnectionString = null)
+        public static IServiceCollection RooHttpClientConfig(this IServiceCollection services, string channelId, List<(Enum Name, string BaseUrl)> httpClients, string? redisConnectionString = null, bool useMemoryCache = false)
         {
             //Iterate through client list and create named client for each item
             foreach (var httpClient in httpClients)
@@ -65,13 +65,27 @@ namespace Roo.Azure.Configuration.Common.Http
                     config.BaseAddress = new Uri(httpClient.BaseUrl);
                 }).AddHttpMessageHandler<HeaderPropagateMiddleware>();
             }
-            return CreateHttpClient(services, channelId, useMemoryCache, redisConnectionString);
+            return CreateHttpClient(services, channelId, redisConnectionString, useMemoryCache);
         }
 
-        private static IServiceCollection CreateHttpClient(IServiceCollection services, string channelId, bool useMemoryCache = false, string? redisConnectionString = null)
+        private static IServiceCollection CreateHttpClient(IServiceCollection services, string channelId, string? redisConnectionString = null, bool useMemoryCache = false)
         {
             //Add Azure Active Directory authentication service
-            services.TryAddSingleton<IAzureAdClientAssertion, AzureAdClientAssertion>();
+            if (string.IsNullOrEmpty(redisConnectionString) && useMemoryCache == false)
+            {
+                services.TryAddSingleton<IAzureAdClientAssertion>(x =>
+                {
+                    var cache = x.GetRequiredService<IMemoryCache>();
+                    return new AzureAdClientAssertion(cache);
+                });
+            }
+            else
+            {
+                services.TryAddSingleton<IAzureAdClientAssertion>(x =>
+                {
+                    return new AzureAdClientAssertion();
+                });
+            }
 
             //Create RooHttpClient
             if (!string.IsNullOrEmpty(redisConnectionString))

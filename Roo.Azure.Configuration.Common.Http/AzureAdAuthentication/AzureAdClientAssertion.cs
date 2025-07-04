@@ -8,6 +8,7 @@ using Roo.Azure.Configuration.Common.Http.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using YamlDotNet.Core.Tokens;
 
 namespace Roo.Azure.Configuration.Common.Http.AzureAdAuthentication
 {
@@ -61,7 +62,13 @@ namespace Roo.Azure.Configuration.Common.Http.AzureAdAuthentication
     /// </summary>
     public class AzureAdClientAssertion : IAzureAdClientAssertion
     {
-        private readonly IMemoryCache _cache;
+        private readonly IMemoryCache? _cache;
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="cache"></param>
+        public AzureAdClientAssertion() { }
 
         /// <summary>
         /// <inheritdoc/>
@@ -110,7 +117,12 @@ namespace Roo.Azure.Configuration.Common.Http.AzureAdAuthentication
         public async Task<string?> GetTokenAsync(string tenantId, string clientId, string scope, X509Certificate2 certificate, string? tokenName = null)
         {
             //Check if token is already in cache
-            var token = !string.IsNullOrEmpty(tokenName) ? _cache.Get<string>(tokenName) : null;
+            string? token = null;
+            if (_cache != null)
+            {
+                token = !string.IsNullOrEmpty(tokenName) ? _cache.Get<string>(tokenName) : null;
+            }
+            
 
             if (!string.IsNullOrEmpty(token))
             {
@@ -142,7 +154,11 @@ namespace Roo.Azure.Configuration.Common.Http.AzureAdAuthentication
         public async Task<string?> GetTokenAsync(string tenantId, string clientId, string scope, string clientSecret, string? tokenName = null)
         {
             //Check if token is already in cache
-            var token = !string.IsNullOrEmpty(tokenName) ? _cache.Get<string>(tokenName) : null;
+            string? token = null;
+            if (_cache != null)
+            {
+                token = !string.IsNullOrEmpty(tokenName) ? _cache.Get<string>(tokenName) : null;
+            }
 
             if (!string.IsNullOrEmpty(token))
             {
@@ -213,7 +229,7 @@ namespace Roo.Azure.Configuration.Common.Http.AzureAdAuthentication
                 {
                     return null;
                 }
-                if (!string.IsNullOrEmpty(tokenName))
+                if (_cache != null && !string.IsNullOrEmpty(tokenName))
                 {
                     _cache.Set(tokenName, token, DateTimeOffset.UtcNow.AddMinutes(58));
                 }

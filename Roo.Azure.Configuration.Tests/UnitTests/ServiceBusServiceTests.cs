@@ -7,19 +7,16 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class ServiceBusServiceTests
     {
         //Common
-        string serviceBusNamespace = "serviceBusNamespace";
-        string serviceBusQueueName = "serviceBusQueueName";
-        string serviceBusConnectionString = "serviceBusConnectionString";
-        string messageString = "message";
-        ReadOnlyMemory<byte> messageReadOnlyMemory = new ReadOnlyMemory<byte>([0]);
-        BinaryData binaryData = new BinaryData([0]);
-        ServiceBusMessage serviceBusMessage = new ServiceBusMessage("message");
-        DefaultAzureCredential token = new();
-        DateTimeOffset dateTimeOffset = new();
-        CancellationToken cancellationToken = new();
-
-        [SetUp]
-        public void Setup() { }
+        private string serviceBusNamespace = "serviceBusNamespace";
+        private string serviceBusQueueName = "serviceBusQueueName";
+        private string serviceBusConnectionString = "serviceBusConnectionString";
+        private string messageString = "message";
+        private ReadOnlyMemory<byte> messageReadOnlyMemory = new ReadOnlyMemory<byte>([0]);
+        private BinaryData binaryData = new BinaryData([0]);
+        private ServiceBusMessage serviceBusMessage = new ServiceBusMessage("message");
+        private DefaultAzureCredential token = new();
+        private DateTimeOffset dateTimeOffset = new();
+        private CancellationToken cancellationToken = new();
 
         #region String
         [Test]

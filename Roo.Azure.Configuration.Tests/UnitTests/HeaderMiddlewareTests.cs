@@ -8,8 +8,8 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class HeaderMiddlewareTests
     {
         //Common
-        Mock<IRooLogger> loggerMoq;
-        RequestDelegate next;
+        private Mock<IRooLogger> loggerMoq;
+        private RequestDelegate next;
 
         [SetUp]
         public void Setup()

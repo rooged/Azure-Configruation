@@ -6,10 +6,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class CertificateValidationServiceTests
     {
         //Common
-        string validThumbprint = "validThumbPrint";
-
-        [SetUp]
-        public void Setup() { }
+        private string validThumbprint = "validThumbPrint";
 
         [Test]
         public void ValidateCertificateFailInvalid_Verify()

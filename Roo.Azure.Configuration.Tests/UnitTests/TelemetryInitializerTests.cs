@@ -3,8 +3,6 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Roo.Azure.Configuration.Common.Logging;
-using Roo.Azure.Configuration.Common.Middlewares;
 using Roo.Azure.Configuration.Common.Models;
 using Roo.Azure.Configuration.Common.Telemetry;
 using System.Security.Claims;
@@ -14,15 +12,10 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class TelemetryInitializerTests
     {
         //Common
-        string sessionId = "sessionId";
-        string transactionId = "transactionId";
-        string channelId = "channelId";
-        string loginId = "loginId";
-
-        [SetUp]
-        public void Setup()
-        {
-        }
+        private string sessionId = "sessionId";
+        private string transactionId = "transactionId";
+        private string channelId = "channelId";
+        private string loginId = "loginId";
 
         [Test]
         public void InitializeCloudRoleNameTelemetry_Verify()

@@ -125,20 +125,37 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
             if (queryParameters != null)
             {
+                relativeUrl = relativeUrl.TrimEnd('/');
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            var response = await httpClient.GetAsync(relativeUrl).ConfigureAwait(false);
-            if (response.StatusCode == HttpStatusCode.Unauthorized && AuthenticationInfo != null)
+            HttpResponseMessage? response = null;
+            if (cancellationToken == null)
             {
-                AddBearerToken(await GetToken(httpClientName, true).ConfigureAwait(false) ?? "", httpClient);
                 response = await httpClient.GetAsync(relativeUrl).ConfigureAwait(false);
             }
+            else
+            {
+                response = await httpClient.GetAsync(relativeUrl, (CancellationToken)cancellationToken).ConfigureAwait(false);
+            }
+            if (response.StatusCode == HttpStatusCode.Unauthorized && AuthenticationInfo != null)
+            {
+                AddBearerToken(await GetToken(httpClientName, true).ConfigureAwait(false) ?? "", httpClient);
+                if (cancellationToken == null)
+                {
+                    response = await httpClient.GetAsync(relativeUrl).ConfigureAwait(false);
+                }
+                else
+                {
+                    response = await httpClient.GetAsync(relativeUrl, (CancellationToken)cancellationToken).ConfigureAwait(false);
+                }
+            }
             return response;
         }
 
@@ -148,11 +165,13 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryStringObject"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, string httpClientName, object queryStringObject)
+        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, string httpClientName, object queryStringObject, CancellationToken? cancellationToken = null)
         {
+            relativeUrl = relativeUrl.TrimEnd('/');
             relativeUrl += ToQueryString(queryStringObject);
-            var response = await GetAsync(relativeUrl, httpClientName).ConfigureAwait(false);
+            var response = await GetAsync(relativeUrl, httpClientName, null, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -163,10 +182,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> GetAsync<TResult>(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> GetAsync<TResult>(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            var response = await GetAsync(relativeUrl, httpClientName, queryParameters).ConfigureAwait(false);
+            var response = await GetAsync(relativeUrl, httpClientName, queryParameters, cancellationToken).ConfigureAwait(false);
             return await DeserializeResult<TResult>(response).ConfigureAwait(false);
         }
 
@@ -177,11 +197,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryStringObject"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> GetAsync<TResult>(string relativeUrl, string httpClientName, object queryStringObject)
+        public async Task<TResult> GetAsync<TResult>(string relativeUrl, string httpClientName, object queryStringObject, CancellationToken? cancellationToken = null)
         {
-            relativeUrl += ToQueryString(queryStringObject);
-            var response = await GetAsync(relativeUrl, httpClientName).ConfigureAwait(false);
+            var response = await GetAsync(relativeUrl, httpClientName, queryStringObject, cancellationToken).ConfigureAwait(false);
             return await DeserializeResult<TResult>(response).ConfigureAwait(false);
         }
 
@@ -191,10 +211,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await GetAsync(relativeUrl, httpClientName.ToString(), queryParameters).ConfigureAwait(false);
+            return await GetAsync(relativeUrl, httpClientName.ToString(), queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -203,10 +224,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryStringObject"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, Enum httpClientName, object queryStringObject)
+        public async Task<HttpResponseMessage> GetAsync(string relativeUrl, Enum httpClientName, object queryStringObject, CancellationToken? cancellationToken = null)
         {
-            return await GetAsync(relativeUrl, httpClientName.ToString(), queryStringObject).ConfigureAwait(false);
+            return await GetAsync(relativeUrl, httpClientName.ToString(), queryStringObject, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -216,10 +238,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> GetAsync<TResult>(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> GetAsync<TResult>(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await GetAsync<TResult>(relativeUrl, httpClientName.ToString(), queryParameters).ConfigureAwait(false);
+            return await GetAsync<TResult>(relativeUrl, httpClientName.ToString(), queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -229,10 +252,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryStringObject"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> GetAsync<TResult>(string relativeUrl, Enum httpClientName, object queryStringObject)
+        public async Task<TResult> GetAsync<TResult>(string relativeUrl, Enum httpClientName, object queryStringObject, CancellationToken? cancellationToken = null)
         {
-            return await GetAsync<TResult>(relativeUrl, httpClientName.ToString(), queryStringObject).ConfigureAwait(false);
+            return await GetAsync<TResult>(relativeUrl, httpClientName.ToString(), queryStringObject, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -242,8 +266,9 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> PostAsync(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> PostAsync(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
             HttpContent? content = null;
             if (data != null)
@@ -255,11 +280,7 @@ namespace Roo.Azure.Configuration.Common.Http
                 }
                 else
                 {
-                    if (data is HttpContent)
-                    {
-                        content = (HttpContent?)data;
-                    }
-                    else if (data is MultipartFormDataContent)
+                    if (data is MultipartFormDataContent)
                     {
                         content = (MultipartFormDataContent?)data;
                     }
@@ -267,19 +288,39 @@ namespace Roo.Azure.Configuration.Common.Http
                     {
                         content = (MultipartContent?)data;
                     }
+                    else if (data is HttpContent)
+                    {
+                        content = (HttpContent?)data;
+                    }
                 }
             }
             if (queryParameters != null)
             {
+                relativeUrl = relativeUrl.TrimEnd('/');
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            var response = await httpClient.PostAsync(relativeUrl, content).ConfigureAwait(false);
-            if (response.StatusCode == HttpStatusCode.Unauthorized && AuthenticationInfo != null)
+            HttpResponseMessage? response = null;
+            if (cancellationToken == null)
             {
-                AddBearerToken(await GetToken(httpClientName, true).ConfigureAwait(false) ?? "", httpClient);
                 response = await httpClient.PostAsync(relativeUrl, content).ConfigureAwait(false);
             }
+            else
+            {
+                response = await httpClient.PostAsync(relativeUrl, content, (CancellationToken)cancellationToken).ConfigureAwait(false);
+            }
+            if (response.StatusCode == HttpStatusCode.Unauthorized && AuthenticationInfo != null)
+            {
+                AddBearerToken(await GetToken(httpClientName, true).ConfigureAwait(false) ?? "", httpClient);
+                if (cancellationToken == null)
+                {
+                    response = await httpClient.PostAsync(relativeUrl, content).ConfigureAwait(false);
+                }
+                else
+                {
+                    response = await httpClient.PostAsync(relativeUrl, content, (CancellationToken)cancellationToken).ConfigureAwait(false);
+                }
+            }
             return response;
         }
 
@@ -291,10 +332,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> PostAsync<TResult>(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> PostAsync<TResult>(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            var response = await PostAsync(relativeUrl, httpClientName, data, queryParameters).ConfigureAwait(false);
+            var response = await PostAsync(relativeUrl, httpClientName, data, queryParameters, cancellationToken).ConfigureAwait(false);
             return await DeserializeResult<TResult>(response).ConfigureAwait(false);
         }
 
@@ -305,10 +347,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> PostAsync(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> PostAsync(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await PostAsync(relativeUrl, httpClientName.ToString(), data, queryParameters).ConfigureAwait(false);
+            return await PostAsync(relativeUrl, httpClientName.ToString(), data, queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -319,10 +362,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> PostAsync<TResult>(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> PostAsync<TResult>(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await PostAsync<TResult>(relativeUrl, httpClientName.ToString(), data, queryParameters).ConfigureAwait(false);
+            return await PostAsync<TResult>(relativeUrl, httpClientName.ToString(), data, queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -332,8 +376,9 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> PutAsync(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> PutAsync(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
             HttpContent? content = null;
             if (data != null)
@@ -345,11 +390,7 @@ namespace Roo.Azure.Configuration.Common.Http
                 }
                 else
                 {
-                    if (data is HttpContent)
-                    {
-                        content = (HttpContent?)data;
-                    }
-                    else if (data is MultipartFormDataContent)
+                    if (data is MultipartFormDataContent)
                     {
                         content = (MultipartFormDataContent?)data;
                     }
@@ -357,18 +398,38 @@ namespace Roo.Azure.Configuration.Common.Http
                     {
                         content = (MultipartContent?)data;
                     }
+                    else if (data is HttpContent)
+                    {
+                        content = (HttpContent?)data;
+                    }
                 }
             }
             if (queryParameters != null)
             {
+                relativeUrl = relativeUrl.TrimEnd('/');
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            var response = await httpClient.PutAsync(relativeUrl, content).ConfigureAwait(false);
+            HttpResponseMessage? response = null;
+            if (cancellationToken == null)
+            {
+                response = await httpClient.PutAsync(relativeUrl, content).ConfigureAwait(false);
+            }
+            else
+            {
+                response = await httpClient.PutAsync(relativeUrl, content, (CancellationToken)cancellationToken).ConfigureAwait(false);
+            }
             if (response.StatusCode == HttpStatusCode.Unauthorized && AuthenticationInfo != null)
             {
                 AddBearerToken(await GetToken(httpClientName, true).ConfigureAwait(false) ?? "", httpClient);
-                response = await httpClient.PutAsync(relativeUrl, content).ConfigureAwait(false);
+                if (cancellationToken == null)
+                {
+                    response = await httpClient.PutAsync(relativeUrl, content).ConfigureAwait(false);
+                }
+                else
+                {
+                    response = await httpClient.PutAsync(relativeUrl, content, (CancellationToken)cancellationToken).ConfigureAwait(false);
+                }
             }
             return response;
         }
@@ -381,10 +442,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> PutAsync<TResult>(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> PutAsync<TResult>(string relativeUrl, string httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            var response = await PutAsync(relativeUrl, httpClientName, data, queryParameters).ConfigureAwait(false);
+            var response = await PutAsync(relativeUrl, httpClientName, data, queryParameters, cancellationToken).ConfigureAwait(false);
             return await DeserializeResult<TResult>(response).ConfigureAwait(false);
         }
 
@@ -395,10 +457,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> PutAsync(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> PutAsync(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await PutAsync(relativeUrl, httpClientName.ToString(), data, queryParameters).ConfigureAwait(false);
+            return await PutAsync(relativeUrl, httpClientName.ToString(), data, queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -409,10 +472,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="httpClientName"></param>
         /// <param name="data"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> PutAsync<TResult>(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> PutAsync<TResult>(string relativeUrl, Enum httpClientName, object? data = null, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await PutAsync<TResult>(relativeUrl, httpClientName.ToString(), data, queryParameters).ConfigureAwait(false);
+            return await PutAsync<TResult>(relativeUrl, httpClientName.ToString(), data, queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -421,19 +485,36 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> DeleteAsync(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> DeleteAsync(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
             if (queryParameters != null)
             {
+                relativeUrl = relativeUrl.TrimEnd('/');
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            var response = await httpClient.DeleteAsync(relativeUrl).ConfigureAwait(false);
+            HttpResponseMessage? response = null;
+            if (cancellationToken == null)
+            {
+                response = await httpClient.DeleteAsync(relativeUrl).ConfigureAwait(false);
+            }
+            else
+            {
+                response = await httpClient.DeleteAsync(relativeUrl, (CancellationToken)cancellationToken).ConfigureAwait(false);
+            }
             if (response.StatusCode == HttpStatusCode.Unauthorized && AuthenticationInfo != null)
             {
                 AddBearerToken(await GetToken(httpClientName, true).ConfigureAwait(false) ?? "", httpClient);
-                response = await httpClient.DeleteAsync(relativeUrl).ConfigureAwait(false);
+                if (cancellationToken == null)
+                {
+                    response = await httpClient.DeleteAsync(relativeUrl).ConfigureAwait(false);
+                }
+                else
+                {
+                    response = await httpClient.DeleteAsync(relativeUrl, (CancellationToken)cancellationToken).ConfigureAwait(false);
+                }
             }
             return response;
         }
@@ -445,10 +526,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> DeleteAsync<TResult>(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> DeleteAsync<TResult>(string relativeUrl, string httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            var response = await DeleteAsync(relativeUrl, httpClientName, queryParameters).ConfigureAwait(false);
+            var response = await DeleteAsync(relativeUrl, httpClientName, queryParameters, cancellationToken).ConfigureAwait(false);
             return await DeserializeResult<TResult>(response).ConfigureAwait(false);
         }
 
@@ -458,10 +540,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> DeleteAsync(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<HttpResponseMessage> DeleteAsync(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await DeleteAsync(relativeUrl, httpClientName.ToString(), queryParameters).ConfigureAwait(false);
+            return await DeleteAsync(relativeUrl, httpClientName.ToString(), queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -471,10 +554,11 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <param name="relativeUrl"></param>
         /// <param name="httpClientName"></param>
         /// <param name="queryParameters"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TResult> DeleteAsync<TResult>(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null)
+        public async Task<TResult> DeleteAsync<TResult>(string relativeUrl, Enum httpClientName, List<(string Parameter, string Value)>? queryParameters = null, CancellationToken? cancellationToken = null)
         {
-            return await DeleteAsync<TResult>(relativeUrl, httpClientName.ToString(), queryParameters).ConfigureAwait(false);
+            return await DeleteAsync<TResult>(relativeUrl, httpClientName.ToString(), queryParameters, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -658,27 +742,29 @@ namespace Roo.Azure.Configuration.Common.Http
 
         private async Task<string?> GetToken(string httpClientName, bool forceToken = false)
         {
-            if (AuthenticationInfo == null || string.IsNullOrEmpty(AuthenticationInfo.TokenName))
+            if (AuthenticationInfo == null)
             {
                 return null;
-            }
-
-            if (AuthenticationInfo.ForceToken || forceToken)
-            {
-                _logger.LogInformation(HttpContext, "Deleting stored token and requesting a new one.");
-                await ClearToken().ConfigureAwait(false);
             }
 
             await _semaphoreSlim.WaitAsync();
 
             string? token = null;
-            if (_redisService != null)
+            if (AuthenticationInfo.ForceToken || forceToken)
             {
-                token = await _redisService.Get(AuthenticationInfo.TokenName ?? httpClientName);
+                _logger.LogInformation(HttpContext, "Deleting stored token and requesting a new one.");
+                await ClearToken(httpClientName).ConfigureAwait(false);
             }
-            else if (_cache != null)
+            else
             {
-                token = _cache.Get<string>(AuthenticationInfo.TokenName ?? httpClientName);
+                if (_redisService != null)
+                {
+                    token = await _redisService.Get(AuthenticationInfo.TokenName ?? httpClientName);
+                }
+                else if (_cache != null)
+                {
+                    token = _cache.Get<string>(AuthenticationInfo.TokenName ?? httpClientName);
+                }
             }
 
             try

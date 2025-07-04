@@ -5,13 +5,12 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class RedisServiceTests
     {
         //Common
-        Mock<IConnectionMultiplexer> connectionMultiplexerMoq;
-        RedisService serviceConversion;
-        string key = "key";
-        string value = "value";
-        Test test;
-
-        TimeSpan expirationTime = new TimeSpan(0, 5, 0);
+        private Mock<IConnectionMultiplexer> connectionMultiplexerMoq;
+        private RedisService serviceConversion;
+        private string key = "key";
+        private string value = "value";
+        private Test test;
+        private TimeSpan expirationTime = new TimeSpan(0, 5, 0);
 
         [SetUp]
         public void Setup()

@@ -8,11 +8,8 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class SwaggerFilterTests
     {
         //Common
-        string controller = "TestController";
-        string schema = "TestModel";
-
-        [SetUp]
-        public void Setup() { }
+        private string controller = "TestController";
+        private string schema = "TestModel";
 
         [Test]
         public void ApplyPathsFilter_Verify()

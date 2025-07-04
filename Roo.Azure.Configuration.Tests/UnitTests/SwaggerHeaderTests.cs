@@ -11,11 +11,8 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class SwaggerHeaderTests
     {
         //Common
-        string sessionId = "sessionId";
-        string channelId = "channelId";
-
-        [SetUp]
-        public void Setup() { }
+        private string sessionId = "sessionId";
+        private string channelId = "channelId";
 
         [Test]
         public void ApplyHeadersToSwagger_Verify()
