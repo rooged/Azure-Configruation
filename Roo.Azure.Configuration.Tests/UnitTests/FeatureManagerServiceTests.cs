@@ -5,10 +5,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class FeatureManagerServiceTests
     {
         //Common
-        string featureName = "featureName";
-
-        [SetUp]
-        public void Setup() { }
+        private string featureName = "featureName";
 
         [Test]
         public async Task IsFeatureEnabled_Verify()

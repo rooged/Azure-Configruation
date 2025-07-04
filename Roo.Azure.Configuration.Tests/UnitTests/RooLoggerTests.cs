@@ -8,14 +8,14 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class RooLoggerTests
     {
         //Common
-        Mock<ILogger<RooLogger>> loggerMoq;
-        Mock<IHeaderService> headerServiceMoq;
-        Mock<IHeaderService> headerServiceWithUserInfoMoq;
-        Mock<IHttpContextAccessor> httpContextAccessorMoq;
-        UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
-        DefaultHttpContext httpContext = new();
-        string message = "test";
-        Exception exception = new();
+        private Mock<ILogger<RooLogger>> loggerMoq;
+        private Mock<IHeaderService> headerServiceMoq;
+        private Mock<IHeaderService> headerServiceWithUserInfoMoq;
+        private Mock<IHttpContextAccessor> httpContextAccessorMoq;
+        private UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
+        private DefaultHttpContext httpContext = new();
+        private string message = "test";
+        private Exception exception = new();
 
         [SetUp]
         public void Setup()

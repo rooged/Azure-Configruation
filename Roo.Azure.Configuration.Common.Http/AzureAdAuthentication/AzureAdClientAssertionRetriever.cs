@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Roo.Azure.Configuration.Common.Http.AzureAdAuthentication
 {
-    public class AzureAdClientAssertionHelper
+    public class AzureAdClientAssertionRetriever
     {
         private const uint JwtToAadLifetimeInSeconds = 600;
         private readonly static char Base64PadCharacter = '=';

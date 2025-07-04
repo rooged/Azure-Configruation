@@ -9,10 +9,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class ServiceExceptionFilterTests
     {
         //Common
-        string transactionId = "transactionId";
-
-        [SetUp]
-        public void Setup() { }
+        private string transactionId = "transactionId";
 
         [Test]
         public async Task ExceptionFilter_Verify()

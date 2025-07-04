@@ -10,14 +10,14 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class HeaderPropagateMiddlewareTests
     {
         //Common
-        string sessionId = "sessionId";
-        string transactionId = "transactionId";
-        string channelId = "channelId";
-        string existingSessionId = "existingSessionId";
-        string existingTransactionId = "existingTransactionId";
-        string existingChannelId = "existingChannelId";
-        Mock<IConfiguration> configurationMoq;
-        Mock<IHeaderService> headerServiceMoq;
+        private string sessionId = "sessionId";
+        private string transactionId = "transactionId";
+        private string channelId = "channelId";
+        private string existingSessionId = "existingSessionId";
+        private string existingTransactionId = "existingTransactionId";
+        private string existingChannelId = "existingChannelId";
+        private Mock<IConfiguration> configurationMoq;
+        private Mock<IHeaderService> headerServiceMoq;
 
         [SetUp]
         public void Setup()

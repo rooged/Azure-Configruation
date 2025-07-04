@@ -6,10 +6,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class ServiceExceptionConverterTests
     {
         //Common
-        string transactionId = "transactionId";
-
-        [SetUp]
-        public void Setup() { }
+        private string transactionId = "transactionId";
 
         [Test]
         public void ConvertToServiceException_Verify()

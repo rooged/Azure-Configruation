@@ -8,10 +8,10 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class RooTelemetryLoggerTests
     {
         //Common
-        string name = "name";
-        Dictionary<string, string> properties = new() { { "keyProperties", "valueProperties" } };
-        Dictionary<string, double> metrics = new() { { "keyMetrics", 1 } };
-        TelemetryData data = new()
+        private string name = "name";
+        private Dictionary<string, string> properties = new() { { "keyProperties", "valueProperties" } };
+        private Dictionary<string, double> metrics = new() { { "keyMetrics", 1 } };
+        private TelemetryData data = new()
         {
             User = new()
             {
@@ -54,9 +54,6 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
                 Ip = "ip"
             }
         };
-
-        [SetUp]
-        public void Setup() { }
 
         [Test]
         public void TelemetryDataRemains_VerifyLog()

@@ -7,11 +7,11 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class HeaderServiceTests
     {
         //Common
-        string sessionId = "sessionId";
-        string transactionId = "transactionId";
-        string channelId = "channelId";
-        UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
-        IHeaderDictionary headerDictionaryMissingHeaders;
+        private string sessionId = "sessionId";
+        private string transactionId = "transactionId";
+        private string channelId = "channelId";
+        private UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
+        private IHeaderDictionary headerDictionaryMissingHeaders;
 
         [SetUp]
         public void Setup()

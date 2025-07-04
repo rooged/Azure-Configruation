@@ -8,8 +8,8 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
     public class ServiceExceptionMiddlewareTests
     {
         //Common
-        Mock<IRooLogger> loggerMoq;
-        Mock<IWebHostEnvironment> webHostEnvironment;
+        private Mock<IRooLogger> loggerMoq;
+        private Mock<IWebHostEnvironment> webHostEnvironment;
 
         [SetUp]
         public void Setup()
