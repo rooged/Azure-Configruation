@@ -5,6 +5,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<PackageId>Roo.Azure.Configuration.Common.Http</PackageId>
+	<Company>rooged</Company>
+	<PackageTags>dotnet;Azure;.NET8;HTTP;microservices;C#;</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
