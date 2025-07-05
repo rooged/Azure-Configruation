@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roo.Azure.Configuration.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roo.Azure.Configuration.Tests", "Roo.Azure.Configuration.Tests\Roo.Azure.Configuration.Tests.csproj", "{DD6A7094-8145-244D-28FF-004BD6C875BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roo.Azure.Configuration.Common.Utilities", "Roo.Azure.Configuration.Common.Utilities\Roo.Azure.Configuration.Common.Utilities.csproj", "{6F9A9839-AE16-46F0-97AD-B0032DB17501}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{DD6A7094-8145-244D-28FF-004BD6C875BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD6A7094-8145-244D-28FF-004BD6C875BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD6A7094-8145-244D-28FF-004BD6C875BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F9A9839-AE16-46F0-97AD-B0032DB17501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F9A9839-AE16-46F0-97AD-B0032DB17501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F9A9839-AE16-46F0-97AD-B0032DB17501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F9A9839-AE16-46F0-97AD-B0032DB17501}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
