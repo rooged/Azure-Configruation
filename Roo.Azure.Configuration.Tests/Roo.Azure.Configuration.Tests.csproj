@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Roo.Azure.Configuration.Common.Http\Roo.Azure.Configuration.Common.Http.csproj" />
+    <ProjectReference Include="..\Roo.Azure.Configuration.Common.Utilities\Roo.Azure.Configuration.Common.Utilities.csproj" />
     <ProjectReference Include="..\Roo.Azure.Configuration.Common\Roo.Azure.Configuration.Common.csproj" />
   </ItemGroup>
 

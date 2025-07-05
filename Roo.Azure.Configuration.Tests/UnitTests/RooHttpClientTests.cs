@@ -1728,13 +1728,13 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
         }
         #endregion
 
-        public class Test
+        private class Test
         {
             public int Id { get; set; }
             public string? Value { get; set; } = null;
         }
 
-        public enum TestClientName
+        private enum TestClientName
         {
             httpClientName = 0
         }
