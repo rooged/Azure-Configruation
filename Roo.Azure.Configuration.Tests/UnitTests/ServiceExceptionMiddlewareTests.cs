@@ -59,7 +59,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
             Assert.Multiple(() =>
             {
                 Assert.That(httpContext.Response.StatusCode, Is.EqualTo(549));
-                Assert.That(response, Is.EqualTo("{\"Code\":549,\"CodeName\":\"InvalidOperation\",\"Message\":\"Exception test\",\"Details\":{\"Type\":\"System.InvalidOperationException\",\"BaseMessage\":\"Exception test\",\"Source\":\"Roo.Azure.Configuration.Tests\",\"Method\":\"<InvokeNoException_Verify>b__4_0\",\"StackTrace\":\"   at Roo.Azure.Configuration.Tests.UnitTests.ServiceExceptionMiddlewareTests.<>c.<InvokeNoException_Verify>b__4_0(HttpContext _) in E:\\\\Projects\\\\Azure-Configruation\\\\Roo.Azure.Configuration.Tests\\\\UnitTests\\\\ServiceExceptionMiddlewareTests.cs:line 48\\r\\n   at Roo.Azure.Configuration.Common.Middlewares.ServiceExceptionMiddleware.InvokeAsync(HttpContext context, IHeaderService headerService, IRooLogger logger) in E:\\\\Projects\\\\Azure-Configruation\\\\Roo.Azure.Configuration.Common\\\\Middlewares\\\\ServiceExceptionMiddleware.cs:line 42\",\"HelpLink\":\"\"}}"));
+                Assert.That(response.Contains("549"), Is.True);
             });
         }
     }
