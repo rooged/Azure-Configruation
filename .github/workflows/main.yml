@@ -26,6 +26,6 @@ jobs:
     - name: Pack
       run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney"
     - name: Deploy to NuGet
-      run: dotnet nuget push --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
     
     
