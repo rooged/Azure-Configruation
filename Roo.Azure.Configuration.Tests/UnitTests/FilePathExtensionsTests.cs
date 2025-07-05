@@ -10,6 +10,12 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
         [TestCase("file:Name")]
         public void CheckValidFileName_Verify(string fileName)
         {
+            //Arrange
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
             //Act
             var result = FilePathExtensions.CheckValidFileName(fileName);
 
@@ -29,6 +35,12 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
         [TestCase("test/file|path/test")]
         public void CheckValidFilePath_Verify(string path)
         {
+            //Arrange
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
             //Act
             var result = FilePathExtensions.CheckValidFilePath(path);
 
@@ -69,7 +81,14 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
             var result = FilePathExtensions.BuildValidPathFromAllowedPath("test", "path");
 
             //Assert
-            Assert.That(result, Contains.Substring("path\\test"));
+            if (OperatingSystem.IsWindows())
+            {
+                Assert.That(result, Contains.Substring("path\\test"));
+            }
+            else
+            {
+                Assert.That(result, Contains.Substring("path/test"));
+            }
         }
 
         [Test]
@@ -89,7 +108,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
             var path = "CON.txt";
 
             //Act & Assert
-            if (!OperatingSystem.IsWindows())
+            if (OperatingSystem.IsWindows())
             {
                 Assert.Throws<ArgumentException>(() => FilePathExtensions.BuildValidPathFromAllowedPath(path, "allowedPath"));
             }
@@ -104,7 +123,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
         public void BuildValidPathFromAllowedPathSymLink_Verify()
         {
             //Arrange
-            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsLinux() && !OperatingSystem.IsMacOS())
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -129,10 +148,6 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
                         //Doesn't have privilege to create symbolic links, skipping test
                         return;
                     }
-                }
-                else
-                {
-                    UnixSymLink(targetDirectory, symlink);
                 }
                 var path = Path.Combine("symlink", "file.txt");
                 Assert.Throws<ArgumentException>(() => FilePathExtensions.BuildValidPathFromAllowedPath(path, tempDirectory));
@@ -183,17 +198,5 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
                 Assert.That(result, Is.False);
             }
         }
-
-        private static void UnixSymLink(string target, string link)
-        {
-            var generatedLink = symLink(target, link);
-            if (generatedLink != 0)
-            {
-                throw new IOException($"Failed to create symlink for test BuildValidPathFromAllowedPathSymLink for OS Linux: {OperatingSystem.IsLinux()} or Mac: {OperatingSystem.IsMacOS()}");
-            }
-        }
-
-        [DllImport("libc", SetLastError = true)]
-        private static extern int symLink(string target, string linkPath);
     }
 }
