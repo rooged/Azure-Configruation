@@ -16,28 +16,9 @@
         /// </summary>
         public string AppConfigurationConnectionString { get; set; } = "";
         /// <summary>
-        /// Redis connection string.
-        /// </summary>
-        public string? RedisConnectionString { get; set; }
-        /// <summary>
         /// The name of this application, used for HTTP calls and App Insights logs.
         /// </summary>
         public string ChannelId { get; set; } = "";
-        /// <summary>
-        /// Whether to use certificate forwarding middleware for authentication.
-        /// Default is false.
-        /// </summary>
-        public bool UseCertificateForwarding { get; set; } = false;
-        /// <summary>
-        /// Whether to use header middleware for validating custom headers are in incoming HTTP calls.
-        /// Default is true.
-        /// </summary>
-        public bool UseHeaderValidation { get; set; } = true;
-        /// <summary>
-        /// Use exception filter for excpetion handling during HTTP calls.
-        /// Default is true.
-        /// </summary>
-        public bool UseExceptionFilter { get; set; } = true;
         /// <summary>
         /// Use to pull only specific sections from Azure App Configuration.
         /// </summary>
@@ -47,6 +28,25 @@
         /// Default is the Sentinel settings key.
         /// </summary>
         public string? AppConfigRefreshTriggerKey { get; set; } = "Settings:Sentinel";
+        /// <summary>
+        /// Whether to use header middleware for validating custom headers are in incoming HTTP calls.
+        /// Default is true.
+        /// </summary>
+        public bool UseHeaderValidation { get; set; } = true;
+        /// <summary>
+        /// Whether to use certificate forwarding middleware for authentication.
+        /// Default is false.
+        /// </summary>
+        public bool UseCertificateForwarding { get; set; } = false;
+        /// <summary>
+        /// Use exception filter for excpetion handling during HTTP calls.
+        /// Default is false.
+        /// </summary>
+        public bool UseExceptionFilter { get; set; } = false;
+        /// <summary>
+        /// Redis connection string.
+        /// </summary>
+        public string? RedisConnectionString { get; set; }
 
         //Swagger specific values.
         /// <summary>
