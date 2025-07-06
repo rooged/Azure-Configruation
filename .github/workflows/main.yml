@@ -23,13 +23,17 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Copy Files to Common
+      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common/README.md"
+    - name: Copy Files to Common.Http
+      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common.Http/README.md"
+    - name: Copy Files to Common.Utilities
+      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common.Utilities/README.md"
     - name: Pack
-      run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney"
-    - name: CD
-      run: cd ..
+      run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney" --output "./Azure-Configruation/Azure-Configruation/nupkgs"
     - name: Show files
       run: ls
     - name: Deploy to NuGet
-      run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push "./Azure-Configruation/Azure-Configruation/nupkgs/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
     
     
