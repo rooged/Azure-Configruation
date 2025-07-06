@@ -24,11 +24,11 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Copy Files to Common
-      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common"
+      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common/README.md"
     - name: Copy Files to Common.Http
-      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common.Http"
+      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common.Http/README.md"
     - name: Copy Files to Common.Utilities
-      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common.Utilities"
+      run: cp "./README.md" "./Azure-Configruation/Azure-Configruation/Roo.Azure.Configuration.Common.Utilities/README.md"
     - name: Pack
       run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney" --output "./Azure-Configruation/Azure-Configruation/nupkgs"
     - name: Show files
