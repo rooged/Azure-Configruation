@@ -1,0 +1,36 @@
+name: Deploy to NuGet
+
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to be deployed'     
+        required: true
+        default: '1.0.0'
+  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Pack
+      run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney" -p:PackageVersion=${{ inputs.version }} --output "./Azure-Configruation/Azure-Configuration/nupkgs"
+    - name: Deploy to NuGet
+      run: dotnet nuget push "./Azure-Configuration/Azure-Configuration/nupkgs/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+    
+    

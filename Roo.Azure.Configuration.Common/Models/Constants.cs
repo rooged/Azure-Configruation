@@ -36,9 +36,9 @@
         public const string ChannelId = "ChannelId";
 
         /// <summary>
-        /// UserInfo Username environment variable name.
+        /// UserInfo Login Id environment variable name.
         /// </summary>
-        public const string UserInfoUsername = "Username";
+        public const string UserInfoLoginId = "LoginId";
 
         /// <summary>
         /// Name of HTTP client used by Telemetry.

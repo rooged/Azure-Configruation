@@ -17,7 +17,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         private readonly IWebHostEnvironment env;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceExceptionMiddleware"/> class.
+        /// Initializes a new instance of <see cref="ServiceExceptionMiddleware"/>.
         /// </summary>
         /// <param name="next">Next request.</param>
         /// <param name="env">The hosts environment.</param>

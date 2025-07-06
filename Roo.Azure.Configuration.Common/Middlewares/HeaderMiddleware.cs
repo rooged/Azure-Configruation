@@ -38,27 +38,31 @@ namespace Roo.Azure.Configuration.Common.Middlewares
             var requestHeaders = context.Request.Headers;
 
             //Check if standard headers are there and valid
-            if (!header.IsSessionIdValid(requestHeaders) || !header.IsTransactionIdValid(requestHeaders) || !header.IsChannelIdValid(requestHeaders))
+            var errorCodes = new List<int>();
+            var sessionIdValid = header.IsSessionIdValid(requestHeaders);
+            if (!sessionIdValid)
             {
-                var errorCodes = new List<int>();
-                if (!header.IsSessionIdValid(requestHeaders))
-                {
-                    errorCodes.Add((int)ErrorCode.SessionIdHeaderNotFound);
-                }
-                if (!header.IsTransactionIdValid(requestHeaders))
-                {
-                    errorCodes.Add((int)ErrorCode.TransactionIdHeaderNotFound);
-                }
-                if (!header.IsChannelIdValid(requestHeaders))
-                {
-                    errorCodes.Add((int)ErrorCode.ChannelIdHeaderNotFound);
-                }
+                errorCodes.Add((int)ErrorCode.SessionIdHeaderNotFound);
+            }
+            var transactionIdValid = header.IsTransactionIdValid(requestHeaders);
+            if (!transactionIdValid)
+            {
+                errorCodes.Add((int)ErrorCode.TransactionIdHeaderNotFound);
+            }
+            var channelIdValid = header.IsChannelIdValid(requestHeaders);
+            if (!channelIdValid)
+            {
+                errorCodes.Add((int)ErrorCode.ChannelIdHeaderNotFound);
+            }
+            if (errorCodes.Count > 0)
+            {
                 context.Response.StatusCode = errorCodes.First();
-                var message = $"Error {string.Join(", ", errorCodes)}: Header(s) not found or invalid. {Constants.SessionIdHeaderName} valid: {header.IsSessionIdValid(requestHeaders)}. {Constants.TransactionIdHeaderName} valid: {header.IsTransactionIdValid(requestHeaders)}. {Constants.ChannelIdHeaderName} valid: {header.IsChannelIdValid(requestHeaders)}.";
+                var message = $"Error {string.Join(", ", errorCodes)}: Header(s) not found or invalid. {Constants.SessionIdHeaderName} valid: {sessionIdValid}. {Constants.TransactionIdHeaderName} valid: {transactionIdValid}. {Constants.ChannelIdHeaderName} valid: {channelIdValid}.";
                 var encodedMessage = Encoding.UTF8.GetBytes(message);
                 using var stream = new MemoryStream(encodedMessage);
-                context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
-                stream.Dispose();
+                var buffer = stream.ToArray();
+                await context.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+                await stream.DisposeAsync();
                 logger.LogError(context, message, new ServiceException((ErrorCode)errorCodes.First(), message, null, null, header.GetTransactionId(requestHeaders)));
                 return;
             }
@@ -70,14 +74,16 @@ namespace Roo.Azure.Configuration.Common.Middlewares
             }
 
             //Check if user is authenticated and if the user info header has been set and is valid
-            if (context.User.Claims.Any() && !header.DoesUserInfoHaveInfo(requestHeaders))
+            var useHasInfo = header.DoesUserInfoHaveInfo(requestHeaders);
+            if (context.User.Claims.Any() && !useHasInfo)
             {
                 context.Response.StatusCode = (int)ErrorCode.UserInfoHeaderNotFound;
-                var message = $"Error {(int)ErrorCode.UserInfoHeaderNotFound}: Header(s) not found or invalid. {Constants.UserInfoHeaderName} valid: {header.DoesUserInfoHaveInfo(requestHeaders)}. {Constants.SessionIdHeaderName} valid: {header.IsSessionIdValid(requestHeaders)}. {Constants.TransactionIdHeaderName} valid: {header.IsTransactionIdValid(requestHeaders)}. {Constants.ChannelIdHeaderName} valid: {header.IsChannelIdValid(requestHeaders)}.";
+                var message = $"Error {(int)ErrorCode.UserInfoHeaderNotFound}: Header(s) not found or invalid. {Constants.UserInfoHeaderName} valid: {useHasInfo}. {Constants.SessionIdHeaderName} valid: {sessionIdValid}. {Constants.TransactionIdHeaderName} valid: {transactionIdValid}. {Constants.ChannelIdHeaderName} valid: {channelIdValid}.";
                 var encodedMessage = Encoding.UTF8.GetBytes(message);
                 using var stream = new MemoryStream(encodedMessage);
-                context.Response.Body.Write(stream.GetBuffer(), 0, (int)stream.Length);
-                stream.Dispose();
+                var buffer = stream.ToArray();
+                await context.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+                await stream.DisposeAsync();
                 logger.LogError(context, message, new ServiceException(ErrorCode.UserInfoHeaderNotFound, message, null, null, header.GetTransactionId(requestHeaders)));
                 return;
             }

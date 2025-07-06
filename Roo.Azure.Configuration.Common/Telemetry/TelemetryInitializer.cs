@@ -19,7 +19,7 @@ namespace Roo.Azure.Configuration.Common.Telemetry
         private IHeaderService HeaderService { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TelemetryInitializer"/> class.
+        /// Initializes a new instance of <see cref="TelemetryInitializer"/>.
         /// Initializer can't have a reference to ILogger as it will create a circular dependency.
         /// </summary>
         /// <param name="httpContextAccessor">HTTPContext accessor.</param>
@@ -38,8 +38,14 @@ namespace Roo.Azure.Configuration.Common.Telemetry
         /// <param name="telemetry"></param>
         public void Initialize(ITelemetry telemetry)
         {
+            var httpContext = HttpContextAccessor.HttpContext;
+            if (httpContext == null)
+            {
+                telemetry.Context.GlobalProperties["HttpContextError"] = "Request made without HttpContext available for telemetry to consume. Custom headers unable to be set correctly, used default values.";
+            }
+
             //Sets "SessionId" default
-            telemetry.Context.GlobalProperties[Constants.SessionIdHeaderName] = Guid.NewGuid().ToString();
+            telemetry.Context.GlobalProperties[Constants.SessionIdHeaderName] = httpContext?.Session.GetString(Constants.SessionId) ?? httpContext?.Session.Id ?? Guid.NewGuid().ToString();
 
             //Sets "TransactionId" default
             telemetry.Context.GlobalProperties[Constants.TransactionIdHeaderName] = Guid.NewGuid().ToString("N");
@@ -50,17 +56,27 @@ namespace Roo.Azure.Configuration.Common.Telemetry
                 telemetry.Context.GlobalProperties[Constants.ChannelIdHeaderName] = Configuration[Constants.ChannelId];
             }
 
-            //Sets "UserInfo" default
-            if (HttpContextAccessor?.HttpContext != null && HttpContextAccessor.HttpContext.User.Claims.Any())
+            //Return since headers and user-info aren't available
+            if (httpContext == null)
             {
-                telemetry.Context.GlobalProperties[Constants.UserInfoUsername] = HttpContextAccessor.HttpContext.User.FindFirstValue(Constants.UserInfoUsername) ?? "";
+                return;
+            }
+
+            //Sets "UserInfo" default
+            if (httpContext.User.Claims.Any())
+            {
+                var loginId = httpContext.User.FindFirstValue(Constants.UserInfoLoginId);
+                if (!string.IsNullOrEmpty(loginId))
+                {
+                    telemetry.Context.GlobalProperties[Constants.UserInfoLoginId] = loginId;
+                }
             }
 
             //Get headers of HTTP request
-            var headers = HttpContextAccessor?.HttpContext?.Request.Headers;
-            if (headers == null)
+            var headers = httpContext.Request.Headers;
+            if (headers == null || headers.Count == 0)
             {
-                telemetry.Context.GlobalProperties["HttpContextError"] = "Request made without HttpContext available for telemetry to consume. Custom headers unable to be set correctly, used default values.";
+                telemetry.Context.GlobalProperties["HttpRequestHeadersError"] = "Request made without headers available for telemetry to consume. Custom headers unable to be set correctly from existing request, used default values.";
                 return;
             }
 
@@ -74,30 +90,33 @@ namespace Roo.Azure.Configuration.Common.Telemetry
             SetTelemetryFromHeader(telemetry, headers, Constants.ChannelIdHeaderName);
 
             //Set "UserInfo" from header
-            SetTelemetryFromHeader(telemetry, headers, Constants.UserInfoUsername);
+            SetTelemetryFromHeader(telemetry, headers, Constants.UserInfoHeaderName);
         }
 
         private void SetTelemetryFromHeader(ITelemetry telemetry, IHeaderDictionary headers, string headerName)
         {
             if (!string.IsNullOrEmpty(headers[headerName]))
             {
-                var telemetryValue = "";
+                telemetry.Context.GlobalProperties.TryGetValue(headerName, out var telemetryValue);
                 switch (headerName)
                 {
                     case Constants.SessionIdHeaderName:
-                        telemetryValue = HeaderService.GetSessionId(headers) ?? HttpContextAccessor.HttpContext?.Session.GetString(Constants.SessionId) ?? HttpContextAccessor.HttpContext?.Session.Id;
+                        
+                        telemetryValue = HeaderService.GetSessionId(headers) ?? telemetryValue ?? Guid.NewGuid().ToString();
                         break;
 
                     case Constants.TransactionIdHeaderName:
-                        telemetryValue = HeaderService.GetTransactionId(headers);
+                        telemetryValue = HeaderService.GetTransactionId(headers) ?? telemetryValue;
                         break;
 
                     case Constants.ChannelIdHeaderName:
-                        telemetryValue = HeaderService.GetChannelId(headers);
+                        telemetryValue = HeaderService.GetChannelId(headers) ?? telemetryValue;
                         break;
 
-                    case Constants.UserInfoUsername:
-                        telemetryValue = HeaderService.GetUserInfoUsername(headers);
+                    case Constants.UserInfoHeaderName:
+                        telemetry.Context.GlobalProperties.TryGetValue(Constants.UserInfoLoginId, out var telemetryLoginIdValue);
+                        telemetryValue = HeaderService.GetUserInfoLoginId(headers) ?? telemetryLoginIdValue;
+                        headerName = Constants.UserInfoLoginId;
                         break;
 
                     default:

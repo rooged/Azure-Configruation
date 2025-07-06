@@ -11,7 +11,7 @@ namespace Roo.Azure.Configuration.Common.Telemetry
         private readonly string _cloudRoleName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CloudRoleNameTelemetryInitializer"/> class.
+        /// Initializes a new instance of <see cref="CloudRoleNameTelemetryInitializer"/>.
         /// </summary>
         /// <param name="cloudRoleName"></param>
         public CloudRoleNameTelemetryInitializer(string cloudRoleName)

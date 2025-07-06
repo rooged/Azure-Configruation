@@ -3,11 +3,6 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.Metrics;
 using Roo.Azure.Configuration.Common.Models;
-using static IdentityModel.OidcConstants;
-using System.Security.Policy;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System;
-using Microsoft.ApplicationInsights.Channel;
 
 namespace Roo.Azure.Configuration.Common.Logging
 {
@@ -33,7 +28,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="metrics">Additional metrics about the event.</param>
         /// <param name="data">Telemetry data.</param>
         /// <param name="clearTelemetryData">Clear existing telemetry data.</param>
-        void TrackEvent(string name, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data, bool clearTelemetryData = false);
+        void TrackEvent(string name, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null);
         /// <summary>
         /// Track and aggregate values before sending a singular metric to App Insights.
         /// </summary>
@@ -43,7 +38,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="config">Limit series count, values per dimension, and if negative ints should be tracked.</param>
         /// <param name="data">Telemetry data.</param>
         /// <returns>The metric telemetry to attach data to.</returns>
-        Metric GetMetric(string id, string? nameSpace, List<string>? dimensions, MetricConfiguration? config, TelemetryData? data);
+        Metric GetMetric(string id, string? nameSpace, List<string>? dimensions, MetricConfiguration? config, TelemetryData? data = null);
         /// <summary>
         /// Track a page view, tab specific url, duration spent on page, and id of page.
         /// </summary>
@@ -53,7 +48,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="id">Id of page.</param>
         /// <param name="data">Telemetry data.</param>
         /// <param name="clearTelemetryData">Clear existing telemetry data.</param>
-        void TrackPageView(string name, string? url, TimeSpan? duration, string? id, TelemetryData? data, bool clearTelemetryData = false);
+        void TrackPageView(string name, string? url, TimeSpan? duration, string? id, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null);
         /// <summary>
         /// Track a HTTP request, should be used when the request acts as an operation context. Use with StartOperation/RequestTelemetry/({operationName})
         /// </summary>
@@ -66,7 +61,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="pageId">Id of page.</param>
         /// <param name="data">Telemetry data.</param>
         /// <param name="clearTelemetryData">Clear existing telemetry data.</param>
-        void TrackRequest(string name, DateTimeOffset startTime, TimeSpan duration, string responseCode, bool? success, string? url, string? pageId, TelemetryData? data, bool clearTelemetryData = false);
+        void TrackRequest(string name, DateTimeOffset startTime, TimeSpan duration, string responseCode, bool? success, string? url, string? pageId, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null);
         /// <summary>
         /// Used to correlate telemetry items together by sharing the same operation ID with all telemetry logs sent within the operation.<br/>
         /// Must dispose of this method either with 'using' or with StopOperation, othewise telemetry won't be sent.<br/>
@@ -75,14 +70,14 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="name">Name of operation.</param>
         /// <param name="data">Telemetry data.</param>
         /// <returns></returns>
-        IOperationHolder<RequestTelemetry> StartOperation(string name, TelemetryData? data);
+        IOperationHolder<RequestTelemetry> StartOperation(string name, TelemetryData? data = null);
         /// <summary>
         /// Ends an operation and sends all telemetry from it to App Insights.<br/>
         /// Not required to end the operation if StartOperation is initialized in a using.
         /// </summary>
         /// <param name="operation">The operation.</param>
         /// <param name="clearTelemetryData">Clear existing telemetry data.</param>
-        void StopOperation(IOperationHolder<RequestTelemetry> operation, bool clearTelemetryData = false);
+        void StopOperation(IOperationHolder<RequestTelemetry> operation, bool clearTelemetryData = false, CancellationToken? token = null);
         /// <summary>
         /// Track an exception. Most exceptions are already tracked by App Insights, use to add additional information to the telemetry.
         /// </summary>
@@ -91,7 +86,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="metrics">Additional metrics about the event.</param>
         /// <param name="data">Telemetry data.</param>
         /// <param name="clearTelemetryData">Clear existing telemetry data.</param>
-        void TrackException(Exception exception, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data, bool clearTelemetryData = false);
+        void TrackException(Exception exception, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null);
         /// <summary>
         /// Standard trace logging. Message can handle large inputs such as encoded POST data to track HTTP requests and responses.
         /// </summary>
@@ -100,7 +95,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="properties">Additional properties about the event.</param>
         /// <param name="data">Telemetry data.</param>
         /// <param name="clearTelemetryData">Clear existing telemetry data.</param>
-        void TrackTrace(string message, SeverityLevel? severityLevel, Dictionary<string, string>? properties, TelemetryData? data, bool clearTelemetryData = false);
+        void TrackTrace(string message, SeverityLevel? severityLevel, Dictionary<string, string>? properties, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null);
         /// <summary>
         /// Track response times and success rates of calls. Must use with a timer and manually set dependency data.<br/>
         /// In most cases, <see cref="StartOperation(string, TelemetryData?)"/> should be used instead because it does the same without needing a timer and manual data entry.
@@ -115,18 +110,18 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="resultCode">Result code of request.</param>
         /// <param name="data">Telemetry data.</param>
         /// <param name="clearTelemetryData">Clear existing telemetry data.</param>
-        void TrackDependency(string name, string dependencyData, DateTimeOffset startTime, TimeSpan duration, bool success, string? dependencyType, string? target, string? resultCode, TelemetryData? data, bool clearTelemetryData = false);
+        void TrackDependency(string name, string dependencyData, DateTimeOffset startTime, TimeSpan duration, bool success, string? dependencyType, string? target, string? resultCode, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null);
         /// <summary>
         /// Clear all stored telemetry data that is currently cached.
         /// </summary>
         /// <param name="sleepTime">Time to wait after flush to allow completion, time is in milliseconds.</param>
-        void TelemetryFlush(int sleepTime);
+        void TelemetryFlush(int sleepTime = 0);
         /// <summary>
         /// Clear all stored telemetry data that is currently cached asynchronously.
         /// </summary>
         /// <param name="token"></param>
         /// <returns>Whether telemetry was flushed.</returns>
-        Task<bool> TelemetryFlushAsync(CancellationToken? token);
+        Task<bool> TelemetryFlushAsync(CancellationToken? token = null);
     }
 
     /// <summary>
@@ -134,12 +129,23 @@ namespace Roo.Azure.Configuration.Common.Logging
     /// </summary>
     public class RooTelemetryLogger : IRooTelemetryLogger
     {
+        private TelemetryData? _telemetryData;
+
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        public TelemetryData? TelemetryData { get; set; }
+        public TelemetryData? TelemetryData
+        {
+            get { return _telemetryData; }
+            set
+            {
+                _telemetryData = value;
+                SetContext(_telemetryData, _token);
+            }
+        }
 
         private readonly TelemetryClient _telemetryClient;
+        private CancellationToken? _token;
 
         /// <summary>
         /// Initialize <see cref="RooTelemetryLogger"/>.
@@ -154,8 +160,13 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// Set telemetry data in client.
         /// </summary>
         /// <param name="data"></param>
-        public void SetContext(TelemetryData data)
+        public void SetContext(TelemetryData? data = null, CancellationToken? token = null)
         {
+            if (data == null)
+            {
+                _telemetryClient.FlushAsync(token ?? new());
+                return;
+            }
             if (data.User != null)
             {
                 _telemetryClient.Context.User.Id = data.User.Id;
@@ -206,15 +217,16 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="metrics"></param>
         /// <param name="data"></param>
         /// <param name="clearTelemetryData"></param>
-        public void TrackEvent(string name, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data, bool clearTelemetryData = false)
+        public void TrackEvent(string name, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             _telemetryClient.TrackEvent(name, properties, metrics);
             if (clearTelemetryData)
             {
+                _token = token;
                 TelemetryData = null;
             }
         }
@@ -228,11 +240,11 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="config"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Metric GetMetric(string id, string? nameSpace, List<string>? dimensions, Microsoft.ApplicationInsights.Metrics.MetricConfiguration? config, TelemetryData? data)
+        public Metric GetMetric(string id, string? nameSpace, List<string>? dimensions, MetricConfiguration? config, TelemetryData? data = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             MetricIdentifier metricId;
             if (string.IsNullOrEmpty(nameSpace))
@@ -256,11 +268,11 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="id"></param>
         /// <param name="data"></param>
         /// <param name="clearTelemetryData"></param>
-        public void TrackPageView(string name, string? url, TimeSpan? duration, string? id, TelemetryData? data, bool clearTelemetryData = false)
+        public void TrackPageView(string name, string? url, TimeSpan? duration, string? id, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             var telemetry = new PageViewTelemetry(name);
             if (!string.IsNullOrEmpty(url))
@@ -278,6 +290,7 @@ namespace Roo.Azure.Configuration.Common.Logging
             _telemetryClient.TrackPageView(telemetry);
             if (clearTelemetryData)
             {
+                _token = token;
                 TelemetryData = null;
             }
         }
@@ -294,11 +307,11 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="pageId"></param>
         /// <param name="data"></param>
         /// <param name="clearTelemetryData"></param>
-        public void TrackRequest(string name, DateTimeOffset startTime, TimeSpan duration, string responseCode, bool? success, string? url, string? pageId, TelemetryData? data, bool clearTelemetryData = false)
+        public void TrackRequest(string name, DateTimeOffset startTime, TimeSpan duration, string responseCode, bool? success, string? url, string? pageId, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             var telemetry = new RequestTelemetry()
             {
@@ -319,6 +332,7 @@ namespace Roo.Azure.Configuration.Common.Logging
             _telemetryClient.TrackRequest(telemetry);
             if (clearTelemetryData)
             {
+                _token = token;
                 TelemetryData = null;
             }
         }
@@ -329,11 +343,11 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="name"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public IOperationHolder<RequestTelemetry> StartOperation(string name, TelemetryData? data)
+        public IOperationHolder<RequestTelemetry> StartOperation(string name, TelemetryData? data = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             return _telemetryClient.StartOperation<RequestTelemetry>(name);
         }
@@ -343,11 +357,12 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="operation"></param>
         /// <param name="clearTelemetryData"></param>
-        public void StopOperation(IOperationHolder<RequestTelemetry> operation, bool clearTelemetryData = false)
+        public void StopOperation(IOperationHolder<RequestTelemetry> operation, bool clearTelemetryData = false, CancellationToken? token = null)
         {
             _telemetryClient.StopOperation(operation);
             if (clearTelemetryData)
             {
+                _token = token;
                 TelemetryData = null;
             }
         }
@@ -360,15 +375,16 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="metrics"></param>
         /// <param name="data"></param>
         /// <param name="clearTelemetryData"></param>
-        public void TrackException(Exception exception, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data, bool clearTelemetryData = false)
+        public void TrackException(Exception exception, Dictionary<string, string>? properties, Dictionary<string, double>? metrics, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             _telemetryClient.TrackException(exception, properties, metrics);
             if (clearTelemetryData)
             {
+                _token = token;
                 TelemetryData = null;
             }
         }
@@ -381,11 +397,11 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="properties"></param>
         /// <param name="data"></param>
         /// <param name="clearTelemetryData"></param>
-        public void TrackTrace(string message, SeverityLevel? severityLevel, Dictionary<string, string>? properties, TelemetryData? data, bool clearTelemetryData = false)
+        public void TrackTrace(string message, SeverityLevel? severityLevel, Dictionary<string, string>? properties, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             if (severityLevel != null)
             {
@@ -397,6 +413,7 @@ namespace Roo.Azure.Configuration.Common.Logging
             }
             if (clearTelemetryData)
             {
+                _token = token;
                 TelemetryData = null;
             }
         }
@@ -414,15 +431,16 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="resultCode"></param>
         /// <param name="data"></param>
         /// <param name="clearTelemetryData"></param>
-        public void TrackDependency(string name, string dependencyData, DateTimeOffset startTime, TimeSpan duration, bool success, string? dependencyType, string? target, string? resultCode, TelemetryData? data, bool clearTelemetryData = false)
+        public void TrackDependency(string name, string dependencyData, DateTimeOffset startTime, TimeSpan duration, bool success, string? dependencyType, string? target, string? resultCode, TelemetryData? data = null, bool clearTelemetryData = false, CancellationToken? token = null)
         {
             if (data != null)
             {
-                SetContext(data);
+                TelemetryData = data;
             }
             _telemetryClient.TrackDependency(dependencyType, target, name, dependencyData, startTime, duration, resultCode, success);
             if (clearTelemetryData)
             {
+                _token = token;
                 TelemetryData = null;
             }
         }
@@ -431,7 +449,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <inheritdoc/>
         /// </summary>
         /// <param name="sleepTime"></param>
-        public void TelemetryFlush(int sleepTime)
+        public void TelemetryFlush(int sleepTime = 0)
         {
             _telemetryClient.Flush();
             Thread.Sleep(sleepTime);
@@ -442,9 +460,9 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<bool> TelemetryFlushAsync(CancellationToken? token)
+        public async Task<bool> TelemetryFlushAsync(CancellationToken? token = null)
         {
-            return await _telemetryClient.FlushAsync(token ?? new CancellationToken());
+            return await _telemetryClient.FlushAsync(token ?? new()).ConfigureAwait(false);
         }
     }
 }

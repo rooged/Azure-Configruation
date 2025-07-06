@@ -15,7 +15,7 @@ namespace Roo.Azure.Configuration.Common.Startup
         /// Sets up Swagger(OpenAPI), <see cref="HeaderMiddleware">Header validation</see>, Azure App Configuration.
         /// </summary>
         /// <param name="app"></param>
-        /// <returns>WebApplication for continued configuration</returns>
+        /// <returns><see cref="WebApplication"/>> for further service configuration.</returns>
         public static WebApplication WebAppConfig(this WebApplication app, StartupModel model)
         {
             //Azure App Configuration

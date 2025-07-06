@@ -51,7 +51,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<bool> IsFeatureEnabled(string name)
         {
-            return await _featureManager.IsEnabledAsync(name);
+            return await _featureManager.IsEnabledAsync(name).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Roo.Azure.Configuration.Common.Services
         /// <returns></returns>
         public async Task<bool> IsFeatureEnabled<T>(string name, T context)
         {
-            return await _featureManager.IsEnabledAsync(name, context);
+            return await _featureManager.IsEnabledAsync(name, context).ConfigureAwait(false);
         }
 
         /// <summary>

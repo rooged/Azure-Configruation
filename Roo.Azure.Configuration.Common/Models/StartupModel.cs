@@ -16,37 +16,37 @@
         /// </summary>
         public string AppConfigurationConnectionString { get; set; } = "";
         /// <summary>
-        /// Redis connection string.
-        /// </summary>
-        public string? RedisConnectionString { get; set; }
-        /// <summary>
-        /// Channel Id.
+        /// The name of this application, used for HTTP calls and App Insights logs.
         /// </summary>
         public string ChannelId { get; set; } = "";
-        /// <summary>
-        /// Whether to use certificate forwarding middleware for authentication.
-        /// Default is false.
-        /// </summary>
-        public bool UseCertificateForwarding { get; set; } = false;
-        /// <summary>
-        /// Whether to use header middleware for validating custom headers are in incoming HTTP calls.
-        /// Default is true.
-        /// </summary>
-        public bool UseHeaderValidation { get; set; } = true;
-        /// <summary>
-        /// Use exception filter for excpetion handling during HTTP calls.
-        /// </summary>
-        public bool UseExceptionFilter { get; set; } = true;
         /// <summary>
         /// Use to pull only specific sections from Azure App Configuration.
         /// </summary>
         public List<string>? AppConfigurationSections { get; set; }
         /// <summary>
         /// The key-value in App Configuration to be refreshed whenever one is triggered.<br/>
-        /// Defaults to the Sentinel settings key.
+        /// Default is the Sentinel settings key.
         /// </summary>
         public string? AppConfigRefreshTriggerKey { get; set; } = "Settings:Sentinel";
-
+        /// <summary>
+        /// Whether to use header middleware for validating custom headers are in incoming HTTP calls.
+        /// Default is true.
+        /// </summary>
+        public bool UseHeaderValidation { get; set; } = true;
+        /// <summary>
+        /// Whether to use certificate forwarding middleware for authentication.
+        /// Default is false.
+        /// </summary>
+        public bool UseCertificateForwarding { get; set; } = false;
+        /// <summary>
+        /// Use exception filter for excpetion handling during HTTP calls.
+        /// Default is false.
+        /// </summary>
+        public bool UseExceptionFilter { get; set; } = false;
+        /// <summary>
+        /// Redis connection string.
+        /// </summary>
+        public string? RedisConnectionString { get; set; }
 
         //Swagger specific values.
         /// <summary>
@@ -61,7 +61,7 @@
         /// <summary>
         /// Names for Swagger route instances (definition in Swagger UI).
         /// Should only add on to the default as it must start with 'private'.
-        /// Set to null if you don't want separate routing in Swagger.
+        /// Set to null if you don't want to setup Swagger.
         /// </summary>
         public List<string>? SwaggerDefinitionNames { get; set; } = ["private"];
         /// <summary>
