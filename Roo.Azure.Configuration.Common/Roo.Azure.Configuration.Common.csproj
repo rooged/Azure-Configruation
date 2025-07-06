@@ -10,7 +10,6 @@
 	<PackageTags>dotnet;Azure;.NET8;HTTP;microservices;C#;</PackageTags>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<VersionPrefix>1.0.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
