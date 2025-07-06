@@ -8,6 +8,7 @@
 	<PackageId>Roo.Azure.Configuration.Common.Http</PackageId>
 	<Company>rooged</Company>
 	<PackageTags>dotnet;Azure;.NET8;HTTP;microservices;C#;</PackageTags>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,7 @@
     <PackageReference Include="Polly" Version="8.6.1" />
     <PackageReference Include="Polly.Caching.Memory" Version="3.0.2" />
     <PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
+	<None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>

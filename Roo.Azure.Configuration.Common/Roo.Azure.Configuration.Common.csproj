@@ -8,6 +8,7 @@
 	<PackageId>Roo.Azure.Configuration.Common</PackageId>
 	<Company>rooged</Company>
 	<PackageTags>dotnet;Azure;.NET8;HTTP;microservices;C#;</PackageTags>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
+	<None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
