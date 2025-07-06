@@ -2,8 +2,8 @@ name: Deploy to NuGet
 
 on:
   push:
-    branches:
-    - main
+    #branches:
+    #- main
   workflow_dispatch:
     inputs:
       version:
@@ -15,7 +15,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
