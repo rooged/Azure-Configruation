@@ -1,9 +1,65 @@
 ## Roo.Azure.Configuration
-The Roo.Azure.Configuration packages are a C#, .NET 8 SDK designed to simplify development and integrate easily with Azure services. This package is designed to allow new projects be setup with minimal configuration, standardize functionalities, improve developer productivity, and expand log information in Azure App Insights. This SDK is geared more towards a microservice architecture but is useful in any application that makes HTTP calls and/or uses Azure services. The SDK is split into 3 packages, and are called Roo.Azure.Configuration.Common, Roo.Azure.Configuration.Common.Http, and Roo.Azure.Configuration.Common.Utilities.
+The Roo.Azure.Configuration packages are a C#, .NET SDK designed to simplify development and integrate with Azure services. This package is designed to allow new projects be setup with minimal configuration, standardize functionalities, improve developer productivity, and expand log information in Azure App Insights. This SDK is geared more towards a microservice architecture but can be used in any application that makes HTTP calls and/or uses Azure services. The SDK is split into 3 packages; Roo.Azure.Configuration.Common, Roo.Azure.Configuration.Common.Http, and Roo.Azure.Configuration.Common.Utilities:
 
-### Package Descriptions
-**Common:** The package includes middleware's for propagating custom headers (session-id, transaction-id, and channel-id are preset) to HTTP requests and Azure App Insight logs, custom logging, custom telemetry logging, Swagger setup and configuration, startup configuration, and boiler plates for Azure Service Bus, Azure Feature Manager, and Redis.
+**Common:** Header propagation, logger, Swagger setup, startup config, and simplified Azure Service Bus, Azure Feature Manager, and Redis.
 
-**Common.Http:** The package includes a custom HttpClient that ensures all requests have the custom headers from Common attached, allows authentication using pre-built methods such as OAuth or Azure APIM, stores tokens in either Redis or local memory, and handles object deserialization. The client is setup in program start and available through Dependency Injection with no further configuration at call time besides the relative request url, the pre-configured client name, and, if authorization is required, setting the necessary authorization model components. Common.Http has a dependency on Common because the headers configured in Common are used throughout the RooHttpClient service.
+**Common.Http:** HttpClient with custom headers, authentication (OAuth or Azure APIM), token storage, and object deserialization.
 
-**Common.Utilities:** This package is a standalone set of functions that aren't usually required in most applications but are ease of life methods. The main functionality of the package is type extensions that simplify type conversion and allow null safe type conversion. There are extensions methods for string, Enum, DateTime, FilePath, object, and ActionResult. There's also boiler plate service's for Azure Blob and Azure File Share usage.
+**Common.Utilities:** Ease of life functions such as type extensions and boiler plate's for Azure Blob and Azure File Share.
+
+[Check the Wiki out for more information on the packages, functionality, and usage.](https://github.com/rooged/Azure-Configruation/wiki)
+
+### Getting started
+In your Program.cs, add values to the StartupModel then pass it to setup methods.
+
+Web application:
+```
+var builder = WebApplication.CreateBuilder(args);
+var startupModel = new StartupModel()
+{
+  //Set values
+}
+builder.AddAzureAppConfiguration(startupModel);
+builder.Services.ApplicationConfiguration(startupModel);
+var httpClients = new Dictionary<string, string>()
+{
+  { "YourClientName", "BaseUrlForTheClient" }
+};
+builder.Services.CommonPetsHttp(startupModel.ChannelId, httpClients);
+```
+
+Console application:
+```
+var builder = HostBuilder.ConfigureServices((hostContext, services) =>
+{
+  var startupModel = new StartupModel()
+  {
+    //Set values
+  }
+  services.ApplicationConfiguration(startupModel);
+  var httpClients = new Dictionary<string, string>()
+  {
+    { "YourClientName", "BaseUrlForTheClient" }
+  };
+  services.CommonPetsHttp(startupModel.ChannelId, httpClients);
+});
+```
+
+### Installing the packages
+You can install the packages into a project using the [NuGet Package Manager](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio) in Visual Studio, just look up [Roo.Azure.Configuration.Common](https://www.nuget.org/packages?q=Roo.Azure.Configuration.Common&includeComputedFrameworks=true&prerel=true) and you'll be able to install them. If you prefer using the dotnet CLI then you can do so with:
+```
+dotnet add package Roo.Azure.Configuration.Common
+dotnet add package Roo.Azure.Configuration.Common.Http
+dotnet add package Roo.Azure.Configuration.Common.Utilities
+```
+Or you can add the project reference directly in your .csproj with (replace the x.x.x with your desired version):
+```
+<ItemGroup>
+  <PackageReference Include="Roo.Azure.Configuration.Common" Version="x.x.x" />
+  <PackageReference Include="Roo.Azure.Configuration.Common.Http" Version="x.x.x" />
+  <PackageReference Include="Roo.Azure.Configuration.Common.Utilities" Version="x.x.x" />
+</ItemGroup>
+```
+
+### Having trouble?
+Feel free to reach out to me or open an issue.
