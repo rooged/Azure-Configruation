@@ -21,7 +21,7 @@
     <PackageReference Include="Polly" Version="8.6.1" />
     <PackageReference Include="Polly.Caching.Memory" Version="3.0.2" />
     <PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
-	<None Include="README.md" Pack="true" PackagePath="..\"/>
+	<None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
