@@ -13,7 +13,7 @@ The Roo.Azure.Configuration packages are a C#, .NET SDK designed to simplify dev
 In your Program.cs, add values to the StartupModel then pass it to setup methods.
 
 Web application:
-```
+```C#
 var builder = WebApplication.CreateBuilder(args);
 var startupModel = new StartupModel()
 {
@@ -29,7 +29,7 @@ builder.Services.CommonPetsHttp(startupModel.ChannelId, httpClients);
 ```
 
 Console application:
-```
+```C#
 var builder = HostBuilder.ConfigureServices((hostContext, services) =>
 {
   var startupModel = new StartupModel()
