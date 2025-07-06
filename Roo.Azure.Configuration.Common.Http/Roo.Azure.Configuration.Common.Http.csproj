@@ -9,6 +9,7 @@
 	<Company>rooged</Company>
 	<PackageTags>dotnet;Azure;.NET8;HTTP;microservices;C#;</PackageTags>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
