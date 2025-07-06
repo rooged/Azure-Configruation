@@ -19,7 +19,7 @@ namespace Roo.Azure.Configuration.Common.Telemetry
         private IHeaderService HeaderService { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TelemetryInitializer"/> class.
+        /// Initializes a new instance of <see cref="TelemetryInitializer"/>.
         /// Initializer can't have a reference to ILogger as it will create a circular dependency.
         /// </summary>
         /// <param name="httpContextAccessor">HTTPContext accessor.</param>

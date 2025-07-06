@@ -22,7 +22,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         private HeaderPropagateOptions _headerPropagateOptions { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HeaderPropagateMiddleware"/> class.
+        /// Initializes a new instance of <see cref="HeaderPropagateMiddleware"/>.
         /// </summary>
         /// <param name="httpContextAccessor">HTTPContext accessor.</param>
         /// <param name="configuration">Configuration for access envrionment variables.</param>
