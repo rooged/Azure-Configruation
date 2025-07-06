@@ -25,6 +25,8 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Pack
       run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney"
+    - name: CD
+      run: cd ..
     - name: Show files
       run: ls
     - name: Deploy to NuGet
