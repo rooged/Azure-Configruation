@@ -5,6 +5,11 @@ on:
     branches:
     - main
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to be deployed'     
+        required: true
+        default: '1.0.0'
   
 
 jobs:
@@ -24,9 +29,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney" --output "./Azure-Configruation/Azure-Configruation/nupkgs"
-    - name: Show files
-      run: ls
+      run: dotnet pack -p:Description="Roo Azure Configuration SDK" -p:Authors="Timothy Gedney" -p:PackageVersion=${{ inputs.version }} --output "./Azure-Configruation/Azure-Configruation/nupkgs"
     - name: Deploy to NuGet
       run: dotnet nuget push "./Azure-Configruation/Azure-Configruation/nupkgs/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
     
