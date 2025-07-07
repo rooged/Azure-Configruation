@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Immutable;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class SwaggerFilterTests
     {

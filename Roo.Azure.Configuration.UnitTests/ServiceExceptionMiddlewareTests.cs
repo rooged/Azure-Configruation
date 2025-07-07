@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Roo.Azure.Configuration.Common.Logging;
 using Roo.Azure.Configuration.Common.Middlewares;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class ServiceExceptionMiddlewareTests
     {

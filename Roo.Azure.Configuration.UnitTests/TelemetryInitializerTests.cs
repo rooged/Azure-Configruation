@@ -7,7 +7,7 @@ using Roo.Azure.Configuration.Common.Models;
 using Roo.Azure.Configuration.Common.Telemetry;
 using System.Security.Claims;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class TelemetryInitializerTests
     {

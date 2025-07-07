@@ -1,6 +1,6 @@
 using StackExchange.Redis;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class RedisServiceTests
     {

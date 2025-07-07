@@ -6,7 +6,7 @@ using Roo.Azure.Configuration.Common.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class SwaggerHeaderTests
     {

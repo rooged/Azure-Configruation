@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Roo.Azure.Configuration.Common.Models;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class HeaderServiceTests
     {

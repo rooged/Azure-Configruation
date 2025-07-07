@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Roo.Azure.Configuration.Common.Models;
 using Roo.Azure.Configuration.Common.ServiceExceptions;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class ServiceExceptionFilterTests
     {

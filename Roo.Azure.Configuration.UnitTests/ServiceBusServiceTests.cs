@@ -2,7 +2,7 @@ using Azure.Core;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class ServiceBusServiceTests
     {

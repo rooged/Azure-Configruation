@@ -1,7 +1,7 @@
 using Roo.Azure.Configuration.Common.Utilities.Extensions;
 using System.ComponentModel.DataAnnotations;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class DateTimeExtensionsTests
     {
