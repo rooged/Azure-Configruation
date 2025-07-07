@@ -1,6 +1,6 @@
 using Roo.Azure.Configuration.Common.Utilities.Extensions;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class StringExtensionsTests
     {

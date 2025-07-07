@@ -3,7 +3,7 @@ using Roo.Azure.Configuration.Common.Logging;
 using Roo.Azure.Configuration.Common.Middlewares;
 using System.Security.Claims;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class HeaderMiddlewareTests
     {
@@ -15,7 +15,7 @@ namespace Roo.Azure.Configuration.Tests.UnitTests
         public void Setup()
         {
             loggerMoq = new();
-            next = (HttpContext hc) => Task.CompletedTask;
+            next = (hc) => Task.CompletedTask;
         }
 
         [Test]

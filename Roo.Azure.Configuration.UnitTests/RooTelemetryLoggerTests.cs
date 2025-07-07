@@ -3,7 +3,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Roo.Azure.Configuration.Common.Logging;
 using Roo.Azure.Configuration.Common.Models;
 
-namespace Roo.Azure.Configuration.Tests.UnitTests
+namespace Roo.Azure.Configuration.UnitTests
 {
     public class RooTelemetryLoggerTests
     {
