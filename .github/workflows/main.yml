@@ -1,7 +1,7 @@
 name: Deploy to NuGet
 
 on:
-  push:
+  #push:
     #branches:
     #- main
   workflow_dispatch:
