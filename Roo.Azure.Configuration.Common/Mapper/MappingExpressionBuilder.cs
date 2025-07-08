@@ -61,7 +61,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 var destinationPropertyType = destinationProperty.PropertyType;
 
                 //Build collection type maps
-                if (MappingExtensions.IsCollectionType(destinationPropertyType, out var destinationElementType) && MappingExtensions.IsCollectionType(sourcePropertyType, out var sourceElementType) && destinationPropertyType != typeof(string) && sourcePropertyType != typeof(string))
+                if (destinationPropertyType.IsCollectionType(out var destinationElementType) && destinationPropertyType != typeof(string) && sourcePropertyType.IsCollectionType(out var sourceElementType) && sourcePropertyType != typeof(string))
                 {
                     var elementMapDelegate = mapper.GetMappingDelegate(sourceElementType, destinationElementType);
                     var elementMapFunction = new Func<object, object>(src => elementMapDelegate(src));
@@ -71,7 +71,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                     continue;
                 }
                 //Build complex type maps
-                if (MappingExtensions.IsComplexType(destinationPropertyType) && MappingExtensions.IsComplexType(sourcePropertyType))
+                if (destinationPropertyType.IsComplexType() && sourcePropertyType.IsComplexType())
                 {
                     //Filter to current level nested maps
                     Dictionary<string, LambdaExpression>? nestedCustomMaps = null;
