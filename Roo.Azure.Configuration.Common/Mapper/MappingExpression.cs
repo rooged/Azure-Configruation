@@ -61,7 +61,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                     var firstDot = path.IndexOf('.');
                     var nestedProperty = path.Substring(0, firstDot);
                     var nestedPath = path.Substring(firstDot + 1);
-                    var nestedSourceProperty = typeof(TSource).GetProperty(nestedProperty);
+                    var nestedSourceProperty = ReflectionCache.GetProperty(typeof(TSource), nestedProperty);
                     if (nestedSourceProperty == null)
                     {
                         throw new InvalidOperationException($"Property '{nestedProperty}' not found on source type '{typeof(TSource)}'.");
@@ -87,7 +87,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             var assignExpression = new List<Expression> { Expression.Assign(sourceVariable, Expression.New(typeof(TSource))) };
             foreach (var sourceProperty in typeof(TSource).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(x => x.CanWrite))
             {
-                var destinationProperty = typeof(TDestination).GetProperty(sourceProperty.Name, BindingFlags.Public | BindingFlags.Instance);
+                var destinationProperty = ReflectionCache.GetProperty(typeof(TDestination), sourceProperty.Name);
                 if (destinationProperty == null || !destinationProperty.CanRead)
                 {
                     continue;
@@ -165,30 +165,6 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 return memberOperand;
             }
             throw new ArgumentException("Expression is not a member access.", nameof(expression));
-        }
-
-        private static object? GetNestedPropertyValue(object? obj, string propertyPath)
-        {
-            if (obj == null)
-            {
-                return null;
-            }
-            var parts = propertyPath.Split('.');
-            var current = obj;
-            foreach (var part in parts)
-            {
-                if (current == null)
-                {
-                    return null;
-                }
-                var property = current.GetType().GetProperty(part);
-                if (property == null)
-                {
-                    return null;
-                }
-                current = property.GetValue(current);
-            }
-            return current;
         }
     }
 

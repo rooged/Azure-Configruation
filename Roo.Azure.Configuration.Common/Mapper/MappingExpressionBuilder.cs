@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Roo.Azure.Configuration.Common.Mapper
 {
@@ -52,7 +53,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 }
 
                 //If source property is null or can't be read, skip
-                var sourceProperty = typeof(TSource).GetProperty(destinationPropertyName, BindingFlags.Public | BindingFlags.Instance);
+                var sourceProperty = ReflectionCache.GetProperty(typeof(TSource), destinationPropertyName);
                 if (sourceProperty == null || !sourceProperty.CanRead)
                 {
                     continue;
@@ -197,7 +198,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             var getEnumerator = typeof(IEnumerable<>).MakeGenericType(loopVariable.Type).GetMethod("GetEnumerator")!;
             var enumeratorVariable = Expression.Variable(getEnumerator.ReturnType, "enumerator");
             var moveNext = typeof(IEnumerator).GetMethod("MoveNext")!;
-            var current = getEnumerator.ReturnType.GetProperty("Current")!;
+            var current = ReflectionCache.GetProperty(getEnumerator.ReturnType, "Current")!;
             var breakLabel = Expression.Label("break");
             return Expression.Block(new[] { enumeratorVariable }, Expression.Assign(enumeratorVariable, Expression.Call(collection, getEnumerator)),
                 Expression.Loop(Expression.IfThenElse(Expression.Call(enumeratorVariable, moveNext),
@@ -217,6 +218,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             _to = to;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override Expression VisitParameter(ParameterExpression node) => node == _from ? _to : base.VisitParameter(node);
     }
 }

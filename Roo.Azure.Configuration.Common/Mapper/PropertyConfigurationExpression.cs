@@ -1,5 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Concurrent;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Roo.Azure.Configuration.Common.Mapper
 {
@@ -40,6 +42,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
         private readonly PropertyInfo _propertyInfo;
         private readonly MappingExpression<TSource, TDestination> _mappingExpression;
         private readonly string _propertyPath;
+        private static readonly ConcurrentDictionary<(Type, string), Action<object, object?>> _setters = new();
 
         /// <summary>
         /// Initialize <see cref="PropertyConfigurationExpression{TSource, TDestination, TProperty}"/>.
@@ -69,11 +72,12 @@ namespace Roo.Azure.Configuration.Common.Mapper
         public void MapFrom(Expression<Func<TSource, TMember>> sourceMember)
         {
             var function = sourceMember.Compile();
+            var setter = GetOrAddSetter(typeof(TDestination), _propertyPath);
             _mappingExpression.AddCustomMap((source, destination) =>
             {
                 var sourceValue = function(source);
                 var convertedvalue = RooMapper.ConvertValue(sourceValue, _propertyInfo.PropertyType);
-                SetNestedPropertyValue(destination, _propertyPath, convertedvalue);
+                setter(destination!, convertedvalue);
             }, _propertyPath);
         }
 
@@ -83,40 +87,34 @@ namespace Roo.Azure.Configuration.Common.Mapper
         /// <param name="sourceValue"></param>
         public void MapFrom(TMember sourceValue)
         {
+            var setter = GetOrAddSetter(typeof(TDestination), _propertyPath);
             _mappingExpression.AddCustomMap((source, destination) =>
             {
                 var convertedvalue = RooMapper.ConvertValue(sourceValue, _propertyInfo.PropertyType);
-                SetNestedPropertyValue(destination, _propertyPath, convertedvalue);
+                setter(destination!, convertedvalue);
             }, _propertyPath);
         }
 
-        private static void SetNestedPropertyValue(object? destination, string propertyPath, object? value)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Action<object, object?> GetOrAddSetter(Type type, string propertyPath)
         {
-            var pathParts = propertyPath.Split('.');
-            object? current = destination;
-            PropertyInfo? currentProperty = null;
-            for (int i = 0; i < pathParts.Length - 1; i++)
+            return _setters.GetOrAdd((type, propertyPath), key =>
             {
-                currentProperty = current!.GetType().GetProperty(pathParts[i]);
-                if (currentProperty == null)
+                var parameterObject = Expression.Parameter(typeof(object), "obj");
+                var parameterValue = Expression.Parameter(typeof(object), "value");
+                Expression current = Expression.Convert(parameterObject, type);
+                var parts = propertyPath.Split('.');
+                for (var i = 0; i < parts.Length - 1; i++)
                 {
-                    throw new InvalidOperationException($"Property '{pathParts[i]}' not found on type '{current!.GetType().FullName}'.");
+                    var property = ReflectionCache.GetProperty(type, parts[i]);
+                    current = Expression.Property(current, property!);
+                    type = property!.PropertyType;
                 }
-                var next = currentProperty.GetValue(current);
-                if (next == null)
-                {
-                    next = Activator.CreateInstance(currentProperty.PropertyType)!;
-                    currentProperty.SetValue(current, next);
-                }
-                current = next;
-            }
-
-            var finalProperty = current!.GetType().GetProperty(pathParts[^1]);
-            if (finalProperty == null)
-            {
-                throw new InvalidOperationException($"Property '{pathParts[^1]}' not found on type '{current!.GetType().FullName}'.");
-            }
-            finalProperty.SetValue(current, value);
+                var finalProperty = ReflectionCache.GetProperty(type, parts[^1])!;
+                var assign = Expression.Assign(Expression.Property(current, finalProperty), Expression.Convert(parameterValue, finalProperty.PropertyType));
+                var lambda = Expression.Lambda<Action<object, object?>>(assign, parameterObject, parameterValue);
+                return lambda.Compile();
+            });
         }
     }
 }
