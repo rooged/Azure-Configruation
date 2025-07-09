@@ -5,7 +5,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
 {
     internal static class ExpressionExtensions
     {
-        internal static Expression ForEach(Expression collection, ParameterExpression loopVariable, Expression loopContent)
+        internal static Expression ForEach(this Expression collection, ParameterExpression loopVariable, Expression loopContent)
         {
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(loopVariable.Type);
             var enumeratorType = typeof(IEnumerator<>).MakeGenericType(loopVariable.Type);
