@@ -2,14 +2,14 @@
 
 namespace Roo.Azure.Configuration.Common.Mapper
 {
-    internal class MappingExtensions
+    internal static class MappingExtensions
     {
-        internal static bool IsComplexType(Type type)
+        internal static bool IsComplexType(this Type type)
         {
             return type.IsClass && type != typeof(string);
         }
 
-        internal static bool IsCollectionType(Type type, out Type? elementType)
+        internal static bool IsCollectionType(this Type type, out Type? elementType)
         {
             if (type == typeof(string))
             {
@@ -34,7 +34,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             return false;
         }
 
-        internal static bool IsEnumerableType(Type type, out Type? elementType)
+        internal static bool IsEnumerableType(this Type type, out Type? elementType)
         {
             if (type == typeof(string))
             {

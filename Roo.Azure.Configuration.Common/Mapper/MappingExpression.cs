@@ -60,8 +60,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 {
                     var firstDot = path.IndexOf('.');
                     var nestedProperty = path.Substring(0, firstDot);
-                    var nestedPath = path.Substring(firstDot + 1);
-                    var nestedSourceProperty = typeof(TSource).GetProperty(nestedProperty);
+                    var nestedSourceProperty = ReflectionCache.GetProperty(typeof(TSource), nestedProperty);
                     if (nestedSourceProperty == null)
                     {
                         throw new InvalidOperationException($"Property '{nestedProperty}' not found on source type '{typeof(TSource)}'.");
@@ -87,7 +86,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             var assignExpression = new List<Expression> { Expression.Assign(sourceVariable, Expression.New(typeof(TSource))) };
             foreach (var sourceProperty in typeof(TSource).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(x => x.CanWrite))
             {
-                var destinationProperty = typeof(TDestination).GetProperty(sourceProperty.Name, BindingFlags.Public | BindingFlags.Instance);
+                var destinationProperty = ReflectionCache.GetProperty(typeof(TDestination), sourceProperty.Name, BindingFlags.Public | BindingFlags.Instance);
                 if (destinationProperty == null || !destinationProperty.CanRead)
                 {
                     continue;
@@ -96,7 +95,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 var sourcePropertyType = sourceProperty.PropertyType;
                 var destinationPropertyType = destinationProperty.PropertyType;
                 Expression valueExpression;
-                if (MappingExtensions.IsComplexType(sourcePropertyType) && MappingExtensions.IsComplexType(destinationPropertyType) && sourcePropertyType != destinationPropertyType)
+                if (sourcePropertyType != destinationPropertyType && sourcePropertyType.IsComplexType() && destinationPropertyType.IsComplexType())
                 {
                     var mapMethod = typeof(RooMapper).GetMethod(nameof(RooMapper.Map))!.MakeGenericMethod(sourcePropertyType);
                     valueExpression = Expression.Call(Expression.Constant(_mapper), mapMethod, Expression.Convert(destinationPropertyExpression, typeof(object)));
@@ -165,100 +164,6 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 return memberOperand;
             }
             throw new ArgumentException("Expression is not a member access.", nameof(expression));
-        }
-
-        [Obsolete("Don't use.")]
-        private void MapProperties(object? source, object? destination, string? parentPath = null, string? collectionParentPath = null)
-        {
-            var sourceProperties = source?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            var destinationProperties = destination?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            if (destinationProperties == null)
-            {
-                return;
-            }
-            foreach (var destinationProperty in destinationProperties)
-            {
-                var destinationPropertyName = destinationProperty.Name;
-                var fullPath = string.IsNullOrEmpty(parentPath) ? destinationPropertyName : $"{parentPath}.{destinationPropertyName}";
-                if (_ignoredPropertyPaths.Contains(fullPath))
-                {
-                    continue;
-                }
-                var destinationPropertyType = destinationProperty.PropertyType;
-                if (_ignoredPropertyPaths.Any(x => x.StartsWith(fullPath + ".")) && (MappingExtensions.IsComplexType(destinationPropertyType) || MappingExtensions.IsCollectionType(destinationPropertyType, out _)))
-                {
-                    continue;
-                }
-                if (_customMappedProperties.Contains(fullPath) || (collectionParentPath != null && _customMappedProperties.Contains($"{collectionParentPath}.{destinationPropertyName}")))
-                {
-                    continue;
-                }
-                if (_propertyMaps.Any(x => x.Method.GetParameters()[1].Name == destinationPropertyName || x.Method.GetParameters()[1].Name == fullPath))
-                {
-                    continue;
-                }
-                if (!destinationProperty.CanWrite)
-                {
-                    continue;
-                }
-                var value = GetNestedPropertyValue(source, fullPath);
-                if (value == null && (parentPath == null || !fullPath.Contains('.')))
-                {
-                    var sourceProperty = source?.GetType().GetProperty(destinationPropertyName);
-                    if (sourceProperty != null && sourceProperty.CanRead)
-                    {
-                        value = sourceProperty.GetValue(source);
-                    }
-                }
-                //Handle collections of nested properties
-                if (value != null && MappingExtensions.IsCollectionType(destinationPropertyType, out var destinationElementType) && MappingExtensions.IsCollectionType(value.GetType(), out var sourceElementType))
-                {
-                    var mapDelegate = _mapper.GetMappingDelegate(value.GetType(), destinationPropertyType);
-                    var mappedValue = mapDelegate(value);
-                    destinationProperty.SetValue(destination, RooMapper.ConvertValue(mappedValue, destinationPropertyType));
-                    continue;
-                }
-                //Handle complex objects
-                if (MappingExtensions.IsComplexType(destinationPropertyType))
-                {
-                    if (value == null)
-                    {
-                        destinationProperty.SetValue(destination, null);
-                    }
-                    else
-                    {
-                        var mapDelegate = _mapper.GetMappingDelegate(value.GetType(), destinationPropertyType);
-                        var mappedValue = mapDelegate(value);
-                        destinationProperty.SetValue(destination, RooMapper.ConvertValue(mappedValue, destinationPropertyType));
-                    }
-                    continue;
-                }
-                destinationProperty.SetValue(destination, RooMapper.ConvertValue(value, destinationPropertyType));
-            }
-        }
-
-        private static object? GetNestedPropertyValue(object? obj, string propertyPath)
-        {
-            if (obj == null)
-            {
-                return null;
-            }
-            var parts = propertyPath.Split('.');
-            var current = obj;
-            foreach (var part in parts)
-            {
-                if (current == null)
-                {
-                    return null;
-                }
-                var property = current.GetType().GetProperty(part);
-                if (property == null)
-                {
-                    return null;
-                }
-                current = property.GetValue(current);
-            }
-            return current;
         }
     }
 

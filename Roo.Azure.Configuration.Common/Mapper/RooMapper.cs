@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Roo.Azure.Configuration.Common.Mapper
 {
@@ -27,6 +28,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
         private readonly ConcurrentDictionary<(Type Source, Type Destination), Delegate> _mappings = new();
         private readonly ConcurrentDictionary<(Type Source, Type Destination), Delegate> _reverseMappings = new();
         private readonly ConcurrentDictionary<(Type Source, Type Destination), Delegate> _collectionMappings = new();
+        private readonly ConcurrentDictionary<(Type Source, Type Destination), Delegate> _typedElementMappings = new();
         private static readonly ConcurrentDictionary<(Type Source, Type Destination), Delegate> _defaultConverters = new();
 
         /// <summary>
@@ -130,7 +132,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             var destinationType = typeof(TDestination);
 
             //Handle IEnumerable<TSource> to IEnumerable<TDestination>
-            if (MappingExtensions.IsEnumerableType(sourceType, out var sourceElementType) && MappingExtensions.IsEnumerableType(destinationType, out var destinationElementType))
+            if (sourceType.IsEnumerableType(out var sourceElementType) && destinationType.IsEnumerableType(out var destinationElementType))
             {
                 var key = (sourceElementType, destinationElementType);
                 if (!_mappings.ContainsKey(key))
@@ -141,10 +143,17 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 var result = collectionMapDelegate.DynamicInvoke(source);
                 if (destinationType.IsArray)
                 {
-                    var list = (IList)result!;
-                    var array = Array.CreateInstance(destinationElementType, list.Count);
-                    list.CopyTo(array, 0);
-                    return (TDestination)(object)array;
+                    if (result is IList list)
+                    {
+                        var array = Array.CreateInstance(destinationElementType, list.Count);
+                        list.CopyTo(array, 0);
+                        return (TDestination)(object)array;
+                    }
+                    var toArrayMethod = result!.GetType().GetMethod("ToArray", Type.EmptyTypes);
+                    if (toArrayMethod != null)
+                    {
+                        return (TDestination)toArrayMethod.Invoke(result, null)!;
+                    }
                 }
                 if (destinationType.IsAssignableFrom(result!.GetType()))
                 {
@@ -186,6 +195,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             var function = MappingExpressionBuilder.BuildMapFunction<TSource, TDestination>(this, expression.GetCustomMapExpressions().ToDictionary(x => x.Key, x => x.Value), expression.GetIgnoredPropertyPaths().ToHashSet());
             Func<object, object> wrapper = src => function((TSource)src)!;
             _mappings[(typeof(TSource), typeof(TDestination))] = wrapper;
+            _typedElementMappings[(typeof(TSource), typeof(TDestination))] = function;
             if (expression.ReverseMapDelegate != null)
             {
                 Func<object, object> reverseWrapper = src => expression.ReverseMapDelegate((TDestination)src)!;
@@ -193,13 +203,29 @@ namespace Roo.Azure.Configuration.Common.Mapper
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal Func<TSource, TDestination> GetTypedMappingDelegate<TSource, TDestination>()
+        {
+            if (_typedElementMappings.TryGetValue((typeof(TSource), typeof(TDestination)), out var del))
+            {
+                return (Func<TSource, TDestination>)del;
+            }
+            if (_mappings.TryGetValue((typeof(TSource), typeof(TDestination)), out var objectDel))
+            {
+                var objectFunction = (Func<object, object>)objectDel;
+                return source => (TDestination)objectFunction(source!);
+            }
+            throw new InvalidOperationException($"No mapping registered for {typeof(TSource)} -> {typeof(TDestination)}.");
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal Func<object, object> GetMappingDelegate(Type sourceType, Type destinationType)
         {
             if (sourceType == destinationType)
             {
                 return x => x;
             }
-            if (MappingExtensions.IsEnumerableType(sourceType, out var sourceElementType) && sourceElementType != null && MappingExtensions.IsEnumerableType(destinationType, out var destinationElementType) && destinationElementType != null)
+            if (sourceType.IsEnumerableType(out var sourceElementType) && sourceElementType != null && destinationType.IsEnumerableType(out var destinationElementType) && destinationElementType != null)
             {
                 var delegateCollection = GetOrAddCollectionMapping(sourceElementType, destinationElementType);
                 return (Func<object, object>)delegateCollection;
@@ -216,6 +242,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             _reverseMappings[(typeof(TDestination), typeof(TSource))] = new Func<object, object>(src => reverseMap((TDestination)src)!);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static object? ConvertValue(object? value, Type destinationType)
         {
             if (value == null)
@@ -257,40 +284,89 @@ namespace Roo.Azure.Configuration.Common.Mapper
             {
                 return existingMapping;
             }
-            if (sourceElementType == destinationElementType)
-            {
-                var sourceEnumerableTypeSame = typeof(IEnumerable<>).MakeGenericType(sourceElementType);
-                var destinationListTypeSame = typeof(List<>).MakeGenericType(destinationElementType);
-                var parameterSame = Expression.Parameter(typeof(object), "src");
-                var castedParameterSame = Expression.Convert(parameterSame, sourceEnumerableTypeSame);
-                var listConstructor = destinationListTypeSame.GetConstructor(new[] { sourceEnumerableTypeSame });
-                var newList = Expression.New(listConstructor!, castedParameterSame);
-                var lambdaSame = Expression.Lambda<Func<object, object>>(newList, parameterSame);
-                var compiledSame = lambdaSame.Compile();
-                _collectionMappings[key] = compiledSame;
-                return compiledSame;
-            }
-            if (!_mappings.TryGetValue(key, out var elementMapDelegate))
-            {
-                throw new InvalidOperationException($"No mapping registered for {sourceElementType} -> {destinationElementType}.");
-            }
-            var sourceEnumerableType = typeof(IEnumerable<>).MakeGenericType(sourceElementType);
-            var destinationListType = typeof(List<>).MakeGenericType(destinationElementType);
-            var parameter = Expression.Parameter(typeof(object), "src");
-            var castedParameter = Expression.Convert(parameter, sourceEnumerableType);
-            var listVariable = Expression.Variable(destinationListType, "list");
-            var assignList = Expression.Assign(listVariable, Expression.New(destinationListType));
-            var elementParameter = Expression.Parameter(sourceElementType, "item");
-            var mapCall = Expression.Invoke(Expression.Constant(elementMapDelegate), Expression.Convert(elementParameter, typeof(object)));
-            var mappedElement = Expression.Convert(mapCall, destinationElementType);
-            var addMethod = destinationListType.GetMethod("Add")!;
-            var loop = ExpressionExtensions.ForEach(castedParameter, elementParameter, Expression.Call(listVariable, addMethod, mappedElement));
-            var block = Expression.Block(new[] { listVariable }, assignList, loop, listVariable);
-            var lambda = Expression.Lambda<Func<object, object>>(block, parameter);
-            var compiled = lambda.Compile();
-            _collectionMappings[key] = compiled;
-            return compiled;
+            var method = typeof(RooMapper).GetMethod(nameof(BuildCollectionMap), BindingFlags.NonPublic | BindingFlags.Instance)!.MakeGenericMethod(sourceElementType, destinationElementType);
+            var del = (Delegate)method.Invoke(this, null)!;
+            _collectionMappings[key] = del;
+            return del;
         }
+
+        private Func<object, object> BuildCollectionMap<TSource, TDestination>()
+        {
+            var elementMap = GetTypedMappingDelegate<TSource, TDestination>();
+            Func<IEnumerable<TSource>, List<TDestination>> typedMap = source =>
+            {
+                List<TDestination> result;
+                if (source is ICollection<TSource> collection)
+                {
+                    result = new List<TDestination>(collection.Count);
+                }
+                else
+                {
+                    result = new List<TDestination>();
+                }
+                foreach (var item in source)
+                {
+                    result.Add(elementMap(item!));
+                }
+                return result;
+            };
+            return source =>
+            {
+                if (source is not IEnumerable<TSource> sourceEnum)
+                {
+                    throw new InvalidCastException($"Can't cast {source?.GetType()} to IEnumerable<{typeof(TSource).Name}>");
+                }
+                return typedMap(sourceEnum);
+            };
+        }
+
+        /*private Func<object, object> BuildCollectionMap<TSource, TDestination>()
+        {
+            var elementMap = GetTypedMappingDelegate<TSource, TDestination>();
+            return source =>
+            {
+                if (source is TSource[] array)
+                {
+                    var result = new TDestination[array.Length];
+                    for (var i = 0; i < array.Length; i++)
+                    {
+                        result[i] = elementMap(array[i]);
+                    }
+                    return result.ToList();
+                }
+                else if (source is List<TSource> list)
+                {
+                    var result = new List<TDestination>(list.Count);
+                    for (var i = 0; i < list.Count; i++)
+                    {
+                        result.Add(elementMap(list[i]));
+                    }
+                    return result;
+                }
+                else if (source is ICollection<TSource> collection)
+                {
+                    var result = new List<TDestination>(collection.Count);
+                    foreach (var item in collection)
+                    {
+                        result.Add(elementMap(item));
+                    }
+                    return result;
+                }
+                else if (source is IEnumerable<TSource> enumerable)
+                {
+                    var result = new List<TDestination>();
+                    foreach (var item in enumerable)
+                    {
+                        result.Add(elementMap(item));
+                    }
+                    return result;
+                }
+                else
+                {
+                    throw new InvalidCastException($"Can't cast {source?.GetType()} to IEnumerable<{typeof(TSource).Name}>.");
+                }
+            };
+        }*/
 
         private void RegisterNestedSelfMaps<TSource, TDestination>(MappingExpression<TSource, TDestination> expression) where TDestination : new()
         {
@@ -303,8 +379,8 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 var nestedPropertyName = group.Key;
                 var nestedCustomMaps = customMapExpressions.Where(x => x.Key.StartsWith(nestedPropertyName + ".")).ToDictionary(x => x.Key.Substring(nestedPropertyName.Length + 1), x => x.Value);
                 var nestedIgnored = ignored.Where(x => x.StartsWith(nestedPropertyName + ".")).Select(x => x.Substring(nestedPropertyName.Length + 1)).ToHashSet();
-                var sourceNestedProperty = typeof(TSource).GetProperty(nestedPropertyName);
-                var destinationNestedProperty = typeof(TDestination).GetProperty(nestedPropertyName);
+                var sourceNestedProperty = ReflectionCache.GetProperty(typeof(TSource), nestedPropertyName);
+                var destinationNestedProperty = ReflectionCache.GetProperty(typeof(TDestination), nestedPropertyName);
                 if (sourceNestedProperty != null && destinationNestedProperty != null && sourceNestedProperty.PropertyType == destinationNestedProperty.PropertyType)
                 {
                     var key = (sourceNestedProperty.PropertyType, destinationNestedProperty.PropertyType);
@@ -323,7 +399,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             expression.SetCustomMapExpression(customMaps);
             foreach (var map in customMaps)
             {
-                var property = typeof(TDestination).GetProperty(map.Key);
+                var property = ReflectionCache.GetProperty(typeof(TDestination), map.Key);
                 if (property != null)
                 {
                     var forMemberMethod = typeof(MappingExpression<TSource, TDestination>).GetMethods().First(x => x.Name == "ForMember" && x.GetParameters().Length == 2);
@@ -342,7 +418,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             }
             foreach (var ignore in ignoredProperties)
             {
-                var property = typeof(TDestination).GetProperty(ignore);
+                var property = ReflectionCache.GetProperty(typeof(TDestination), ignore);
                 if (property != null)
                 {
                     var forMemberMethod = typeof(MappingExpression<TSource, TDestination>).GetMethods().First(x => x.Name == "ForMember" && x.GetParameters().Length == 2);
@@ -382,13 +458,13 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 }
                 var sourcePropertyType = sourceProperty.PropertyType;
                 var destinationPropertyType = destinationProperty.PropertyType;
-                if (MappingExtensions.IsEnumerableType(destinationPropertyType, out var destinationElementType) && MappingExtensions.IsEnumerableType(sourcePropertyType, out var sourceElementType) &&
-                    destinationElementType != null && sourceElementType != null && destinationElementType!= typeof(string) && sourceElementType != typeof(string))
+                if (destinationPropertyType.IsEnumerableType(out var destinationElementType) && destinationElementType != null && destinationElementType != typeof(string) &&
+                    sourcePropertyType.IsEnumerableType(out var sourceElementType) && sourceElementType != null && sourceElementType != typeof(string))
                 {
                     CreateMapMethod(sourceElementType, destinationElementType);
                     RegisterAutoMap(sourceElementType, destinationElementType, visited);
                 }
-                else if (MappingExtensions.IsComplexType(destinationPropertyType) && MappingExtensions.IsComplexType(sourcePropertyType))
+                else if (destinationPropertyType.IsComplexType() && sourcePropertyType.IsComplexType())
                 {
                     CreateMapMethod(sourcePropertyType, destinationPropertyType);
                     RegisterAutoMap(sourcePropertyType, destinationPropertyType, visited);
