@@ -2,7 +2,7 @@
 {
     public class GenerateTestingData
     {
-        public List<Source> GenerateSourceDate(int count)
+        public static List<Source> GenerateSourceDate(int count)
         {
             var result = new List<Source>();
             var random = new Random();

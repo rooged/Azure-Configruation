@@ -84,13 +84,13 @@ namespace Roo.Azure.Configuration.Common.Mapper
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="sourceValue"></param>
-        public void MapFrom(TMember sourceValue)
+        /// <param name="value"></param>
+        public void MapFrom(TMember value)
         {
             var setter = GetOrAddSetter(typeof(TDestination), _propertyPath);
             _mappingExpression.AddCustomMap((source, destination) =>
             {
-                var convertedvalue = RooMapper.ConvertValue(sourceValue, _propertyInfo.PropertyType);
+                var convertedvalue = RooMapper.ConvertValue(value, _propertyInfo.PropertyType);
                 setter(destination!, convertedvalue);
             }, _propertyPath);
         }

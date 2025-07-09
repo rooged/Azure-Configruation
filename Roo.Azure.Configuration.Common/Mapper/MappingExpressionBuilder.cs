@@ -53,7 +53,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 }
 
                 //If source property is null or can't be read, skip
-                var sourceProperty = ReflectionCache.GetProperty(typeof(TSource), destinationPropertyName);
+                var sourceProperty = ReflectionCache.GetProperty(typeof(TSource), destinationPropertyName, BindingFlags.Public | BindingFlags.Instance);
                 if (sourceProperty == null || !sourceProperty.CanRead)
                 {
                     continue;

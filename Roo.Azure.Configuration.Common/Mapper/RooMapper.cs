@@ -320,6 +320,54 @@ namespace Roo.Azure.Configuration.Common.Mapper
             };
         }
 
+        /*private Func<object, object> BuildCollectionMap<TSource, TDestination>()
+        {
+            var elementMap = GetTypedMappingDelegate<TSource, TDestination>();
+            return source =>
+            {
+                if (source is TSource[] array)
+                {
+                    var result = new TDestination[array.Length];
+                    for (var i = 0; i < array.Length; i++)
+                    {
+                        result[i] = elementMap(array[i]);
+                    }
+                    return result.ToList();
+                }
+                else if (source is List<TSource> list)
+                {
+                    var result = new List<TDestination>(list.Count);
+                    for (var i = 0; i < list.Count; i++)
+                    {
+                        result.Add(elementMap(list[i]));
+                    }
+                    return result;
+                }
+                else if (source is ICollection<TSource> collection)
+                {
+                    var result = new List<TDestination>(collection.Count);
+                    foreach (var item in collection)
+                    {
+                        result.Add(elementMap(item));
+                    }
+                    return result;
+                }
+                else if (source is IEnumerable<TSource> enumerable)
+                {
+                    var result = new List<TDestination>();
+                    foreach (var item in enumerable)
+                    {
+                        result.Add(elementMap(item));
+                    }
+                    return result;
+                }
+                else
+                {
+                    throw new InvalidCastException($"Can't cast {source?.GetType()} to IEnumerable<{typeof(TSource).Name}>.");
+                }
+            };
+        }*/
+
         private void RegisterNestedSelfMaps<TSource, TDestination>(MappingExpression<TSource, TDestination> expression) where TDestination : new()
         {
             var customMapped = expression.GetCustomMappedProperties();

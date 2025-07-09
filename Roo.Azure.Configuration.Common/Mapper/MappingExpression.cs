@@ -60,7 +60,6 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 {
                     var firstDot = path.IndexOf('.');
                     var nestedProperty = path.Substring(0, firstDot);
-                    var nestedPath = path.Substring(firstDot + 1);
                     var nestedSourceProperty = ReflectionCache.GetProperty(typeof(TSource), nestedProperty);
                     if (nestedSourceProperty == null)
                     {
@@ -87,7 +86,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             var assignExpression = new List<Expression> { Expression.Assign(sourceVariable, Expression.New(typeof(TSource))) };
             foreach (var sourceProperty in typeof(TSource).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(x => x.CanWrite))
             {
-                var destinationProperty = ReflectionCache.GetProperty(typeof(TDestination), sourceProperty.Name);
+                var destinationProperty = ReflectionCache.GetProperty(typeof(TDestination), sourceProperty.Name, BindingFlags.Public | BindingFlags.Instance);
                 if (destinationProperty == null || !destinationProperty.CanRead)
                 {
                     continue;
