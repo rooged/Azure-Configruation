@@ -25,7 +25,7 @@ var httpClients = new Dictionary<string, string>()
 {
   { "YourClientName", "BaseUrlForTheClient" }
 };
-builder.Services.CommonPetsHttp(startupModel.ChannelId, httpClients);
+builder.Services.RooHttpClientConfig(startupModel.ChannelId, httpClients);
 ```
 
 Console application:
@@ -41,7 +41,7 @@ var builder = HostBuilder.ConfigureServices((hostContext, services) =>
   {
     { "YourClientName", "BaseUrlForTheClient" }
   };
-  services.CommonPetsHttp(startupModel.ChannelId, httpClients);
+  services.RooHttpClientConfig(startupModel.ChannelId, httpClients);
 });
 ```
 
