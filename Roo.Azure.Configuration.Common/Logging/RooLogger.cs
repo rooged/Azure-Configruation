@@ -22,7 +22,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
-        /// <param name="e">Exception</param>
+        /// <param name="ex">Exception</param>
         public void LogInformation(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
-        /// <param name="e">Exception</param>
+        /// <param name="ex">Exception</param>
         public void LogError(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
-        /// <param name="e">Exception</param>
+        /// <param name="ex">Exception</param>
         public void LogWarning(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
-        /// <param name="e">Exception</param>
+        /// <param name="ex">Exception</param>
         public void LogTrace(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
-        /// <param name="e">Exception</param>
+        /// <param name="ex">Exception</param>
         public void LogCritical(HttpContext? context = null, string? message = null, Exception? ex = null);
 
         /// <summary>
@@ -62,8 +62,50 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// </summary>
         /// <param name="context">HttpContext</param>
         /// <param name="message">Log message</param>
-        /// <param name="e">Exception</param>
+        /// <param name="ex">Exception</param>
         public void LogDebug(HttpContext? context = null, string? message = null, Exception? ex = null);
+
+        /// <summary>
+        /// <see cref="LogInformation(HttpContext?, string?, Exception?)">
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogInformation(string? message = null, Exception? ex = null);
+
+        /// <summary>
+        /// <see cref="LogError(HttpContext?, string?, Exception?)(HttpContext?, string?, Exception?)">
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogError(string? message = null, Exception? ex = null);
+
+        /// <summary>
+        /// <see cref="LogWarning(HttpContext?, string?, Exception?)(HttpContext?, string?, Exception?)">
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogWarning(string? message = null, Exception? ex = null);
+
+        /// <summary>
+        /// <see cref="LogTrace(HttpContext?, string?, Exception?)(HttpContext?, string?, Exception?)">
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogTrace(string? message = null, Exception? ex = null);
+
+        /// <summary>
+        /// <see cref="LogCritical(HttpContext?, string?, Exception?)(HttpContext?, string?, Exception?)">
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogCritical(string? message = null, Exception? ex = null);
+
+        /// <summary>
+        /// <see cref="LogDebug(HttpContext?, string?, Exception?)(HttpContext?, string?, Exception?)">
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogDebug(string? message = null, Exception? ex = null);
     }
 
     /// <summary>
@@ -333,6 +375,96 @@ namespace Roo.Azure.Configuration.Common.Logging
                     Constants.SessionIdHeaderName, _headerService.GetSessionId(context?.Request.Headers), Constants.TransactionIdHeaderName, _headerService.GetTransactionId(context?.Request.Headers), Constants.ChannelIdHeaderName,
                     _headerService.GetChannelId(context?.Request.Headers));
             }
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogInformation(string? message = null, Exception? ex = null)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                return;
+            }
+            LogInformation(context, message, ex);
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogError(string? message = null, Exception? ex = null)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                return;
+            }
+            LogError(context, message, ex);
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogWarning(string? message = null, Exception? ex = null)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                return;
+            }
+            LogWarning(context, message, ex);
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogTrace(string? message = null, Exception? ex = null)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                return;
+            }
+            LogTrace(context, message, ex);
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogCritical(string? message = null, Exception? ex = null)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                return;
+            }
+            LogCritical(context, message, ex);
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="message">Log message</param>
+        /// <param name="ex">Exception</param>
+        public void LogDebug(string? message = null, Exception? ex = null)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                return;
+            }
+            LogDebug(context, message, ex);
         }
 
         [GeneratedRegex(encodePattern)]

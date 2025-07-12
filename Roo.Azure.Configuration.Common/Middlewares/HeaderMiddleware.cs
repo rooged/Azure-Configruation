@@ -77,13 +77,13 @@ namespace Roo.Azure.Configuration.Common.Middlewares
             var useHasInfo = header.DoesUserInfoHaveInfo(requestHeaders);
             if (context.User.Claims.Any() && !useHasInfo)
             {
-                context.Response.StatusCode = (int)ErrorCode.UserInfoHeaderNotFound;
+                //context.Response.StatusCode = (int)ErrorCode.UserInfoHeaderNotFound;
                 var message = $"Error {(int)ErrorCode.UserInfoHeaderNotFound}: Header(s) not found or invalid. {Constants.UserInfoHeaderName} valid: {useHasInfo}. {Constants.SessionIdHeaderName} valid: {sessionIdValid}. {Constants.TransactionIdHeaderName} valid: {transactionIdValid}. {Constants.ChannelIdHeaderName} valid: {channelIdValid}.";
-                var encodedMessage = Encoding.UTF8.GetBytes(message);
-                using var stream = new MemoryStream(encodedMessage);
-                var buffer = stream.ToArray();
-                await context.Response.Body.WriteAsync(buffer, 0, buffer.Length);
-                await stream.DisposeAsync();
+                //var encodedMessage = Encoding.UTF8.GetBytes(message);
+                //using var stream = new MemoryStream(encodedMessage);
+                //var buffer = stream.ToArray();
+                //await context.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+                //await stream.DisposeAsync();
                 logger.LogError(context, message, new ServiceException(ErrorCode.UserInfoHeaderNotFound, message, null, null, header.GetTransactionId(requestHeaders)));
                 return;
             }
