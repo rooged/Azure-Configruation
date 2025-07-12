@@ -50,6 +50,12 @@
 
         //Swagger specific values.
         /// <summary>
+        /// Names for Swagger route instances (definition in Swagger UI).
+        /// Should only add on to the default as it must start with 'private'.
+        /// Set to null if you don't want to setup Swagger.
+        /// </summary>
+        public List<string>? SwaggerDefinitionNames { get; set; } = ["private"];
+        /// <summary>
         /// Base path of API for Swagger setup.
         /// </summary>
         public string SwaggerBasePath { get; set; } = "";
@@ -59,24 +65,18 @@
         /// </summary>
         public bool SwaggerCustomOperationId { get; set; } = true;
         /// <summary>
-        /// Names for Swagger route instances (definition in Swagger UI).
-        /// Should only add on to the default as it must start with 'private'.
-        /// Set to null if you don't want to setup Swagger.
-        /// </summary>
-        public List<string>? SwaggerDefinitionNames { get; set; } = ["private"];
-        /// <summary>
         /// Add an optional prefix in Swaggers route.
         /// </summary>
         public string? SwaggerRoutePrefix { get; set; }
         /// <summary>
         /// Controllers that will be hidden from Swagger UI.
-        /// Case insensitive, searches using contains: *{searchWord}*
+        /// Case insensitive, searches using <see cref="string.Contains(string)"/>.
         /// Defaults to hide Redis APIs. Add onto default to hide other controllers or set to null to show Redis APIs.
         /// </summary>
         public List<string>? SwaggerFilterControllers { get; set; } = ["redis"];
         /// <summary>
         /// Models that will be hidden from Swagger UI to improve responsiveness.
-        /// Case insensitive, searches using contains: *{searchWord}*
+        /// Case insensitive, searches using <see cref="string.Contains(string)"/>.
         /// </summary>
         public List<string>? SwaggerFilterModels { get; set; }
     }
