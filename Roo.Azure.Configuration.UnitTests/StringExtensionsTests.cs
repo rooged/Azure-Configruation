@@ -661,5 +661,32 @@ namespace Roo.Azure.Configuration.UnitTests
                 }
             });
         }
+
+        [Test]
+        [TestCase("pass")]
+        [TestCase("")]
+        [TestCase(null)]
+        [TestCase(" ")]
+        [TestCase("        a")]
+        [TestCase("      \n  ")]
+        [TestCase("\n\t\r\v")]
+        public void IsNullEmptyOrWhiteSpace_Verify(string? input)
+        {
+            //Act
+            var result = input.IsNullEmptyOrWhitespace();
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                if (input != null && input.Equals("pass"))
+                {
+                    Assert.That(result, Is.EqualTo(false));
+                }
+                else
+                {
+                    Assert.That(result, Is.EqualTo(true));
+                }
+            });
+        }
     }
 }

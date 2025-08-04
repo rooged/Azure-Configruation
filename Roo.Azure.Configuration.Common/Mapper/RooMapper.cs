@@ -135,17 +135,17 @@ namespace Roo.Azure.Configuration.Common.Mapper
             if (sourceType.IsEnumerableType(out var sourceElementType) && destinationType.IsEnumerableType(out var destinationElementType))
             {
                 var key = (sourceElementType, destinationElementType);
-                if (!_mappings.ContainsKey(key))
+                if (!_mappings.ContainsKey(key!))
                 {
                     throw new InvalidOperationException($"No mapping registered for {sourceElementType} -> {destinationElementType}.");
                 }
-                var collectionMapDelegate = GetOrAddCollectionMapping(sourceElementType, destinationElementType);
+                var collectionMapDelegate = GetOrAddCollectionMapping(sourceElementType!, destinationElementType!);
                 var result = collectionMapDelegate.DynamicInvoke(source);
                 if (destinationType.IsArray)
                 {
                     if (result is IList list)
                     {
-                        var array = Array.CreateInstance(destinationElementType, list.Count);
+                        var array = Array.CreateInstance(destinationElementType!, list.Count);
                         list.CopyTo(array, 0);
                         return (TDestination)(object)array;
                     }

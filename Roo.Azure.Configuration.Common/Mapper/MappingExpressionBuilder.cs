@@ -64,10 +64,10 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 //Build collection type maps
                 if (destinationPropertyType.IsCollectionType(out var destinationElementType) && destinationPropertyType != typeof(string) && sourcePropertyType.IsCollectionType(out var sourceElementType) && sourcePropertyType != typeof(string))
                 {
-                    var elementMapDelegate = mapper.GetMappingDelegate(sourceElementType, destinationElementType);
+                    var elementMapDelegate = mapper.GetMappingDelegate(sourceElementType!, destinationElementType!);
                     var elementMapFunction = new Func<object, object>(src => elementMapDelegate(src));
                     var sourcePropertyExpression = Expression.Property(sourceParameter, sourceProperty);
-                    var mapCollectionExpression = BuildMapCollectionExpression(sourcePropertyExpression, destinationPropertyType, sourceElementType, destinationElementType, elementMapDelegate);
+                    var mapCollectionExpression = BuildMapCollectionExpression(sourcePropertyExpression, destinationPropertyType, sourceElementType!, destinationElementType!, elementMapDelegate);
                     assignExpression.Add(Expression.Assign(Expression.Property(destinationVariable, destinationProperty), Expression.Convert(mapCollectionExpression, destinationPropertyType)));
                     continue;
                 }
@@ -127,7 +127,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 return del;
             }
             var method = typeof(MappingExpressionBuilder).GetMethod(nameof(BuildMapFunction), BindingFlags.Static | BindingFlags.Public)!.MakeGenericMethod(sourceType, destinationType);
-            var function = (Delegate)method.Invoke(null, new object[] { mapper, customMaps, ignoredProperties, cache })!;
+            var function = (Delegate)method.Invoke(null, new object[] { mapper, customMaps!, ignoredProperties!, cache })!;
             cache[key] = function;
             return function;
         }

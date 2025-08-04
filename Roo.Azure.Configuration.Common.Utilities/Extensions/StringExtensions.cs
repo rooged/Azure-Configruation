@@ -294,11 +294,11 @@ namespace Roo.Azure.Configuration.Common.Utilities.Extensions
                 return string.Empty;
             }
             var value = new StringBuilder();
-            foreach (var character in input)
+            for (var i = 0; i < input.Length; i++)
             {
-                if (char.IsDigit(character))
+                if (input[i].IsDigit())
                 {
-                    value.Append(character);
+                    value.Append(input[i]);
                 }
             }
             return value.ToString();
@@ -410,12 +410,12 @@ namespace Roo.Azure.Configuration.Common.Utilities.Extensions
             {
                 return string.Empty;
             }
-            if (char.IsUpper(input.First()))
+            if (input.First().IsUpper())
             {
                 return input;
             }
             var value = new StringBuilder();
-            value.Append(input.First().ToString().ToUpper());
+            value.Append(input.First().ToUpper());
             value.Append(input.AsSpan(1));
             return value.ToString();
         }
@@ -443,6 +443,27 @@ namespace Roo.Azure.Configuration.Common.Utilities.Extensions
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="string.IsNullOrWhiteSpace(string?)"/> Does the same as string.IsNullOrWhiteSpace() just as a value extension.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool IsNullEmptyOrWhitespace(this string? input)
+        {
+            if (input == null || input.Length == 0)
+            {
+                return true;
+            }
+            for (var i = 0; i < input.Length - 1; i++)
+            {
+                if (!char.IsWhiteSpace(input[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
