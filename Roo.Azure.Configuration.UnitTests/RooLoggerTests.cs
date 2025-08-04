@@ -51,7 +51,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -71,7 +71,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -91,7 +91,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -111,7 +111,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -131,7 +131,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -151,7 +151,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -173,7 +173,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -193,7 +193,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
+                loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
             });
         }
         #endregion
@@ -215,7 +215,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -235,7 +235,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -255,7 +255,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -275,7 +275,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -295,7 +295,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -315,7 +315,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -337,7 +337,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -357,7 +357,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
+                loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
             });
         }
         #endregion
@@ -379,7 +379,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -399,7 +399,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -419,7 +419,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -439,7 +439,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -459,7 +459,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -479,7 +479,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -501,7 +501,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -521,7 +521,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
+                loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
             });
         }
         #endregion
@@ -543,7 +543,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -563,7 +563,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -583,7 +583,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -603,7 +603,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -623,7 +623,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -643,7 +643,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -665,7 +665,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -685,7 +685,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
+                loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
             });
         }
         #endregion
@@ -707,7 +707,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -727,7 +727,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -747,7 +747,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -767,7 +767,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -787,7 +787,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -807,7 +807,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -829,7 +829,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -849,7 +849,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
+                loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
             });
         }
         #endregion
@@ -871,7 +871,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -891,7 +891,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -911,7 +911,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -931,7 +931,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -951,7 +951,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -971,7 +971,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -993,7 +993,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
             });
         }
 
@@ -1013,7 +1013,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
-                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString().Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
+                loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
             });
         }
         #endregion
