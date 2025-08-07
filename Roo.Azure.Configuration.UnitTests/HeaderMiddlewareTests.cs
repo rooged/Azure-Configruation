@@ -31,11 +31,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.Invoke(httpContext, headerService.Object, loggerMoq.Object);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 Assert.That(httpContext.Response.StatusCode, Is.EqualTo(200));
-            });
+            }
         }
 
         [Test]
@@ -58,12 +58,12 @@ namespace Roo.Azure.Configuration.UnitTests
             memoryStream.Dispose();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.IsSessionIdValid(It.IsAny<IHeaderDictionary>()), Times.Once);
                 Assert.That(httpContext.Response.StatusCode, Is.EqualTo(432));
                 Assert.That(response, Is.EqualTo("Error 432: Header(s) not found or invalid. session-id valid: False. transaction-id valid: True. channel-id valid: True."));
-            });
+            }
         }
 
         [Test]
@@ -86,12 +86,12 @@ namespace Roo.Azure.Configuration.UnitTests
             memoryStream.Dispose();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.IsTransactionIdValid(It.IsAny<IHeaderDictionary>()), Times.Once);
                 Assert.That(httpContext.Response.StatusCode, Is.EqualTo(433));
                 Assert.That(response, Is.EqualTo("Error 433: Header(s) not found or invalid. session-id valid: True. transaction-id valid: False. channel-id valid: True."));
-            });
+            }
         }
 
         [Test]
@@ -114,12 +114,12 @@ namespace Roo.Azure.Configuration.UnitTests
             memoryStream.Dispose();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.IsChannelIdValid(It.IsAny<IHeaderDictionary>()), Times.Once);
                 Assert.That(httpContext.Response.StatusCode, Is.EqualTo(434));
                 Assert.That(response, Is.EqualTo("Error 434: Header(s) not found or invalid. session-id valid: True. transaction-id valid: True. channel-id valid: False."));
-            });
+            }
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace Roo.Azure.Configuration.UnitTests
             httpContext.Session = session.Object;
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, "email", ClaimValueTypes.Email)
+                new(ClaimTypes.Email, "email", ClaimValueTypes.Email)
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var service = new HeaderMiddleware(next);
@@ -150,12 +150,12 @@ namespace Roo.Azure.Configuration.UnitTests
             memoryStream.Dispose();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.DoesUserInfoHaveInfo(It.IsAny<IHeaderDictionary>()), Times.Once);
                 //Assert.That(httpContext.Response.StatusCode, Is.EqualTo(435));
                 //Assert.That(response, Is.EqualTo("Error 435: Header(s) not found or invalid. user-info valid: False. session-id valid: True. transaction-id valid: True. channel-id valid: True."));
-            });
+            }
         }
 
         [Test]
@@ -176,10 +176,7 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.Invoke(httpContext, headerService.Object, loggerMoq.Object);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(httpContext.Response.StatusCode, Is.EqualTo(200));
-            });
+            Assert.That(httpContext.Response.StatusCode, Is.EqualTo(200));
         }
     }
 }

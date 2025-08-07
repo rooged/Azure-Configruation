@@ -57,7 +57,7 @@ namespace Roo.Azure.Configuration.Common.Http
         /// </summary>
         public SerializationSettings? SerializationSettings { get; set; }
 
-        private static readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
         private readonly string _channelId;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -135,7 +135,7 @@ namespace Roo.Azure.Configuration.Common.Http
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            HttpResponseMessage? response = null;
+            HttpResponseMessage? response;
             if (cancellationToken == null)
             {
                 response = await httpClient.GetAsync(relativeUrl).ConfigureAwait(false);
@@ -300,7 +300,7 @@ namespace Roo.Azure.Configuration.Common.Http
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            HttpResponseMessage? response = null;
+            HttpResponseMessage? response;
             if (cancellationToken == null)
             {
                 response = await httpClient.PostAsync(relativeUrl, content).ConfigureAwait(false);
@@ -410,7 +410,7 @@ namespace Roo.Azure.Configuration.Common.Http
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            HttpResponseMessage? response = null;
+            HttpResponseMessage? response;
             if (cancellationToken == null)
             {
                 response = await httpClient.PutAsync(relativeUrl, content).ConfigureAwait(false);
@@ -495,7 +495,7 @@ namespace Roo.Azure.Configuration.Common.Http
                 relativeUrl += ToQueryString(queryParameters);
             }
             var httpClient = await HttpClientSetup(httpClientName).ConfigureAwait(false);
-            HttpResponseMessage? response = null;
+            HttpResponseMessage? response;
             if (cancellationToken == null)
             {
                 response = await httpClient.DeleteAsync(relativeUrl).ConfigureAwait(false);
@@ -591,10 +591,7 @@ namespace Roo.Azure.Configuration.Common.Http
 
         private async Task<HttpClient> HttpClientSetup(string httpClientName)
         {
-            if (HttpContext == null)
-            {
-                HttpContext = _httpContextAccessor.HttpContext;
-            }
+            HttpContext ??= _httpContextAccessor.HttpContext;
 
             var httpClient = CreateHttpClient(httpClientName);
 
@@ -679,9 +676,9 @@ namespace Roo.Azure.Configuration.Common.Http
             {
                 if (AuthenticationInfo.AdditionalRequestHeaders != null)
                 {
-                    foreach (var header in AuthenticationInfo.AdditionalRequestHeaders)
+                    foreach (var (name, value) in AuthenticationInfo.AdditionalRequestHeaders)
                     {
-                        httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Name, header.Value);
+                        httpClient.DefaultRequestHeaders.TryAddWithoutValidation(name, value);
                     }
                 }
 
@@ -731,7 +728,7 @@ namespace Roo.Azure.Configuration.Common.Http
             }
         }
 
-        private void AddBearerToken(string token, HttpClient client)
+        private static void AddBearerToken(string token, HttpClient client)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -809,9 +806,9 @@ namespace Roo.Azure.Configuration.Common.Http
             var httpClient = CreateHttpClient(AuthenticationInfo.AuthenticationHttpClientName ?? httpClientName);
             if (AuthenticationInfo.AuthenticationHeaders != null)
             {
-                foreach (var header in AuthenticationInfo.AuthenticationHeaders)
+                foreach (var (name, value) in AuthenticationInfo.AuthenticationHeaders)
                 {
-                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Name, header.Value);
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation(name, value);
                 }
             }
 
@@ -912,18 +909,18 @@ namespace Roo.Azure.Configuration.Common.Http
             var httpClient = CreateHttpClient(AuthenticationInfo.AuthenticationHttpClientName ?? httpClientName);
             if (AuthenticationInfo.AuthenticationHeaders != null)
             {
-                foreach (var header in AuthenticationInfo.AuthenticationHeaders)
+                foreach (var (name, value) in AuthenticationInfo.AuthenticationHeaders)
                 {
-                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Name, header.Value);
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation(name, value);
                 }
             }
             FormUrlEncodedContent? content = null;
             if (AuthenticationInfo.BasicEncodedContent != null)
             {
                 var encodedContent = new List<KeyValuePair<string, string>>();
-                foreach (var header in AuthenticationInfo.BasicEncodedContent)
+                foreach (var (name, value) in AuthenticationInfo.BasicEncodedContent)
                 {
-                    encodedContent.Add(new(header.Name, header.Value));
+                    encodedContent.Add(new(name, value));
                 }
                 content = new FormUrlEncodedContent(encodedContent);
                 content.Headers.Clear();
@@ -966,9 +963,9 @@ namespace Roo.Azure.Configuration.Common.Http
         private static string ToQueryString(List<(string Parameter, string Value)> queryParameters)
         {
             var s = new StringBuilder("?");
-            foreach (var queryParameter in queryParameters)
+            foreach (var (parameter, value) in queryParameters)
             {
-                s.Append($"{Uri.EscapeDataString(queryParameter.Parameter)}={Uri.EscapeDataString(queryParameter.Value)}&");
+                s.Append($"{Uri.EscapeDataString(parameter)}={Uri.EscapeDataString(value)}&");
                 
             }
             s.Length--;

@@ -64,7 +64,7 @@ namespace Roo.Azure.Configuration.PerformanceTests
             Console.WriteLine();
         }
 
-        private bool ValidateMap(List<Source> sources, List<Destination>? destinations)
+        private static bool ValidateMap(List<Source> sources, List<Destination>? destinations)
         {
             if (destinations == null)
             {
@@ -86,13 +86,13 @@ namespace Roo.Azure.Configuration.PerformanceTests
             {
                 var source = sources[i];
                 var destination = destinations[i];
-                isValid &= ValidateInt(source.Id, destination.Id, nameof(source.Id));
-                isValid &= ValidateString(source.Name, destination.Name, nameof(source.Name));
-                isValid &= ValidateString(source.Description!, destination.Description, nameof(source.Description));
-                isValid &= ValidateBool(source.IsActive, destination.IsActive, nameof(source.IsActive));
-                isValid &= ValidateDateTime(source.CreatedAt, destination.CreatedAt, nameof(source.CreatedAt));
-                isValid &= ValidateDateTime(source.UpdatedAt, destination.UpdatedAt, nameof(source.UpdatedAt));
-                isValid &= ValidateString(source.Category!, destination.Category, nameof(source.Category));
+                isValid &= Validate(source.Id, destination.Id, nameof(source.Id));
+                isValid &= Validate(source.Name, destination.Name, nameof(source.Name));
+                isValid &= Validate(source.Description!, destination.Description, nameof(source.Description));
+                isValid &= Validate(source.IsActive, destination.IsActive, nameof(source.IsActive));
+                isValid &= Validate(source.CreatedAt, destination.CreatedAt, nameof(source.CreatedAt));
+                isValid &= Validate(source.UpdatedAt, destination.UpdatedAt, nameof(source.UpdatedAt));
+                isValid &= Validate(source.Category!, destination.Category, nameof(source.Category));
                 if (source.Tags != null)
                 {
                     if (destination.Tags == null)
@@ -115,11 +115,11 @@ namespace Roo.Azure.Configuration.PerformanceTests
                     }
                     for (var j = 0; j < source.Tags.Count - 1; j++)
                     {
-                        isValid &= ValidateString(source.Tags[j], destination.Tags[j], $"{nameof(source.Tags)} index: {j}");
+                        isValid &= Validate(source.Tags[j], destination.Tags[j], $"{nameof(source.Tags)} index: {j}");
                     }
                 }
-                isValid &= ValidateString(source.AdditionalInfo!, destination.AdditionalInfo, nameof(source.AdditionalInfo));
-                isValid &= ValidateString(source.Notes!, destination.Notes, nameof(source.Notes));
+                isValid &= Validate(source.AdditionalInfo!, destination.AdditionalInfo, nameof(source.AdditionalInfo));
+                isValid &= Validate(source.Notes!, destination.Notes, nameof(source.Notes));
                 if (source.Subs != null)
                 {
                     if (destination.Subs == null)
@@ -144,14 +144,14 @@ namespace Roo.Azure.Configuration.PerformanceTests
                     {
                         var sourceSub = source.Subs[j];
                         var destinationSub = destination.Subs[j];
-                        isValid &= ValidateInt(source.Subs[j].Id, destination.Subs[j].Id, $"Source.Subs.Id index: {j}");
-                        isValid &= ValidateString(source.Subs[j].Name, destination.Subs[j].Name, $"Source.Subs.Name index: {j}");
-                        isValid &= ValidateString(source.Subs[j].Type!, destination.Subs[j].Type, $"Source.Subs.Type index: {j}");
-                        isValid &= ValidateDateTime(source.Subs[j].BuyDate, destination.Subs[j].BuyDate, $"Source.Subs.BuyDate index: {j}");
-                        isValid &= ValidateString(source.Subs[j].OwnerName!, destination.Subs[j].OwnerName, $"Source.Subs.OwnerName index: {j}");
-                        isValid &= ValidateString(source.Subs[j].Genre!, destination.Subs[j].Genre, $"Source.Subs.Genre index: {j}");
-                        isValid &= ValidateString(source.Subs[j].Color!, destination.Subs[j].Color, $"Source.Subs.Color index: {j}");
-                        isValid &= ValidateInt(source.Subs[j].Age, destination.Subs[j].Age, $"Source.Subs.Age index: {j}");
+                        isValid &= Validate(source.Subs[j].Id, destination.Subs[j].Id, $"Source.Subs.Id index: {j}");
+                        isValid &= Validate(source.Subs[j].Name, destination.Subs[j].Name, $"Source.Subs.Name index: {j}");
+                        isValid &= Validate(source.Subs[j].Type!, destination.Subs[j].Type, $"Source.Subs.Type index: {j}");
+                        isValid &= Validate(source.Subs[j].BuyDate, destination.Subs[j].BuyDate, $"Source.Subs.BuyDate index: {j}");
+                        isValid &= Validate(source.Subs[j].OwnerName!, destination.Subs[j].OwnerName, $"Source.Subs.OwnerName index: {j}");
+                        isValid &= Validate(source.Subs[j].Genre!, destination.Subs[j].Genre, $"Source.Subs.Genre index: {j}");
+                        isValid &= Validate(source.Subs[j].Color!, destination.Subs[j].Color, $"Source.Subs.Color index: {j}");
+                        isValid &= Validate(source.Subs[j].Age, destination.Subs[j].Age, $"Source.Subs.Age index: {j}");
                         if (sourceSub.ListOfInts != null)
                         {
                             if (destinationSub.ListOfInts == null)
@@ -174,7 +174,7 @@ namespace Roo.Azure.Configuration.PerformanceTests
                             }
                             for (var k = 0; k < sourceSub.ListOfInts.Count - 1; k++)
                             {
-                                isValid &= ValidateInt(sourceSub.ListOfInts[k], destinationSub.ListOfInts[k], $"Source.Subs.ListOfInts index: {j}");
+                                isValid &= Validate(sourceSub.ListOfInts[k], destinationSub.ListOfInts[k], $"Source.Subs.ListOfInts index: {j}");
                             }
                         }
                     }
@@ -187,14 +187,14 @@ namespace Roo.Azure.Configuration.PerformanceTests
                         isValid = false;
                         continue;
                     }
-                    isValid &= ValidateString(source.Metadata.Key!, destination.Metadata.Key, nameof(source.Metadata.Key));
-                    isValid &= ValidateString(source.Metadata.Value!, destination.Metadata.Value, nameof(source.Metadata.Value));
-                    isValid &= ValidateDateTime(source.Metadata.Timestamp, destination.Metadata.Timestamp, nameof(source.Metadata.Timestamp));
-                    isValid &= ValidateString(source.Metadata.Source!, destination.Metadata.Source, nameof(source.Metadata.Source));
-                    isValid &= ValidateInt(source.Metadata.Version, destination.Metadata.Version, nameof(source.Metadata.Version));
-                    isValid &= ValidateString(source.Metadata.IpAddress!, destination.Metadata.IpAddress, nameof(source.Metadata.IpAddress));
-                    isValid &= ValidateString(source.Metadata.UserAgent!, destination.Metadata.UserAgent, nameof(source.Metadata.UserAgent));
-                    isValid &= ValidateString(source.Metadata.SessionId!, destination.Metadata.SessionId, nameof(source.Metadata.SessionId));
+                    isValid &= Validate(source.Metadata.Key!, destination.Metadata.Key, nameof(source.Metadata.Key));
+                    isValid &= Validate(source.Metadata.Value!, destination.Metadata.Value, nameof(source.Metadata.Value));
+                    isValid &= Validate(source.Metadata.Timestamp, destination.Metadata.Timestamp, nameof(source.Metadata.Timestamp));
+                    isValid &= Validate(source.Metadata.Source!, destination.Metadata.Source, nameof(source.Metadata.Source));
+                    isValid &= Validate(source.Metadata.Version, destination.Metadata.Version, nameof(source.Metadata.Version));
+                    isValid &= Validate(source.Metadata.IpAddress!, destination.Metadata.IpAddress, nameof(source.Metadata.IpAddress));
+                    isValid &= Validate(source.Metadata.UserAgent!, destination.Metadata.UserAgent, nameof(source.Metadata.UserAgent));
+                    isValid &= Validate(source.Metadata.SessionId!, destination.Metadata.SessionId, nameof(source.Metadata.SessionId));
                     if (source.Metadata.MetaTags != null)
                     {
                         if (destination.Metadata.MetaTags == null)
@@ -217,7 +217,7 @@ namespace Roo.Azure.Configuration.PerformanceTests
                         }
                         for (var j = 0; j < source.Metadata.MetaTags.Count - 1; j++)
                         {
-                            isValid &= ValidateString(source.Metadata.MetaTags[j], destination.Metadata.MetaTags[j], $"{nameof(source.Metadata.MetaTags)} index: {j}");
+                            isValid &= Validate(source.Metadata.MetaTags[j], destination.Metadata.MetaTags[j], $"{nameof(source.Metadata.MetaTags)} index: {j}");
                         }
                     }
                 }
@@ -225,7 +225,7 @@ namespace Roo.Azure.Configuration.PerformanceTests
             return isValid;
         }
 
-        private static bool ValidateString(string source, string? destination, string propertyName)
+        private static bool Validate(string source, string? destination, string propertyName)
         {
             if (string.IsNullOrEmpty(destination))
             {
@@ -240,7 +240,7 @@ namespace Roo.Azure.Configuration.PerformanceTests
             return true;
         }
 
-        private static bool ValidateInt(int source, int? destination, string propertyName)
+        private static bool Validate(int source, int? destination, string propertyName)
         {
             if (destination == null)
             {
@@ -255,7 +255,7 @@ namespace Roo.Azure.Configuration.PerformanceTests
             return true;
         }
 
-        private static bool ValidateDateTime(DateTime? source, DateTime? destination, string propertyName)
+        private static bool Validate(DateTime? source, DateTime? destination, string propertyName)
         {
             if (source != null && destination == null)
             {
@@ -270,7 +270,7 @@ namespace Roo.Azure.Configuration.PerformanceTests
             return true;
         }
 
-        private static bool ValidateBool(bool source, bool? destination, string propertyName)
+        private static bool Validate(bool source, bool? destination, string propertyName)
         {
             if (destination == null)
             {

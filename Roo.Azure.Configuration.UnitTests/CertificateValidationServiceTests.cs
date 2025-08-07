@@ -6,7 +6,7 @@ namespace Roo.Azure.Configuration.UnitTests
     public class CertificateValidationServiceTests
     {
         //Common
-        private string validThumbprint = "validThumbPrint";
+        private readonly string validThumbprint = "validThumbPrint";
 
         [Test]
         public void ValidateCertificateFailInvalid_Verify()
@@ -22,10 +22,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.ValidateCertificate(cert);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(false));
-            });
+            Assert.That(result, Is.False);
         }
 
         private static X509Certificate2 CreateSelfSignedCertificate()

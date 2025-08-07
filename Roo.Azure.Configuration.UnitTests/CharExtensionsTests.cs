@@ -19,17 +19,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToLower();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals('A'))
             {
-                if (input.Equals('A'))
-                {
-                    Assert.That(result, Is.EqualTo('a'));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(input));
-                }
-            });
+                Assert.That(result, Is.EqualTo('a'));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(input));
+            }
         }
 
         [Test]
@@ -44,17 +41,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToUpper();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals('z'))
             {
-                if (input.Equals('z'))
-                {
-                    Assert.That(result, Is.EqualTo('Z'));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(input));
-                }
-            });
+                Assert.That(result, Is.EqualTo('Z'));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(input));
+            }
         }
 
         [Test]
@@ -69,17 +63,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.IsLetter();
 
             //Assert
-            Assert.Multiple(() =>
+            if (letters.Contains(input))
             {
-                if (letters.Contains(input))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
 
         [Test]
@@ -92,18 +83,16 @@ namespace Roo.Azure.Configuration.UnitTests
         {
             //Act
             var result = input.IsUpper();
+
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals('N'))
             {
-                if (input.Equals('N'))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
 
         [Test]
@@ -116,18 +105,16 @@ namespace Roo.Azure.Configuration.UnitTests
         {
             //Act
             var result = input.IsLower();
+
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals('d'))
             {
-                if (input.Equals('d'))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
 
         [Test]
@@ -140,18 +127,16 @@ namespace Roo.Azure.Configuration.UnitTests
         {
             //Act
             var result = input.IsDigit();
+
             //Assert
-            Assert.Multiple(() =>
+            if (int.TryParse(input.ToString(), out _))
             {
-                if (int.TryParse(input.ToString(), out _))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
 
         [Test]
@@ -165,18 +150,16 @@ namespace Roo.Azure.Configuration.UnitTests
         {
             //Act
             var result = input.IsAlphanumeric();
+
             //Assert
-            Assert.Multiple(() =>
+            if (int.TryParse(input.ToString(), out _) || letters.Contains(input))
             {
-                if (int.TryParse(input.ToString(), out _) || letters.Contains(input))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
     }
 }

@@ -12,10 +12,10 @@ namespace Roo.Azure.Configuration.UnitTests
     public class TelemetryInitializerTests
     {
         //Common
-        private string sessionId = "sessionId";
-        private string transactionId = "transactionId";
-        private string channelId = "channelId";
-        private string loginId = "loginId";
+        private readonly string sessionId = "sessionId";
+        private readonly string transactionId = "transactionId";
+        private readonly string channelId = "channelId";
+        private readonly string loginId = "loginId";
 
         [Test]
         public void InitializeCloudRoleNameTelemetry_Verify()
@@ -30,10 +30,7 @@ namespace Roo.Azure.Configuration.UnitTests
             service.Initialize(telemetry.Object);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(telemetry.Object.Context.Cloud.RoleName, Is.EqualTo("cloudRoleName"));
-            });
+            Assert.That(telemetry.Object.Context.Cloud.RoleName, Is.EqualTo("cloudRoleName"));
         }
 
         [Test]
@@ -57,7 +54,7 @@ namespace Roo.Azure.Configuration.UnitTests
             telemetry.Object.Context.GlobalProperties.TryGetValue("HttpContextError", out var httpContextError);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdValue, Is.Not.Null);
                 Assert.That(sessionIdValue?.Length, Is.EqualTo(36));
@@ -67,7 +64,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(userInfoLoginIdValue, Is.Null);
                 Assert.That(httpContextError, Is.Not.Null);
                 Assert.That(httpContextError, Is.EqualTo("Request made without HttpContext available for telemetry to consume. Custom headers unable to be set correctly, used default values."));
-            });
+            }
         }
 
         [Test]
@@ -92,7 +89,7 @@ namespace Roo.Azure.Configuration.UnitTests
             httpContext.Session = session.Object;
             var claims = new List<Claim>
             {
-                new Claim(Constants.UserInfoLoginId, loginId)
+                new(Constants.UserInfoLoginId, loginId)
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -115,7 +112,7 @@ namespace Roo.Azure.Configuration.UnitTests
             telemetry.Object.Context.GlobalProperties.TryGetValue("HttpRequestHeadersError", out var httpRequestHeadersError);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdValue, Is.Not.Null);
                 Assert.That(sessionIdValue, Is.EqualTo(sessionId));
@@ -127,7 +124,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(userInfoLoginIdValue, Is.EqualTo(loginId));
                 Assert.That(httpRequestHeadersError, Is.Not.Null);
                 Assert.That(httpRequestHeadersError, Is.EqualTo("Request made without headers available for telemetry to consume. Custom headers unable to be set correctly from existing request, used default values."));
-            });
+            }
         }
 
         [Test]
@@ -152,7 +149,7 @@ namespace Roo.Azure.Configuration.UnitTests
             httpContext.Session = session.Object;
             var claims = new List<Claim>
             {
-                new Claim(Constants.UserInfoLoginId, "existingLoginId")
+                new(Constants.UserInfoLoginId, "existingLoginId")
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             httpContext.Request.Headers.TryAdd(Constants.SessionIdHeaderName, sessionId);
@@ -183,7 +180,7 @@ namespace Roo.Azure.Configuration.UnitTests
             telemetry.Object.Context.GlobalProperties.TryGetValue("HttpRequestHeadersError", out var httpRequestHeadersError);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdValue, Is.Not.Null);
                 Assert.That(sessionIdValue, Is.EqualTo(sessionId));
@@ -195,7 +192,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(userInfoLoginIdValue, Is.EqualTo(loginId));
                 Assert.That(httpContextError, Is.Null);
                 Assert.That(httpRequestHeadersError, Is.Null);
-            });
+            }
         }
     }
 }

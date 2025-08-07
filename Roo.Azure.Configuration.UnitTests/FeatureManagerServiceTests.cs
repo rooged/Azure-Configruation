@@ -5,7 +5,7 @@ namespace Roo.Azure.Configuration.UnitTests
     public class FeatureManagerServiceTests
     {
         //Common
-        private string featureName = "featureName";
+        private readonly string featureName = "featureName";
 
         [Test]
         public async Task IsFeatureEnabled_Verify()
@@ -19,11 +19,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.IsFeatureEnabled(featureName);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 featureManagerService.Verify(x => x.IsEnabledAsync(It.IsAny<string>()), Times.Once);
-                Assert.That(result, Is.EqualTo(true));
-            });
+                Assert.That(result, Is.True);
+            }
         }
 
         [Test]
@@ -38,11 +38,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.IsFeatureEnabled(featureName, "context");
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 featureManagerService.Verify(x => x.IsEnabledAsync(It.IsAny<string>(), It.IsAny<It.IsAnyType>()), Times.Once);
-                Assert.That(result, Is.EqualTo(true));
-            });
+                Assert.That(result, Is.True);
+            }
         }
 
         [Test]
@@ -63,11 +63,11 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 featureManagerService.Verify(x => x.GetFeatureNamesAsync(), Times.Once);
                 Assert.That(result, Is.EqualTo(featureName));
-            });
+            }
         }
 
         private static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(IEnumerable<T> values)

@@ -1,21 +1,16 @@
 using Azure;
-using Azure.Core;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Files.Shares;
-using Azure.Storage.Files.Shares.Models;
-using Microsoft.Azure.Amqp.Encoding;
 using Roo.Azure.Configuration.Common.Utilities.Storage;
 
 namespace Roo.Azure.Configuration.UnitTests
 {
     public class BlobServiceTests
     {
-        private string storageName = "storageName";
-        private string containerName = "containerName";
-        private string blobName = "blobName";
+        private readonly string storageName = "storageName";
+        private readonly string containerName = "containerName";
+        private readonly string blobName = "blobName";
 
         [Test]
         public void GetAzureStorageUrl_Verify()
@@ -27,11 +22,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetAzureStorageUrl(storageName, containerName, blobName);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result, Is.EqualTo($"https://{storageName}.blob.core.windows.net/{containerName}/{blobName}"));
-            });
+            }
         }
 
         [Test]
@@ -61,7 +56,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKeyToken = serviceToken.ContainerClients.TryGetValue(containerToken, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Name, Is.EqualTo(containerName));
@@ -71,7 +66,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(hasKey, Is.True);
                 Assert.That(hasKeyManagedIdentity, Is.True);
                 Assert.That(hasKeyToken, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -90,13 +85,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.BlobClients.TryGetValue((containerName, blobName), out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Name, Is.EqualTo(blobName));
                 Assert.That(service.BlobClients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -117,14 +112,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var blobHasKey = service.BlobClients.TryGetValue((containerName, blobName), out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(service.ContainerClients, Is.Not.Null);
                 Assert.That(containerHasKey, Is.True);
                 Assert.That(service.BlobClients, Is.Not.Null);
                 Assert.That(blobHasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -146,14 +141,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var blobHasKey = service.BlobClients.TryGetValue((containerName, blobName), out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.True);
                 Assert.That(service.ContainerClients, Is.Not.Null);
                 Assert.That(containerHasKey, Is.True);
                 Assert.That(service.BlobClients, Is.Not.Null);
                 Assert.That(blobHasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -175,14 +170,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var blobHasKey = service.BlobClients.TryGetValue((containerName, blobName), out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.True);
                 Assert.That(service.ContainerClients, Is.Not.Null);
                 Assert.That(containerHasKey, Is.True);
                 Assert.That(service.BlobClients, Is.Not.Null);
                 Assert.That(blobHasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -206,14 +201,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var blobHasKey = service.BlobClients.TryGetValue((containerName, blobName), out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(service.ContainerClients, Is.Not.Null);
                 Assert.That(containerHasKey, Is.True);
                 Assert.That(service.BlobClients, Is.Not.Null);
                 Assert.That(blobHasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -237,14 +232,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var blobHasKey = service.BlobClients.TryGetValue((containerName, blobName), out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(service.ContainerClients, Is.Not.Null);
                 Assert.That(containerHasKey, Is.True);
                 Assert.That(service.BlobClients, Is.Not.Null);
                 Assert.That(blobHasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -267,14 +262,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var blobHasKey = service.BlobClients.TryGetValue((containerName, blobName), out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.True);
                 Assert.That(service.ContainerClients, Is.Not.Null);
                 Assert.That(containerHasKey, Is.True);
                 Assert.That(service.BlobClients, Is.Not.Null);
                 Assert.That(blobHasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -297,12 +292,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var containerHasKey = service.ContainerClients.TryGetValue(containerName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(service.ContainerClients, Is.Not.Null);
                 Assert.That(containerHasKey, Is.True);
-            });
+            }
         }
     }
 }

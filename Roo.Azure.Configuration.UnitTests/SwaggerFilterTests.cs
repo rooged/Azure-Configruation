@@ -8,8 +8,8 @@ namespace Roo.Azure.Configuration.UnitTests
     public class SwaggerFilterTests
     {
         //Common
-        private string controller = "TestController";
-        private string schema = "TestModel";
+        private readonly string controller = "TestController";
+        private readonly string schema = "TestModel";
 
         [Test]
         public void ApplyPathsFilter_Verify()
@@ -48,13 +48,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var schemas = swaggerDoc.Components.Schemas;
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(paths, Is.Not.Null);
-                Assert.That(paths.Where(x => x.Key == controller).Count, Is.EqualTo(0));
+                Assert.That(paths.Where(x => x.Key == controller).Count, Is.Zero);
                 Assert.That(schemas, Is.Not.Null);
-                Assert.That(schemas.Where(x => x.Key == schema).Count, Is.EqualTo(0));
-            });
+                Assert.That(schemas.Where(x => x.Key == schema).Count, Is.Zero);
+            }
         }
     }
 }

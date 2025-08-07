@@ -108,7 +108,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
                 assignExpression.Add(Expression.Assign(Expression.Property(sourceVariable, sourceProperty), valueExpression));
             }
             assignExpression.Add(sourceVariable);
-            var body = Expression.Block(new[] { sourceVariable }, assignExpression);
+            var body = Expression.Block([sourceVariable], assignExpression);
             var lambda = Expression.Lambda<Func<TDestination, TSource>>(body, destinationParameters);
             ReverseMapDelegate = lambda.Compile();
             _mapper.RegisterReverseMap(ReverseMapDelegate);

@@ -7,10 +7,10 @@ namespace Roo.Azure.Configuration.UnitTests
     public class HeaderServiceTests
     {
         //Common
-        private string sessionId = "sessionId";
-        private string transactionId = "transactionId";
-        private string channelId = "channelId";
-        private UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
+        private readonly string sessionId = "sessionId";
+        private readonly string transactionId = "transactionId";
+        private readonly string channelId = "channelId";
+        private readonly UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
         private IHeaderDictionary headerDictionaryMissingHeaders;
 
         [SetUp]
@@ -33,10 +33,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetSessionId(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(sessionId));
-            });
+            Assert.That(result, Is.EqualTo(sessionId));
         }
 
         [Test]
@@ -49,10 +46,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetSessionId(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(null));
-            });
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -67,10 +61,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.IsSessionIdValid(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(true));
-            });
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -83,10 +74,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.IsSessionIdValid(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(false));
-            });
+            Assert.That(result, Is.False);
         }
         #endregion
 
@@ -103,10 +91,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetTransactionId(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(transactionId));
-            });
+            Assert.That(result, Is.EqualTo(transactionId));
         }
 
         [Test]
@@ -119,10 +104,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetTransactionId(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(null));
-            });
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -137,10 +119,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.IsTransactionIdValid(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(true));
-            });
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -153,10 +132,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.IsTransactionIdValid(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(false));
-            });
+            Assert.That(result, Is.False);
         }
         #endregion
 
@@ -173,10 +149,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetChannelId(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(channelId));
-            });
+            Assert.That(result, Is.EqualTo(channelId));
         }
 
         [Test]
@@ -189,10 +162,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetChannelId(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(null));
-            });
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -207,10 +177,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.IsChannelIdValid(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(true));
-            });
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -223,10 +190,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.IsChannelIdValid(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(false));
-            });
+            Assert.That(result, Is.False);
         }
         #endregion
 
@@ -244,7 +208,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetUserInfo(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.LoginId, Is.EqualTo(userInfo.LoginId));
@@ -252,7 +216,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(result?.Email, Is.EqualTo(userInfo.Email));
                 Assert.That(result?.SubId, Is.EqualTo(userInfo.SubId));
                 Assert.That(result?.IsAuthenticated, Is.EqualTo(userInfo.IsAuthenticated));
-            });
+            }
         }
 
         [Test]
@@ -265,10 +229,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetUserInfo(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(null));
-            });
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -284,11 +245,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetUserInfoLoginId(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result, Is.EqualTo(userInfo.LoginId));
-            });
+            }
         }
 
         [Test]
@@ -305,10 +266,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.GetUserInfoLoginId(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(null));
-            });
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -324,10 +282,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.DoesUserInfoHaveInfo(httpContext.Request.Headers);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(true));
-            });
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -340,10 +295,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.DoesUserInfoHaveInfo(headerDictionaryMissingHeaders);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(false));
-            });
+            Assert.That(result, Is.False);
         }
         #endregion
     }

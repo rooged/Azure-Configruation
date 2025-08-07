@@ -132,10 +132,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="ex">Exception</param>
         public void LogInformation(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (context == null)
-            {
-                context = _httpContextAccessor.HttpContext;
-            }
+            context ??= _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 return;
@@ -170,10 +167,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="ex">Exception</param>
         public void LogError(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (context == null)
-            {
-                context = _httpContextAccessor.HttpContext;
-            }
+            context ??= _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 return;
@@ -213,10 +207,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="e">Exception</param>
         public void LogWarning(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (context == null)
-            {
-                context = _httpContextAccessor.HttpContext;
-            }
+            context ??= _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 return;
@@ -256,10 +247,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="e">Exception</param>
         public void LogTrace(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (context == null)
-            {
-                context = _httpContextAccessor.HttpContext;
-            }
+            context ??= _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 return;
@@ -299,10 +287,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="e">Exception</param>
         public void LogCritical(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (context == null)
-            {
-                context = _httpContextAccessor.HttpContext;
-            }
+            context ??= _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 return;
@@ -342,10 +327,7 @@ namespace Roo.Azure.Configuration.Common.Logging
         /// <param name="e">Exception</param>
         public void LogDebug(HttpContext? context = null, string? message = null, Exception? ex = null)
         {
-            if (context == null)
-            {
-                context = _httpContextAccessor.HttpContext;
-            }
+            context ??= _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 return;

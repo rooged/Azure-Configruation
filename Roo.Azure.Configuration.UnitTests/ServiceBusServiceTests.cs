@@ -7,16 +7,16 @@ namespace Roo.Azure.Configuration.UnitTests
     public class ServiceBusServiceTests
     {
         //Common
-        private string serviceBusNamespace = "serviceBusNamespace";
-        private string serviceBusQueueName = "serviceBusQueueName";
-        private string serviceBusConnectionString = "serviceBusConnectionString";
-        private string messageString = "message";
-        private ReadOnlyMemory<byte> messageReadOnlyMemory = new ReadOnlyMemory<byte>([0]);
-        private BinaryData binaryData = new BinaryData([0]);
-        private ServiceBusMessage serviceBusMessage = new ServiceBusMessage("message");
-        private DefaultAzureCredential token = new();
-        private DateTimeOffset dateTimeOffset = new();
-        private CancellationToken cancellationToken = new();
+        private readonly string serviceBusNamespace = "serviceBusNamespace";
+        private readonly string serviceBusQueueName = "serviceBusQueueName";
+        private readonly string serviceBusConnectionString = "serviceBusConnectionString";
+        private readonly string messageString = "message";
+        private readonly ReadOnlyMemory<byte> messageReadOnlyMemory = new([0]);
+        private readonly BinaryData binaryData = new([0]);
+        private readonly ServiceBusMessage serviceBusMessage = new("message");
+        private readonly DefaultAzureCredential token = new();
+        private readonly DateTimeOffset dateTimeOffset = new();
+        private readonly CancellationToken cancellationToken = new();
 
         #region String
         [Test]
@@ -33,11 +33,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusNamespace, serviceBusQueueName, messageString, token);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), null), Times.Once);
-            });
+            }
         }
 
         [Test]
@@ -54,11 +54,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusConnectionString, serviceBusQueueName, messageString, dateTimeOffset, cancellationToken);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()), Times.Once);
-            });
+            }
         }
         #endregion
 
@@ -77,11 +77,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusNamespace, serviceBusQueueName, messageReadOnlyMemory, token);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), null), Times.Once);
-            });
+            }
         }
 
         [Test]
@@ -98,11 +98,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusConnectionString, serviceBusQueueName, messageReadOnlyMemory, dateTimeOffset, cancellationToken);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()), Times.Once);
-            });
+            }
         }
         #endregion
 
@@ -121,11 +121,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusNamespace, serviceBusQueueName, binaryData, token);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), null), Times.Once);
-            });
+            }
         }
 
         [Test]
@@ -142,11 +142,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusConnectionString, serviceBusQueueName, binaryData, dateTimeOffset, cancellationToken);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()), Times.Once);
-            });
+            }
         }
         #endregion
 
@@ -165,11 +165,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusNamespace, serviceBusQueueName, serviceBusMessage, token);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), null), Times.Once);
-            });
+            }
         }
 
         [Test]
@@ -186,11 +186,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SendToServiceBus(serviceBusConnectionString, serviceBusQueueName, serviceBusMessage, dateTimeOffset, cancellationToken);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 serviceBusClient.Verify(x => x.CreateSender(It.IsAny<string>()), Times.Once);
                 serviceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()), Times.Once);
-            });
+            }
         }
         #endregion
     }
