@@ -6,7 +6,7 @@ namespace Roo.Azure.Configuration.UnitTests
     public class ServiceExceptionConverterTests
     {
         //Common
-        private string transactionId = "transactionId";
+        private readonly string transactionId = "transactionId";
 
         [Test]
         public void ConvertToServiceException_Verify()
@@ -19,7 +19,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var serviceException = exception.ConvertToServiceException(transactionId);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(serviceException.Error.Code, Is.EqualTo(ErrorCode.InvalidOperation));
                 Assert.That(serviceException.Error.CodeName, Is.EqualTo(ErrorCode.InvalidOperation.GetDisplayName()));
@@ -28,7 +28,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(serviceException.Message, Is.EqualTo("Exception of type 'Roo.Azure.Configuration.Common.ServiceExceptions.ServiceException' was thrown."));
                 Assert.That(serviceException.InnerException, Is.Not.Null);
                 Assert.That(serviceException.InnerException?.Message, Is.EqualTo(exceptionMessage));
-            });
+            }
         }
 
         [Test]
@@ -43,13 +43,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var exception = serviceException.ConvertFromServiceException();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(exception.GetType(), Is.EqualTo(typeof(InvalidOperationException)));
                 Assert.That(exception.Message, Is.EqualTo(exceptionMessage));
                 Assert.That(exception.InnerException, Is.Not.Null);
                 Assert.That(exception.InnerException?.GetType(), Is.EqualTo(typeof(ArgumentException)));
-            });
+            }
         }
     }
 }

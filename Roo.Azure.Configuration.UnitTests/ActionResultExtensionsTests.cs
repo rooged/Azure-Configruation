@@ -14,7 +14,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var resultObject = TestObject().GetValue();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(resultString, Is.Not.Null);
                 Assert.That(resultString, Is.EqualTo("test"));
@@ -23,7 +23,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(resultObject?.Id, Is.EqualTo(1));
                 Assert.That(resultObject?.Key, Is.EqualTo("key"));
                 Assert.That(resultObject?.Value, Is.EqualTo("value"));
-            });
+            }
         }
 
         private static ActionResult<string> TestString()

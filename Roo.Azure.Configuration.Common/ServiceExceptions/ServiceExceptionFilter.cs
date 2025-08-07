@@ -79,7 +79,7 @@ namespace Roo.Azure.Configuration.Common.ServiceExceptions
             var encodedMessage = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(serviceException));
             using var stream = new MemoryStream(encodedMessage);
             var buffer = stream.ToArray();
-            await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
+            await context.HttpContext.Response.Body.WriteAsync(buffer).ConfigureAwait(false);
             await stream.DisposeAsync().ConfigureAwait(false);
 
             base.OnException(context);

@@ -14,17 +14,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToBool();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("true"))
             {
-                if (input.Equals("true"))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -37,17 +34,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeBool();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("true"))
             {
-                if (input.Equals("true"))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
 
         [Test]
@@ -60,17 +54,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToDecimal();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5.15"))
             {
-                if (input.Equals("5.15"))
-                {
-                    Assert.That(result, Is.EqualTo(5.15m));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5.15m));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -83,17 +74,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeDecimal();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5.15"))
             {
-                if (input.Equals("5.15"))
-                {
-                    Assert.That(result, Is.EqualTo(5.15m));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(0m));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5.15m));
+            }
+            else
+            {
+                Assert.That(result, Is.Zero);
+            }
         }
 
         [Test]
@@ -106,17 +94,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToDouble();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5.123456789"))
             {
-                if (input.Equals("5.123456789"))
-                {
-                    Assert.That(result, Is.EqualTo(5.123456789));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5.123456789));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -129,17 +114,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeDouble();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5.123456789"))
             {
-                if (input.Equals("5.123456789"))
-                {
-                    Assert.That(result, Is.EqualTo(5.123456789));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(0));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5.123456789));
+            }
+            else
+            {
+                Assert.That(result, Is.Zero);
+            }
         }
 
         [Test]
@@ -152,17 +134,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToInt();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5"))
             {
-                if (input.Equals("5"))
-                {
-                    Assert.That(result, Is.EqualTo(5));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -175,17 +154,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeInt();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5"))
             {
-                if (input.Equals("5"))
-                {
-                    Assert.That(result, Is.EqualTo(5));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(0));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5));
+            }
+            else
+            {
+                Assert.That(result, Is.Zero);
+            }
         }
 
         [Test]
@@ -198,17 +174,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToLong();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("2147483648"))
             {
-                if (input.Equals("2147483648"))
-                {
-                    Assert.That(result, Is.EqualTo(2147483648));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo(2147483648));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -221,17 +194,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeLong();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("21474836489"))
             {
-                if (input.Equals("21474836489"))
-                {
-                    Assert.That(result, Is.EqualTo(21474836489));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(0));
-                }
-            });
+                Assert.That(result, Is.EqualTo(21474836489));
+            }
+            else
+            {
+                Assert.That(result, Is.Zero);
+            }
         }
 
         [Test]
@@ -244,17 +214,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToFloat();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5.1234567"))
             {
-                if (input.Equals("5.1234567"))
-                {
-                    Assert.That(result, Is.EqualTo(5.1234567f));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5.1234567f));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -267,17 +234,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeFloat();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5.1234567"))
             {
-                if (input.Equals("5.1234567"))
-                {
-                    Assert.That(result, Is.EqualTo(5.1234567f));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(0));
-                }
-            });
+                Assert.That(result, Is.EqualTo(5.1234567f));
+            }
+            else
+            {
+                Assert.That(result, Is.Zero);
+            }
         }
 
         [Test]
@@ -290,17 +254,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToShort();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5"))
             {
-                if (input.Equals("5"))
-                {
-                    Assert.That(result, Is.EqualTo((short)5));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo((short)5));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -313,17 +274,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeShort();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("5"))
             {
-                if (input.Equals("5"))
-                {
-                    Assert.That(result, Is.EqualTo((short)5));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(0));
-                }
-            });
+                Assert.That(result, Is.EqualTo((short)5));
+            }
+            else
+            {
+                Assert.That(result, Is.Zero);
+            }
         }
 
         [Test]
@@ -336,17 +294,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToDateTime();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("08/10/2025 2:30:45"))
             {
-                if (input.Equals("08/10/2025 2:30:45"))
-                {
-                    Assert.That(result, Is.EqualTo(new DateTime(2025, 8, 10, 2, 30, 45)));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo(new DateTime(2025, 8, 10, 2, 30, 45)));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -359,17 +314,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeDateTime();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("08/10/2025 2:30:45"))
             {
-                if (input.Equals("08/10/2025 2:30:45"))
-                {
-                    Assert.That(result, Is.EqualTo(new DateTime(2025, 8, 10, 2, 30, 45)));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(DateTime.MinValue));
-                }
-            });
+                Assert.That(result, Is.EqualTo(new DateTime(2025, 8, 10, 2, 30, 45)));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(DateTime.MinValue));
+            }
         }
 
         [Test]
@@ -382,17 +334,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToGuid();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("27fc633b-8b18-44fa-90e0-2b0be9de284b"))
             {
-                if (input.Equals("27fc633b-8b18-44fa-90e0-2b0be9de284b"))
-                {
-                    Assert.That(result, Is.EqualTo(Guid.Parse("27fc633b-8b18-44fa-90e0-2b0be9de284b")));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(null));
-                }
-            });
+                Assert.That(result, Is.EqualTo(Guid.Parse("27fc633b-8b18-44fa-90e0-2b0be9de284b")));
+            }
+            else
+            {
+                Assert.That(result, Is.Null);
+            }
         }
 
         [Test]
@@ -405,17 +354,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeGuid();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("27fc633b-8b18-44fa-90e0-2b0be9de284b"))
             {
-                if (input.Equals("27fc633b-8b18-44fa-90e0-2b0be9de284b"))
-                {
-                    Assert.That(result, Is.EqualTo(Guid.Parse("27fc633b-8b18-44fa-90e0-2b0be9de284b")));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(Guid.Empty));
-                }
-            });
+                Assert.That(result, Is.EqualTo(Guid.Parse("27fc633b-8b18-44fa-90e0-2b0be9de284b")));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(Guid.Empty));
+            }
         }
 
         [Test]
@@ -428,24 +374,21 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToTitleCase(convertAllCapitals);
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("a test string, ABC, aNd aPPLEs"))
             {
-                if (input.Equals("a test string, ABC, aNd aPPLEs"))
+                if (convertAllCapitals)
                 {
-                    if (convertAllCapitals)
-                    {
-                        Assert.That(result, Is.EqualTo("A Test String, Abc, And Apples"));
-                    }
-                    else
-                    {
-                        Assert.That(result, Is.EqualTo("A Test String, ABC, And Apples"));
-                    }
+                    Assert.That(result, Is.EqualTo("A Test String, Abc, And Apples"));
                 }
                 else
                 {
-                    Assert.That(result, Is.EqualTo(string.Empty));
+                    Assert.That(result, Is.EqualTo("A Test String, ABC, And Apples"));
                 }
-            });
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -459,21 +402,18 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToNumbersOnly();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("123-456-7890"))
             {
-                if (input.Equals("123-456-7890"))
-                {
-                    Assert.That(result, Is.EqualTo("1234567890"));
-                }
-                else if (input.Equals("$1,234,567,890"))
-                {
-                    Assert.That(result, Is.EqualTo("1234567890"));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(string.Empty));
-                }
-            });
+                Assert.That(result, Is.EqualTo("1234567890"));
+            }
+            else if (input.Equals("$1,234,567,890"))
+            {
+                Assert.That(result, Is.EqualTo("1234567890"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -486,21 +426,18 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.Truncate(4);
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("passfail"))
             {
-                if (input.Equals("passfail"))
-                {
-                    Assert.That(result, Is.EqualTo("pass"));
-                }
-                else if (input.Equals("pas"))
-                {
-                    Assert.That(result, Is.EqualTo("pas"));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(string.Empty));
-                }
-            });
+                Assert.That(result, Is.EqualTo("pass"));
+            }
+            else if (input.Equals("pas"))
+            {
+                Assert.That(result, Is.EqualTo("pas"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -513,17 +450,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.IsValidEmailFormat();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("pass@email.com"))
             {
-                if (input.Equals("pass@email.com"))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
 
         [Test]
@@ -535,17 +469,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.ToSafeString();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("abc123!@#$%^&'\"def"))
             {
-                if (input.Equals("abc123!@#$%^&'\"def"))
-                {
-                    Assert.That(result, Is.EqualTo("abc123!@#$%^&amp;&#39;&quot;def"));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(string.Empty));
-                }
-            });
+                Assert.That(result, Is.EqualTo("abc123!@#$%^&amp;&#39;&quot;def"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -558,17 +489,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.EnsureEndsWith("pass");
 
             //Assert
-            Assert.Multiple(() =>
+            if (!input.Equals(""))
             {
-                if (!input.Equals(""))
-                {
-                    Assert.That(result, Is.EqualTo("testpass"));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(string.Empty));
-                }
-            });
+                Assert.That(result, Is.EqualTo("testpass"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -581,17 +509,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.MaskEmail();
 
             //Assert
-            Assert.Multiple(() =>
+            if (!input.Equals(""))
             {
-                if (!input.Equals(""))
-                {
-                    Assert.That(result, Is.EqualTo("te***@email.com"));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(string.Empty));
-                }
-            });
+                Assert.That(result, Is.EqualTo("te***@email.com"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -604,17 +529,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.FirstCharToUpper();
 
             //Assert
-            Assert.Multiple(() =>
+            if (!input.Equals(""))
             {
-                if (!input.Equals(""))
-                {
-                    Assert.That(result, Is.EqualTo("Pass"));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(string.Empty));
-                }
-            });
+                Assert.That(result, Is.EqualTo("Pass"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -626,17 +548,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.Base64Encode();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input.Equals("pass"))
             {
-                if (input.Equals("pass"))
-                {
-                    Assert.That(result, Is.Not.EqualTo("pass"));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(string.Empty));
-                }
-            });
+                Assert.That(result, Is.Not.EqualTo("pass"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo(string.Empty));
+            }
         }
 
         [Test]
@@ -649,17 +568,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.IsNullOrEmpty();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input == null || input.Equals(""))
             {
-                if (input == null || input.Equals(""))
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-            });
+                Assert.That(result, Is.True);
+            }
+            else
+            {
+                Assert.That(result, Is.False);
+            }
         }
 
         [Test]
@@ -676,17 +592,14 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = input.IsNullEmptyOrWhitespace();
 
             //Assert
-            Assert.Multiple(() =>
+            if (input != null && input.Equals("pass"))
             {
-                if (input != null && input.Equals("pass"))
-                {
-                    Assert.That(result, Is.EqualTo(false));
-                }
-                else
-                {
-                    Assert.That(result, Is.EqualTo(true));
-                }
-            });
+                Assert.That(result, Is.False);
+            }
+            else
+            {
+                Assert.That(result, Is.True);
+            }
         }
     }
 }

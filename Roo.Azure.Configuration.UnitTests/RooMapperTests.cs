@@ -1,6 +1,5 @@
 using Roo.Azure.Configuration.Common.Mapper;
 using Roo.Azure.Configuration.Common.Utilities.Extensions;
-using System.ComponentModel.DataAnnotations;
 
 namespace Roo.Azure.Configuration.UnitTests
 {
@@ -22,7 +21,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<Destination>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.String, Is.EqualTo(source.String));
                 Assert.That(destination?.StringNull, Is.Null);
@@ -38,7 +37,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.ByteNull, Is.Null);
                 Assert.That(destination?.DateTime, Is.EqualTo(source.DateTime));
                 Assert.That(destination?.DateTimeNull, Is.Null);
-            });
+            }
         }
 
         [Test]
@@ -57,7 +56,7 @@ namespace Roo.Azure.Configuration.UnitTests
             source = mapper.Map<Source>(destination);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(source?.String, Is.EqualTo(destination.String));
                 Assert.That(source?.StringNull, Is.Null);
@@ -73,7 +72,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(source?.ByteNull, Is.Null);
                 Assert.That(source?.DateTime, Is.EqualTo(destination.DateTime));
                 Assert.That(source?.DateTimeNull, Is.Null);
-            });
+            }
         }
 
         [Test]
@@ -92,7 +91,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<Destination>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.String, Is.EqualTo(source.String));
                 Assert.That(destination?.StringNull, Is.EqualTo(source.String));
@@ -108,7 +107,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.ByteNull, Is.EqualTo(source.Byte));
                 Assert.That(destination?.DateTime, Is.EqualTo(source.DateTime));
                 Assert.That(destination?.DateTimeNull, Is.EqualTo(source.DateTime));
-            });
+            }
         }
 
         [Test]
@@ -127,7 +126,7 @@ namespace Roo.Azure.Configuration.UnitTests
             source = mapper.Map<Source>(destination);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(source?.String, Is.EqualTo(destination.String));
                 Assert.That(source?.Int, Is.EqualTo(destination.Int));
@@ -136,7 +135,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(source?.Bool, Is.EqualTo(destination.Bool));
                 Assert.That(source?.Byte, Is.EqualTo(destination.Byte));
                 Assert.That(source?.DateTime, Is.EqualTo(destination.DateTime));
-            });
+            }
         }
 
         [Test]
@@ -155,7 +154,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<Destination>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.String, Is.EqualTo("test2"));
                 Assert.That(destination?.StringNull, Is.EqualTo(source.String));
@@ -165,13 +164,13 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.DoubleNull, Is.EqualTo(source.Double));
                 Assert.That(destination?.Decimal, Is.EqualTo(2m));
                 Assert.That(destination?.DecimalNull, Is.EqualTo(source.Decimal));
-                Assert.That(destination?.Bool, Is.EqualTo(false));
+                Assert.That(destination?.Bool, Is.False);
                 Assert.That(destination?.BoolNull, Is.EqualTo(source.Bool));
                 Assert.That(destination?.Byte, Is.EqualTo(2));
                 Assert.That(destination?.ByteNull, Is.EqualTo(source.Byte));
                 Assert.That(destination?.DateTime, Is.EqualTo(DateTime.Now.Date.AddDays(1)));
                 Assert.That(destination?.DateTimeNull, Is.EqualTo(source.DateTime));
-            });
+            }
         }
 
         [Test]
@@ -190,7 +189,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<Destination>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.String, Is.EqualTo("testing"));
                 Assert.That(destination?.StringNull, Is.EqualTo(DateTime.Now.Date.ToString()));
@@ -200,13 +199,13 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.DoubleNull, Is.EqualTo(1.1));
                 Assert.That(destination?.Decimal, Is.EqualTo(1.1m));
                 Assert.That(destination?.DecimalNull, Is.EqualTo(1.1m));
-                Assert.That(destination?.Bool, Is.EqualTo(true));
-                Assert.That(destination?.BoolNull, Is.EqualTo(true));
+                Assert.That(destination?.Bool, Is.True);
+                Assert.That(destination?.BoolNull, Is.True);
                 Assert.That(destination?.Byte, Is.EqualTo(3));
                 Assert.That(destination?.ByteNull, Is.EqualTo(3));
                 Assert.That(destination?.DateTime, Is.EqualTo(DateTime.Now.Date.AddDays(-2)));
                 Assert.That(destination?.DateTimeNull, Is.EqualTo(DateTime.Now.Date));
-            });
+            }
         }
 
         [Test]
@@ -225,7 +224,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<Destination>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.String, Is.EqualTo(source.String + source.String));
                 Assert.That(destination?.StringNull, Is.EqualTo($"{source.String} testing"));
@@ -235,13 +234,13 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.DoubleNull, Is.EqualTo(source.Double + 0.1));
                 Assert.That(destination?.Decimal, Is.EqualTo(source.Decimal + source.Decimal));
                 Assert.That(destination?.DecimalNull, Is.EqualTo(0.5m));
-                Assert.That(destination?.Bool, Is.EqualTo(true));
-                Assert.That(destination?.BoolNull, Is.EqualTo(true));
-                Assert.That(destination?.Byte, Is.EqualTo(0));
+                Assert.That(destination?.Bool, Is.True);
+                Assert.That(destination?.BoolNull, Is.True);
+                Assert.That(destination?.Byte, Is.Zero);
                 Assert.That(destination?.ByteNull, Is.EqualTo(1));
                 Assert.That(destination?.DateTime, Is.EqualTo(DateTime.Now.Date.AddDays(-1)));
                 Assert.That(destination?.DateTimeNull, Is.EqualTo(DateTime.Now.Date));
-            });
+            }
         }
 
         [Test]
@@ -260,7 +259,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<List<Destination>>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?[0].String, Is.EqualTo(source[0].String));
                 Assert.That(destination?[0].StringNull, Is.EqualTo(source[0].String));
@@ -282,7 +281,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?[1].IntNull, Is.EqualTo(source[1].Int));
                 Assert.That(destination?[1].DateTime, Is.EqualTo(source[1].DateTime));
                 Assert.That(destination?[1].DateTimeNull, Is.EqualTo(source[1].DateTime));
-            });
+            }
         }
 
         [Test]
@@ -304,7 +303,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination2 = mapper.Map<Destination2>(source2);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.String, Is.EqualTo(source.String));
                 Assert.That(destination?.StringNull, Is.EqualTo(source.String));
@@ -324,7 +323,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination2?.StringNull, Is.EqualTo("testOverwrite"));
                 Assert.That(destination2?.Int, Is.EqualTo(source2.Int + 2));
                 Assert.That(destination2?.IntNull, Is.EqualTo(10));
-            });
+            }
         }
 
         [Test]
@@ -343,7 +342,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<DestinationNest>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.Nested.String, Is.EqualTo(source.Nested.String));
                 Assert.That(destination?.Nested.StringNull, Is.EqualTo(source.Nested.String));
@@ -355,7 +354,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.NestedDifferent.Int, Is.EqualTo(source.NestedDifferent.Int));
                 Assert.That(destination?.NestedDifferent.IntNull, Is.Null);
                 Assert.That(destination?.NestedDifferentNull, Is.Null);
-            });
+            }
         }
 
         [Test]
@@ -374,10 +373,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<DestinationNest>(source);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(destination?.Nested.String, Is.EqualTo("test"));
-            });
+            Assert.That(destination?.Nested.String, Is.EqualTo("test"));
         }
 
         [Test]
@@ -402,7 +398,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<DestinationListNest>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.Nested[0].String, Is.EqualTo(source.Nested[0].String));
                 Assert.That(destination?.Nested[0].StringNull, Is.Null);
@@ -426,7 +422,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.NestedString?[1], Is.EqualTo(source.NestedString[1]));
                 Assert.That(destination?.NestedInt?[0], Is.EqualTo(source.NestedInt[0]));
                 Assert.That(destination?.NestedInt?[1], Is.EqualTo(source.NestedInt[1]));
-            });
+            }
         }
 
         [Test]
@@ -462,7 +458,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<List<DestinationListNest>>(source);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?[0].Nested[0].String, Is.EqualTo(source[0].Nested[0].String));
                 Assert.That(destination?[0].Nested[0].StringNull, Is.Null);
@@ -494,7 +490,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?[1].NestedDifferent[0].StringNull, Is.EqualTo(source[1].NestedDifferent[0].String));
                 Assert.That(destination?[1].NestedDifferent[0].Int, Is.EqualTo(2));
                 Assert.That(destination?[1].NestedDifferent[0].IntNull, Is.EqualTo(source[1].NestedDifferent[0].IntNull));
-            });
+            }
         }
 
         [Test]
@@ -515,7 +511,7 @@ namespace Roo.Azure.Configuration.UnitTests
             destination = mapper.Map<Destination>((sourceString, sourceNumbers, sourceOthers));
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(destination?.String, Is.EqualTo(sourceString.String));
                 Assert.That(destination?.StringNull, Is.EqualTo(sourceString.String + sourceNumbers.Int.ToString()));
@@ -531,7 +527,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(destination?.ByteNull, Is.Null);
                 Assert.That(destination?.DateTime, Is.EqualTo(DateTime.Now.Date.AddDays(-10)));
                 Assert.That(destination?.DateTimeNull, Is.EqualTo(DateTime.Now.Date.AddDays(-5)));
-            });
+            }
         }
 
         #region MapClasses

@@ -29,6 +29,10 @@
         /// </summary>
         public string? AppConfigRefreshTriggerKey { get; set; } = "Settings:Sentinel";
         /// <summary>
+        /// The interval befor the App Configuration cache is refreshed. Default is 30 seconds.
+        /// </summary>
+        public TimeSpan AppConfigRefreshInterval { get; set; } = TimeSpan.FromSeconds(30);
+        /// <summary>
         /// Whether to use header middleware for validating custom headers are in incoming HTTP calls.
         /// Default is true.
         /// </summary>

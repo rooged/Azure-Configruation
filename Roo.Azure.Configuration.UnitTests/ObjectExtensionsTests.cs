@@ -26,11 +26,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = test.ToQueryString();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result, Is.EqualTo($"?Id={test.Id}&Key={test.Key}&Value={test.Value}"));
-            });
+            }
         }
 
         [Test]
@@ -44,11 +44,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = new MemoryStream(bytes).ConvertToBase64();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result, Is.EqualTo(Convert.ToBase64String(Encoding.UTF8.GetBytes(input))));
-            });
+            }
         }
 
         private class Test

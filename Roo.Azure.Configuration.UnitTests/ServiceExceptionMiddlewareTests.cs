@@ -31,11 +31,11 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.InvokeAsync(httpContext, headerService.Object, loggerMoq.Object);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 Assert.That(httpContext.Response.StatusCode, Is.EqualTo(200));
-            });
+            }
         }
 
         [Test]
@@ -56,11 +56,11 @@ namespace Roo.Azure.Configuration.UnitTests
             memoryStream.Dispose();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(httpContext.Response.StatusCode, Is.EqualTo(549));
-                Assert.That(response.Contains("549"), Is.True);
-            });
+                Assert.That(response, Does.Contain("549"));
+            }
         }
     }
 }

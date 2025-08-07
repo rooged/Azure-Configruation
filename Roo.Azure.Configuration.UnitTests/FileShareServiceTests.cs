@@ -7,11 +7,11 @@ namespace Roo.Azure.Configuration.UnitTests
 {
     public class FilShareServiceTests
     {
-        private string storageConnectionString = "storageName";
-        private string fileShareName = "fileShareName";
-        private string directoryName = "directoryName";
-        private string fileName = "fileName";
-        private string path = "path/test";
+        private readonly string storageConnectionString = "storageName";
+        private readonly string fileShareName = "fileShareName";
+        private readonly string directoryName = "directoryName";
+        private readonly string fileName = "fileName";
+        private readonly string path = "path/test";
 
         [Test]
         public void CreateFileShareClient_Verify()
@@ -26,13 +26,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Name, Is.EqualTo(fileShareName));
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -53,13 +53,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.True);
                 Assert.That(result2, Is.True);
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -80,13 +80,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.True);
                 Assert.That(result2, Is.True);
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Name, Is.EqualTo(directoryName));
@@ -115,7 +115,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(result2?.Name, Is.EqualTo(directoryName));
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Name, Is.EqualTo(directoryName));
@@ -144,7 +144,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(result2?.Name, Is.EqualTo(directoryName));
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -170,7 +170,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Name, Is.EqualTo(fileName));
@@ -178,7 +178,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(result2?.Name, Is.EqualTo(fileName));
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -201,13 +201,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(result, Is.EqualTo(true));
-                Assert.That(result2, Is.EqualTo(true));
+                Assert.That(result, Is.True);
+                Assert.That(result2, Is.True);
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -230,13 +230,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(result, Is.EqualTo(true));
-                Assert.That(result2, Is.EqualTo(true));
+                Assert.That(result, Is.True);
+                Assert.That(result2, Is.True);
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -264,13 +264,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result2, Is.Not.Null);
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -299,13 +299,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result2, Is.Not.Null);
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
 
         [Test]
@@ -340,13 +340,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var hasKey = service.Clients.TryGetValue(fileShareName, out _);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result2, Is.Not.Null);
                 Assert.That(service.Clients, Is.Not.Null);
                 Assert.That(hasKey, Is.True);
-            });
+            }
         }
     }
 }

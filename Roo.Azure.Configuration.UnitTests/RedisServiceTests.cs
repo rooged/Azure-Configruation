@@ -7,10 +7,10 @@ namespace Roo.Azure.Configuration.UnitTests
         //Common
         private Mock<IConnectionMultiplexer> connectionMultiplexerMoq;
         private RedisService serviceConversion;
-        private string key = "key";
-        private string value = "value";
+        private readonly string key = "key";
+        private readonly string value = "value";
         private Test test;
-        private TimeSpan expirationTime = new TimeSpan(0, 5, 0);
+        private readonly TimeSpan expirationTime = new(0, 5, 0);
 
         [SetUp]
         public void Setup()
@@ -36,11 +36,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.Get(key);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).StringGetAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()), Times.Once);
                 Assert.That(result, Is.EqualTo(value));
-            });
+            }
         }
 
         [Test]
@@ -52,15 +52,15 @@ namespace Roo.Azure.Configuration.UnitTests
             var service = new RedisService(repository.Object);
 
             //Act
-            var result = await service.GetWithExpiration(key);
+            var (token, expirationTimeSpan) = await service.GetWithExpiration(key);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).StringGetWithExpiryAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()), Times.Once);
-                Assert.That(result.Token, Is.EqualTo(value));
-                Assert.That(result.ExpirationTimeSpan, Is.EqualTo(expirationTime));
-            });
+                Assert.That(token, Is.EqualTo(value));
+                Assert.That(expirationTimeSpan, Is.EqualTo(expirationTime));
+            }
         }
 
         [Test]
@@ -76,13 +76,13 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.GetObject<Test>(key);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).HashGetAllAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()), Times.Once);
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Key, Is.EqualTo(key));
                 Assert.That(result?.Value, Is.EqualTo(value));
-            });
+            }
         }
 
         [Test]
@@ -97,12 +97,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.GetField(key, value);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).HashGetAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<CommandFlags>()), Times.Once);
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result, Is.EqualTo(value));
-            });
+            }
         }
 
         [Test]
@@ -117,11 +117,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.Set(key, value);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).StringSetAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), null, It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()), Times.Once);
-                Assert.That(result, Is.EqualTo(true));
-            });
+                Assert.That(result, Is.True);
+            }
         }
 
         [Test]
@@ -136,11 +136,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.Set(key, value, expirationTime);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).StringSetAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()), Times.Once);
-                Assert.That(result, Is.EqualTo(true));
-            });
+                Assert.That(result, Is.True);
+            }
         }
 
         [Test]
@@ -155,10 +155,7 @@ namespace Roo.Azure.Configuration.UnitTests
             await service.SetObject(key, test);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).HashSetAsync(It.IsAny<RedisKey>(), It.IsAny<HashEntry[]>(), It.IsAny<CommandFlags>()), Times.Once);
-            });
+            repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).HashSetAsync(It.IsAny<RedisKey>(), It.IsAny<HashEntry[]>(), It.IsAny<CommandFlags>()), Times.Once);
         }
 
         [Test]
@@ -173,11 +170,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.SetField(key, value, value);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).HashSetAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<RedisValue>(), It.IsAny<When>(), It.IsAny<CommandFlags>()), Times.Once);
-                Assert.That(result, Is.EqualTo(true));
-            });
+                Assert.That(result, Is.True);
+            }
         }
 
         [Test]
@@ -192,11 +189,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.Delete(key);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).KeyDeleteAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()), Times.Once);
-                Assert.That(result, Is.EqualTo(true));
-            });
+                Assert.That(result, Is.True);
+            }
         }
 
         [Test]
@@ -211,11 +208,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = await service.DeleteField(key, value);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 repository.Verify(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()).HashDeleteAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<CommandFlags>()), Times.Once);
-                Assert.That(result, Is.EqualTo(true));
-            });
+                Assert.That(result, Is.True);
+            }
         }
 
         [Test]
@@ -230,12 +227,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = service.HashEntryToObject<Test>(hashedTest);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Key, Is.EqualTo(key));
                 Assert.That(result?.Value, Is.EqualTo(value));
-            });
+            }
         }
 
         private class Test

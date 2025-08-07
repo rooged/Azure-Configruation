@@ -11,8 +11,8 @@ namespace Roo.Azure.Configuration.UnitTests
     public class SwaggerHeaderTests
     {
         //Common
-        private string sessionId = "sessionId";
-        private string channelId = "channelId";
+        private readonly string sessionId = "sessionId";
+        private readonly string channelId = "channelId";
 
         [Test]
         public void ApplyHeadersToSwagger_Verify()
@@ -58,7 +58,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var userInfoDictionary = userInfoParameter.Schema.Properties;
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionString, Is.Not.Null);
                 Assert.That(sessionString?.Value, Is.EqualTo(sessionId));
@@ -68,9 +68,9 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(channelString?.Value, Is.EqualTo(channelId));
                 Assert.That(userInfoParameter, Is.Not.Null);
                 Assert.That(userInfoDictionary, Is.Not.Null);
-                Assert.That(userInfoDictionary.Count, Is.EqualTo(6));
+                Assert.That(userInfoDictionary, Has.Count.EqualTo(6));
                 Assert.That(userInfoDictionary.First().Key, Is.EqualTo("LoginId"));
-            });
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 using Roo.Azure.Configuration.Common.Utilities.Extensions;
-using System.ComponentModel.DataAnnotations;
 
 namespace Roo.Azure.Configuration.UnitTests
 {
@@ -27,12 +26,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var resultSunday = dateSunday.AddBusinessDays(7);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.EqualTo(date.AddDays(7)));
                 Assert.That(resultSaturday, Is.EqualTo(dateSaturday.AddDays(6)));
                 Assert.That(resultSunday, Is.EqualTo(dateSunday.AddDays(9)));
-            });
+            }
         }
 
         [Test]
@@ -57,12 +56,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var resultSunday = dateSunday.GetBusinessDaysBetweenDates(dateSunday.AddDays(9));
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.EqualTo(5));
                 Assert.That(resultSaturday, Is.EqualTo(5));
                 Assert.That(resultSunday, Is.EqualTo(7));
-            });
+            }
         }
 
         [Test]
@@ -76,11 +75,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var resultYear = date.GetDaysBetweenDates(date.AddYears(4));
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.EqualTo(7));
                 Assert.That(resultYear, Is.EqualTo(1461));
-            });
+            }
         }
 
         [Test]
@@ -95,12 +94,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var resultYearLessThan = date.GetYearsBetweenDates(date.AddMonths(23));
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
-                Assert.That(result, Is.EqualTo(0));
+                Assert.That(result, Is.Zero);
                 Assert.That(resultYear, Is.EqualTo(4));
                 Assert.That(resultYearLessThan, Is.EqualTo(1));
-            });
+            }
         }
 
         [Test]
@@ -113,10 +112,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = date.RemoveMilliseconds();
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.ToString(), Is.EqualTo(date.ToString().TrimEnd('.')));
-            });
+            Assert.That(result.ToString(), Is.EqualTo(date.ToString().TrimEnd('.')));
         }
 
         [Test]
@@ -129,10 +125,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = date.ToEst();
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTime(date, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"))));
-            });
+            Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTime(date, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"))));
         }
 
         [Test]
@@ -145,10 +138,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = date.ToEst();
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTimeFromUtc(date, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"))));
-            });
+            Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTimeFromUtc(date, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"))));
         }
 
         [Test]
@@ -161,10 +151,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = date.ToPst();
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTime(date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))));
-            });
+            Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTime(date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))));
         }
 
         [Test]
@@ -177,10 +164,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = date.ToPst();
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTimeFromUtc(date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))));
-            });
+            Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTimeFromUtc(date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))));
         }
 
         [Test]
@@ -193,10 +177,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = date.ToCst();
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTime(date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"))));
-            });
+            Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTime(date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"))));
         }
 
         [Test]
@@ -209,10 +190,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var result = date.ToCst();
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTimeFromUtc(date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"))));
-            });
+            Assert.That(result, Is.EqualTo(TimeZoneInfo.ConvertTimeFromUtc(date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"))));
         }
     }
 }

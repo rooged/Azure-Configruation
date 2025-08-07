@@ -19,7 +19,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         private IHttpContextAccessor HttpContextAccessor { get; }
         private IConfiguration Configuration { get; }
         private IHeaderService HeaderService { get; }
-        private HeaderPropagateOptions _headerPropagateOptions { get; }
+        private HeaderPropagateOptions HeaderPropagateOptions { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="HeaderPropagateMiddleware"/>.
@@ -32,7 +32,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
             HttpContextAccessor = httpContextAccessor;
             Configuration = configuration;
             HeaderService = headerService;
-            _headerPropagateOptions = headerPropagateOptions ?? new HeaderPropagateOptions();
+            HeaderPropagateOptions = headerPropagateOptions ?? new HeaderPropagateOptions();
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
         {
             //Note: HttpContextAccessor.HttpContext.Request is the incoming request from the client, whereas "request" is the outgoing request.
 
-            foreach (var header in _headerPropagateOptions.Headers)
+            foreach (var header in HeaderPropagateOptions.Headers)
             {
                 CheckIfHeaderIsEmpty(request.Headers, header);
             }
@@ -86,16 +86,13 @@ namespace Roo.Azure.Configuration.Common.Middlewares
                         if (HttpContextAccessor.HttpContext != null && HttpContextAccessor.HttpContext.User.Claims.Any() && !requestHeaders.TryGetValues(Constants.UserInfoHeaderName, out _))
                         {
                             var userInfo = HeaderService.GetUserInfo(HttpContextAccessor.HttpContext.Request.Headers);
-                            if (userInfo == null)
+                            userInfo ??= new UserInfo()
                             {
-                                userInfo = new UserInfo()
-                                {
-                                    LoginId = HttpContextAccessor.HttpContext.User.FindFirstValue(Constants.UserInfoLoginId) ?? "",
-                                    Email = HttpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email) ?? "",
-                                    UserId = HttpContextAccessor.HttpContext.User.FindFirstValue("UserId") ?? "",
-                                    IsAuthenticated = HttpContextAccessor.HttpContext.User.Identity?.IsAuthenticated ?? false
-                                };
-                            }
+                                LoginId = HttpContextAccessor.HttpContext.User.FindFirstValue(Constants.UserInfoLoginId) ?? "",
+                                Email = HttpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email) ?? "",
+                                UserId = HttpContextAccessor.HttpContext.User.FindFirstValue("UserId") ?? "",
+                                IsAuthenticated = HttpContextAccessor.HttpContext.User.Identity?.IsAuthenticated ?? false
+                            };
                             requestHeaders.Add(Constants.UserInfoHeaderName, JsonConvert.SerializeObject(userInfo));
                         }
                         break;

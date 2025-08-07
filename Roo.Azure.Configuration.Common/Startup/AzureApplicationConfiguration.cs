@@ -47,8 +47,7 @@ namespace Roo.Azure.Configuration.Common.Startup
                 options.UseFeatureFlags(x =>
                 {
                     //Load all feature flags with no label. To load specific feature flags and labels, set via FeatureFlagOptions.Select.
-                    //Using the default cache expiration of 30 seconds but included the logic to change the time if needed.
-                    x.SetRefreshInterval(TimeSpan.FromSeconds(30));
+                    x.SetRefreshInterval(model.AppConfigRefreshInterval);
                 });
                 ConfigurationRefresher = options.GetRefresher();
             });
@@ -83,8 +82,7 @@ namespace Roo.Azure.Configuration.Common.Startup
                 options.UseFeatureFlags(x =>
                 {
                     //Load all feature flags with no label. To load specific feature flags and labels, set via FeatureFlagOptions.Select.
-                    //Using the default cache expiration of 30 seconds but included the logic to change the time if needed.
-                    x.SetRefreshInterval(TimeSpan.FromSeconds(30));
+                    x.SetRefreshInterval(model.AppConfigRefreshInterval);
                 });
                 ConfigurationRefresher = options.GetRefresher();
             });

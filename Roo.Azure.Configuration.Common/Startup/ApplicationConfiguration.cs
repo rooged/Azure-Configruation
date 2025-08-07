@@ -27,8 +27,9 @@ namespace Roo.Azure.Configuration.Common.Startup
         /// </summary>
         /// <param name="services">IServiceCollection builder.</param>
         /// <param name="model">Startup model for configuration parameters.</param>
+        /// <param name="isWebApp">Whether the application is a web app or console/host app. True if web app, false if console/host. Ensure you use the correct one otherwise App Inisghts setup will fail.</param>
         /// <returns><see cref="IServiceCollection"/> for further service configuraiton.</returns>
-        public static IServiceCollection AppConfig(this IServiceCollection services, StartupModel model)
+        public static IServiceCollection AppConfig(this IServiceCollection services, StartupModel model, bool isWebApp = true)
         {
             //Add general services
             services.AddSession();
@@ -43,7 +44,7 @@ namespace Roo.Azure.Configuration.Common.Startup
             }
 
             //Add & configure Swagger
-            if (!string.IsNullOrEmpty(model.ChannelId) && model.SwaggerDefinitionNames != null && model.SwaggerDefinitionNames.Count > 0)
+            if (isWebApp && !string.IsNullOrEmpty(model.ChannelId) && model.SwaggerDefinitionNames != null && model.SwaggerDefinitionNames.Count > 0)
             {
                 services.AddSwaggerGen(options =>
                 {
@@ -92,11 +93,22 @@ namespace Roo.Azure.Configuration.Common.Startup
             services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
 
             //Add & configure App Insights
-            var appInsightsOptions = new ApplicationInsightsServiceOptions()
+            
+            if (isWebApp)
             {
-                ConnectionString = model.AppInsightsConnectionString
-            };
-            services.AddApplicationInsightsTelemetry(appInsightsOptions);
+                var appInsightsOptions = new ApplicationInsightsServiceOptions()
+                {
+                    ConnectionString = model.AppInsightsConnectionString
+                };
+                services.AddApplicationInsightsTelemetry(appInsightsOptions);
+            }
+            else
+            {
+                services.AddApplicationInsightsTelemetryWorkerService(options =>
+                {
+                    options.ConnectionString = model.AppInsightsConnectionString;
+                });
+            }
             services.AddApplicationInsightsKubernetesEnricher();
             services.Configure<LoggerFilterOptions>(options =>
             {
@@ -137,12 +149,15 @@ namespace Roo.Azure.Configuration.Common.Startup
                 services.AddCertificateValidation();
             }
 
-            services.Configure<ForwardedHeadersOptions>(options =>
+            if (isWebApp)
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-            });
+                services.Configure<ForwardedHeadersOptions>(options =>
+                {
+                    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                    options.KnownNetworks.Clear();
+                    options.KnownProxies.Clear();
+                });
+            }
 
             return services;
         }

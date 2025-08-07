@@ -3,7 +3,6 @@ using Azure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Roo.Azure.Configuration.Common.Http;
@@ -24,21 +23,21 @@ namespace Roo.Azure.Configuration.UnitTests
         //Common
         private Mock<IRooLogger> loggerMoq;
         private Mock<IAzureAdClientAssertion> azureAdClientAssertionMoq;
-        private string sessionId = "sessionId";
-        private string transactionId = "transactionId";
-        private string channelId = "channelId";
-        private UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
-        private string httpClientName = "httpClientName";
-        private string relativeUrl = "http://unittest.com/test/";
-        private List<(string Parameter, string Value)> queryParameters = new() { ("parameter", "value") };
-        private string relativeUrlWithParameters = "http://unittest.com/test?parameter=value";
-        private string relativeUrlWithQueryObject = "http://unittest.com/test?Id=1&Value=value";
+        private readonly string sessionId = "sessionId";
+        private readonly string transactionId = "transactionId";
+        private readonly string channelId = "channelId";
+        private readonly UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
+        private readonly string httpClientName = "httpClientName";
+        private readonly string relativeUrl = "http://unittest.com/test/";
+        private readonly List<(string Parameter, string Value)> queryParameters = new() { ("parameter", "value") };
+        private readonly string relativeUrlWithParameters = "http://unittest.com/test?parameter=value";
+        private readonly string relativeUrlWithQueryObject = "http://unittest.com/test?Id=1&Value=value";
         private Mock<ISession> session;
         private Mock<ISession> sessionExistingSessionId;
-        private Test testObject = new() { Id = 1, Value = "value" };
-        private List<(string Name, string Value)> headers = new() { ("header", "value"), ("header2", "value2") };
-        private string token = "token";
-        private string authenticationHttpClientName = "authenticationHttpClientName";
+        private readonly Test testObject = new() { Id = 1, Value = "value" };
+        private readonly List<(string Name, string Value)> headers = new() { ("header", "value"), ("header2", "value2") };
+        private readonly string token = "token";
+        private readonly string authenticationHttpClientName = "authenticationHttpClientName";
 
         [SetUp]
         public void Setup()
@@ -80,11 +79,10 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task GetAsyncNoDeserialization_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var claims = new List<Claim>
             {
-                new Claim(Constants.UserInfoLoginId, "loginId")
+                new(Constants.UserInfoLoginId, "loginId")
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -112,7 +110,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var userInfoHeaderModel = JsonConvert.DeserializeObject<UserInfo>(userInfoHeader?.First() ?? default!);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdHeader, Is.Not.Null);
                 Assert.That(sessionIdHeader?.First(), Is.EqualTo(sessionId));
@@ -124,15 +122,14 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(userInfoHeaderModel, Is.Not.Null);
                 Assert.That(userInfoHeaderModel?.LoginId, Is.EqualTo("loginId"));
                 Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrlWithParameters));
-            });
+            }
         }
 
         [Test]
         public async Task GetAsyncNoDeserializationQueryStringObject_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -153,18 +150,14 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrlWithQueryObject));
-            });
+            Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrlWithQueryObject));
         }
 
         [Test]
         public async Task GetAsyncQueryStringObject_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -189,21 +182,20 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrlWithQueryObject));
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Id, Is.EqualTo(testObject.Id));
                 Assert.That(response.Value, Is.EqualTo(testObject.Value));
-            });
+            }
         }
 
         [Test]
         public async Task GetAsync_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -228,13 +220,13 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Id, Is.EqualTo(testObject.Id));
                 Assert.That(response.Value, Is.EqualTo(testObject.Value));
-            });
+            }
         }
 
         [Test]
@@ -243,8 +235,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task GetAsyncEnumClientNames_Verify(bool deserialize)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactoryQueryObject = new Mock<IHttpClientFactory>();
@@ -296,7 +287,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 if (deserialize)
                 {
@@ -314,7 +305,7 @@ namespace Roo.Azure.Configuration.UnitTests
                     Assert.That(requestMessageQueryObject.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrlWithQueryObject));
                     Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 }
-            });
+            }
         }
         #endregion
 
@@ -327,11 +318,10 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task PostAsyncNoDeserialization_Verify(int inputModelType)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var claims = new List<Claim>
             {
-                new Claim(Constants.UserInfoLoginId, "loginId")
+                new(Constants.UserInfoLoginId, "loginId")
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -390,7 +380,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdHeader, Is.Not.Null);
                 Assert.That(sessionIdHeader?.First(), Is.EqualTo(sessionId));
@@ -407,15 +397,14 @@ namespace Roo.Azure.Configuration.UnitTests
                     Assert.That(requestObject?.Id, Is.EqualTo(testObject.Id));
                     Assert.That(requestObject?.Value, Is.EqualTo(testObject.Value));
                 }
-            });
+            }
         }
 
         [Test]
         public async Task PostAsync_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -446,7 +435,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 Assert.That(response, Is.Not.Null);
@@ -454,7 +443,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(response.Value, Is.EqualTo(testObject.Value));
                 Assert.That(requestObject?.Id, Is.EqualTo(testObject.Id));
                 Assert.That(requestObject?.Value, Is.EqualTo(testObject.Value));
-            });
+            }
         }
 
         [Test]
@@ -463,8 +452,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task PostAsyncEnumClientNames_Verify(bool deserialize)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -502,7 +490,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 if (deserialize)
                 {
@@ -515,7 +503,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 {
                     Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 }
-            });
+            }
         }
         #endregion
 
@@ -528,11 +516,10 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task PutAsyncNoDeserialization_Verify(int inputModelType)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var claims = new List<Claim>
             {
-                new Claim(Constants.UserInfoLoginId, "loginId")
+                new(Constants.UserInfoLoginId, "loginId")
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -591,7 +578,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdHeader, Is.Not.Null);
                 Assert.That(sessionIdHeader?.First(), Is.EqualTo(sessionId));
@@ -608,15 +595,14 @@ namespace Roo.Azure.Configuration.UnitTests
                     Assert.That(requestObject?.Id, Is.EqualTo(testObject.Id));
                     Assert.That(requestObject?.Value, Is.EqualTo(testObject.Value));
                 }
-            });
+            }
         }
 
         [Test]
         public async Task PutAsync_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -647,7 +633,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 Assert.That(response, Is.Not.Null);
@@ -655,7 +641,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(response.Value, Is.EqualTo(testObject.Value));
                 Assert.That(requestObject?.Id, Is.EqualTo(testObject.Id));
                 Assert.That(requestObject?.Value, Is.EqualTo(testObject.Value));
-            });
+            }
         }
 
         [Test]
@@ -664,8 +650,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task PutAsyncEnumClientNames_Verify(bool deserialize)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -703,7 +688,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 if (deserialize)
                 {
@@ -716,7 +701,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 {
                     Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 }
-            });
+            }
         }
         #endregion
 
@@ -725,11 +710,10 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task DeleteAsyncNoDeserialization_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var claims = new List<Claim>
             {
-                new Claim(Constants.UserInfoLoginId, "loginId")
+                new(Constants.UserInfoLoginId, "loginId")
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -757,7 +741,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var userInfoHeaderModel = JsonConvert.DeserializeObject<UserInfo>(userInfoHeader?.First() ?? default!);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdHeader, Is.Not.Null);
                 Assert.That(sessionIdHeader?.First(), Is.EqualTo(sessionId));
@@ -769,15 +753,14 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(userInfoHeaderModel, Is.Not.Null);
                 Assert.That(userInfoHeaderModel?.LoginId, Is.EqualTo("loginId"));
                 Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrlWithParameters));
-            });
+            }
         }
 
         [Test]
         public async Task DeleteAsync_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -802,13 +785,13 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Id, Is.EqualTo(testObject.Id));
                 Assert.That(response.Value, Is.EqualTo(testObject.Value));
-            });
+            }
         }
 
         [Test]
@@ -817,8 +800,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task DeleteAsyncEnumClientNames_Verify(bool deserialize)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -856,7 +838,7 @@ namespace Roo.Azure.Configuration.UnitTests
             }
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 if (deserialize)
                 {
@@ -869,7 +851,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 {
                     Assert.That(requestMessage.RequestUri?.AbsoluteUri, Is.EqualTo(relativeUrl));
                 }
-            });
+            }
         }
         #endregion
 
@@ -888,8 +870,8 @@ namespace Roo.Azure.Configuration.UnitTests
             httpContext.Session = sessionExistingSessionId.Object;
             var claims = new List<Claim>
             {
-                new Claim(Constants.UserInfoLoginId, "loginId"),
-                new Claim(ClaimTypes.Email, "email")
+                new(Constants.UserInfoLoginId, "loginId"),
+                new(ClaimTypes.Email, "email")
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -924,7 +906,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var userInfoHeaderModel = JsonConvert.DeserializeObject<UserInfo>(userInfoHeader?.First() ?? default!);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdHeader, Is.Not.Null);
                 Assert.That(transactionIdHeader, Is.Not.Null);
@@ -932,7 +914,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 Assert.That(channelIdHeader, Is.Not.Null);
                 Assert.That(userInfoHeader, Is.Not.Null);
                 Assert.That(userInfoHeaderModel, Is.Not.Null);
-                Assert.That(userInfoHeaderModel?.IsAuthenticated, Is.EqualTo(true));
+                Assert.That(userInfoHeaderModel?.IsAuthenticated, Is.True);
 
                 if (!directlySetHeaders)
                 {
@@ -954,7 +936,7 @@ namespace Roo.Azure.Configuration.UnitTests
                     Assert.That(userInfoHeaderModel?.Email, Is.EqualTo("email2"));
                     Assert.That(userInfoHeaderModel?.SubId, Is.EqualTo("subId2"));
                 }
-            });
+            }
         }
 
         [Test]
@@ -963,8 +945,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task AddHeadersForAuthentication_Verify(bool addApimHeader)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -974,11 +955,13 @@ namespace Roo.Azure.Configuration.UnitTests
             delegatingHandler.As<IDisposable>().Setup(x => x.Dispose());
             var httpClient = new HttpClient(delegatingHandler.Object);
             httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object);
-            service.AuthenticationInfo = new()
+            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object)
             {
-                AdditionalRequestHeaders = headers,
-                AuthenticationStrategy = AuthenticationStrategy.OAuth
+                AuthenticationInfo = new()
+                {
+                    AdditionalRequestHeaders = headers,
+                    AuthenticationStrategy = AuthenticationStrategy.OAuth
+                }
             };
             if (addApimHeader)
             {
@@ -998,7 +981,7 @@ namespace Roo.Azure.Configuration.UnitTests
             requestMessage.Headers.TryGetValues("Ocp-Apim-Subscription-Key", out var apimHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(authHeader, Is.Not.Null);
                 Assert.That(authHeader?.First(), Is.EqualTo(headers[0].Value));
@@ -1013,7 +996,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 {
                     Assert.That(apimHeader?.First(), Is.EqualTo("apimSubscriptionKey"));
                 }
-            });
+            }
         }
         #endregion
 
@@ -1028,8 +1011,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task GetOAuthToken_Verify(string tokenStorage, bool tokenReturned)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1105,7 +1087,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var requestAuthContent = await requestMessageAuth.Content.ReadAsFormDataAsync();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(contentTypeHeader, Is.Not.Null);
                 Assert.That(contentTypeHeader?.First(), Is.EqualTo("application/x-www-form-urlencoded"));
@@ -1144,7 +1126,7 @@ namespace Roo.Azure.Configuration.UnitTests
                     }
                 }
                 
-            });
+            }
             if (memoryCache != null)
             {
                 memoryCache?.Dispose();
@@ -1164,8 +1146,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task GetApimCertificateToken_Verify(string apimAuth, string tokenStorage, bool tokenReturned)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1264,7 +1245,7 @@ namespace Roo.Azure.Configuration.UnitTests
             requestMessage.Headers.TryGetValues("Authorization", out var authorizationHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 if (apimAuth.Equals("certKeyVault"))
                 {
@@ -1312,7 +1293,7 @@ namespace Roo.Azure.Configuration.UnitTests
                     }
                 }
 
-            });
+            }
             if (memoryCache != null)
             {
                 memoryCache?.Dispose();
@@ -1329,8 +1310,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task GetBasicToken_Verify(string tokenStorage, bool tokenReturned)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1404,7 +1384,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var requestAuthContent = await requestMessageAuth.Content.ReadAsFormDataAsync();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(contentTypeHeader, Is.Not.Null);
                 Assert.That(contentTypeHeader?.First(), Is.EqualTo("application/x-www-form-urlencoded"));
@@ -1441,7 +1421,7 @@ namespace Roo.Azure.Configuration.UnitTests
                     }
                 }
 
-            });
+            }
             if (memoryCache != null)
             {
                 memoryCache?.Dispose();
@@ -1452,8 +1432,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task GetPassedInToken_Verify()
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1464,11 +1443,13 @@ namespace Roo.Azure.Configuration.UnitTests
             delegatingHandler.As<IDisposable>().Setup(x => x.Dispose());
             var httpClient = new HttpClient(delegatingHandler.Object);
             httpClientFactory.Setup(x => x.CreateClient(httpClientName)).Returns(httpClient);
-            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object);
-            service.AuthenticationInfo = new()
+            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object)
             {
-                AuthenticationStrategy = AuthenticationStrategy.PassInToken,
-                Token = token
+                AuthenticationInfo = new()
+                {
+                    AuthenticationStrategy = AuthenticationStrategy.PassInToken,
+                    Token = token
+                }
             };
 
             //Act
@@ -1481,11 +1462,11 @@ namespace Roo.Azure.Configuration.UnitTests
             requestMessage.Headers.TryGetValues("Authorization", out var authorizationHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(authorizationHeader, Is.Not.Null);
                 Assert.That(authorizationHeader?.First(), Is.EqualTo($"Bearer {token}"));
-            });
+            }
         }
 
         [Test]
@@ -1494,8 +1475,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task GetTokenExisting_Verify(string tokenStorage)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1537,7 +1517,7 @@ namespace Roo.Azure.Configuration.UnitTests
             requestMessage.Headers.TryGetValues("Authorization", out var authorizationHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(authorizationHeader, Is.Not.Null);
                 Assert.That(authorizationHeader?.First(), Is.EqualTo($"Bearer {token}"));
@@ -1549,7 +1529,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 {
                     Assert.That(memoryCache?.Get(httpClientName), Is.EqualTo(token));
                 }
-            });
+            }
             if (memoryCache != null)
             {
                 memoryCache?.Dispose();
@@ -1562,8 +1542,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task ClearToken_Verify(string tokenStorage)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1605,7 +1584,7 @@ namespace Roo.Azure.Configuration.UnitTests
             requestMessage.Headers.TryGetValues("Authorization", out var authorizationHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(authorizationHeader, Is.Null);
                 if (tokenStorage.Equals("redis"))
@@ -1617,7 +1596,7 @@ namespace Roo.Azure.Configuration.UnitTests
                 {
                     Assert.That(memoryCache?.Get(httpClientName), Is.Null);
                 }
-            });
+            }
             if (memoryCache != null)
             {
                 memoryCache?.Dispose();
@@ -1632,8 +1611,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task SystemTextJsonDeserialize_Verify(bool readAsString)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1646,14 +1624,16 @@ namespace Roo.Azure.Configuration.UnitTests
             delegatingHandler.As<IDisposable>().Setup(x => x.Dispose());
             var httpClient = new HttpClient(delegatingHandler.Object);
             httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object);
-            service.SerializationSettings = new()
+            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object)
             {
-                JsonSerializerOptions = new()
+                SerializationSettings = new()
                 {
-                    AllowTrailingCommas = true,
-                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-                    IgnoreReadOnlyFields = false
+                    JsonSerializerOptions = new()
+                    {
+                        AllowTrailingCommas = true,
+                        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                        IgnoreReadOnlyFields = false
+                    }
                 }
             };
             if (readAsString)
@@ -1663,13 +1643,14 @@ namespace Roo.Azure.Configuration.UnitTests
 
             //Act
             var response = await service.GetAsync<Test>(relativeUrl, httpClientName);
+
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Id, Is.EqualTo(testObject.Id));
                 Assert.That(response.Value, Is.EqualTo(testObject.Value));
-            });
+            }
         }
 
         [Test]
@@ -1682,8 +1663,7 @@ namespace Roo.Azure.Configuration.UnitTests
         public async Task NewtonsoftJsonDeserialize_Verify(string settingsToUse, bool readAsString)
         {
             //Arrange
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = session.Object;
+            var httpContext = new DefaultHttpContext { Session = session.Object };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -1696,8 +1676,10 @@ namespace Roo.Azure.Configuration.UnitTests
             delegatingHandler.As<IDisposable>().Setup(x => x.Dispose());
             var httpClient = new HttpClient(delegatingHandler.Object);
             httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object);
-            service.SerializationSettings = new();
+            var service = new RooHttpClient(channelId, httpContextAccessor.Object, httpClientFactory.Object, loggerMoq.Object, azureAdClientAssertionMoq.Object)
+            {
+                SerializationSettings = new()
+            };
             if (settingsToUse.Equals("default"))
             {
                 service.SerializationSettings.UseDefaultSerializationSettings = true;
@@ -1718,13 +1700,14 @@ namespace Roo.Azure.Configuration.UnitTests
 
             //Act
             var response = await service.GetAsync<Test>(relativeUrl, httpClientName);
+
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Id, Is.EqualTo(testObject.Id));
                 Assert.That(response.Value, Is.EqualTo(testObject.Value));
-            });
+            }
         }
         #endregion
 

@@ -12,10 +12,10 @@ namespace Roo.Azure.Configuration.UnitTests
         private Mock<IHeaderService> headerServiceMoq;
         private Mock<IHeaderService> headerServiceWithUserInfoMoq;
         private Mock<IHttpContextAccessor> httpContextAccessorMoq;
-        private UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
-        private DefaultHttpContext httpContext = new();
-        private string message = "test";
-        private Exception exception = new();
+        private readonly UserInfo userInfo = new() { LoginId = "loginId", UserId = "userId", Email = "email", SubId = "subId", IsAuthenticated = true };
+        private readonly DefaultHttpContext httpContext = new();
+        private readonly string message = "test";
+        private readonly Exception exception = new();
 
         [SetUp]
         public void Setup()
@@ -45,14 +45,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -65,14 +65,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -85,14 +85,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -105,14 +105,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -125,14 +125,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(httpContext, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -145,14 +145,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(httpContext, null, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -167,14 +167,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -187,14 +187,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogInformation(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
-            });
+            }
         }
         #endregion
 
@@ -209,14 +209,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -229,14 +229,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -249,14 +249,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -269,14 +269,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -289,14 +289,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(httpContext, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -309,14 +309,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(httpContext, null, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -331,14 +331,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -351,14 +351,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogError(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
-            });
+            }
         }
         #endregion
 
@@ -373,14 +373,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -393,14 +393,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -413,14 +413,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -433,14 +433,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -453,14 +453,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(httpContext, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -473,14 +473,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(httpContext, null, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -495,14 +495,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -515,14 +515,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogWarning(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Warning, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
-            });
+            }
         }
         #endregion
 
@@ -537,14 +537,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -557,14 +557,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -577,14 +577,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -597,14 +597,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -617,14 +617,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(httpContext, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -637,14 +637,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(httpContext, null, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -659,14 +659,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -679,14 +679,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogTrace(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Trace, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
-            });
+            }
         }
         #endregion
 
@@ -701,14 +701,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -721,14 +721,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -741,14 +741,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -761,14 +761,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -781,14 +781,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(httpContext, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -801,14 +801,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(httpContext, null, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -823,14 +823,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -843,14 +843,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogCritical(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Critical, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
-            });
+            }
         }
         #endregion
 
@@ -865,14 +865,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -885,14 +885,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceWithUserInfoMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceWithUserInfoMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()));
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -905,14 +905,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(httpContext, message, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -925,14 +925,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(httpContext, null, exception);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -945,14 +945,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(httpContext, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -965,14 +965,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(httpContext, null, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => !x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -987,14 +987,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()));
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-            });
+            }
         }
 
         [Test]
@@ -1007,14 +1007,14 @@ namespace Roo.Azure.Configuration.UnitTests
             service.LogDebug(null, message, null);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerServiceMoq.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetTransactionId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetChannelId(It.IsAny<IHeaderDictionary>()), Times.Never);
                 headerServiceMoq.Verify(x => x.GetUserInfo(It.IsAny<IHeaderDictionary>()), Times.Never);
                 loggerMoq.Verify(x => x.Log(LogLevel.Debug, It.IsAny<EventId>(), It.Is<It.IsAnyType>((x, y) => x.ToString()!.Contains(message)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
-            });
+            }
         }
         #endregion
     }

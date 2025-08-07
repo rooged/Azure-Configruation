@@ -6,8 +6,8 @@ namespace Roo.Azure.Configuration.UnitTests
     public class EnumExtensionsTests
     {
         //Common
-        private string name = "Name";
-        private string name2 = "NameTwo";
+        private readonly string name = "Name";
+        private readonly string name2 = "NameTwo";
 
         [Test]
         public void GetDisplayName_Verify()
@@ -18,12 +18,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var resultNameNull = Test.NameNull.GetDisplayName();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(resultName, Is.EqualTo(name));
                 Assert.That(resultName2, Is.EqualTo(name2));
                 Assert.That(resultNameNull, Is.Null);
-            });
+            }
         }
 
         [Test]
@@ -35,12 +35,12 @@ namespace Roo.Azure.Configuration.UnitTests
             var resultNameNull = Test.NameNull.GetSafeDisplayName();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(resultName, Is.EqualTo(name));
                 Assert.That(resultName2, Is.EqualTo(name2));
                 Assert.That(resultNameNull, Is.EqualTo(string.Empty));
-            });
+            }
         }
 
         private enum Test

@@ -27,15 +27,15 @@ namespace Roo.Azure.Configuration.Common.Http
         public static IServiceCollection RooHttpClientConfig(this IServiceCollection services, string channelId, List<(string Name, string BaseUrl)> httpClients, string? redisConnectionString = null, bool useMemoryCache = false)
         {
             //Iterate through client list and create named client for each item
-            foreach (var httpClient in httpClients)
+            foreach (var (name, baseUrl) in httpClients)
             {
-                if (string.IsNullOrEmpty(httpClient.Name) || string.IsNullOrEmpty(httpClient.BaseUrl))
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(baseUrl))
                 {
                     continue;
                 }
-                services.AddHttpClient(httpClient.Name, config =>
+                services.AddHttpClient(name, config =>
                 {
-                    config.BaseAddress = new Uri(httpClient.BaseUrl);
+                    config.BaseAddress = new Uri(baseUrl);
                 }).AddHttpMessageHandler<HeaderPropagateMiddleware>();
             }
             return CreateHttpClient(services, channelId, redisConnectionString, useMemoryCache);
@@ -54,15 +54,15 @@ namespace Roo.Azure.Configuration.Common.Http
         public static IServiceCollection RooHttpClientConfig(this IServiceCollection services, string channelId, List<(Enum Name, string BaseUrl)> httpClients, string? redisConnectionString = null, bool useMemoryCache = false)
         {
             //Iterate through client list and create named client for each item
-            foreach (var httpClient in httpClients)
+            foreach (var (name, baseUrl) in httpClients)
             {
-                if (string.IsNullOrEmpty(httpClient.Name.ToString()) || string.IsNullOrEmpty(httpClient.BaseUrl))
+                if (string.IsNullOrEmpty(name.ToString()) || string.IsNullOrEmpty(baseUrl))
                 {
                     continue;
                 }
-                services.AddHttpClient(httpClient.Name.ToString(), config =>
+                services.AddHttpClient(name.ToString(), config =>
                 {
-                    config.BaseAddress = new Uri(httpClient.BaseUrl);
+                    config.BaseAddress = new Uri(baseUrl);
                 }).AddHttpMessageHandler<HeaderPropagateMiddleware>();
             }
             return CreateHttpClient(services, channelId, redisConnectionString, useMemoryCache);

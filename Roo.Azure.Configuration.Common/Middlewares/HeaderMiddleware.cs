@@ -61,7 +61,7 @@ namespace Roo.Azure.Configuration.Common.Middlewares
                 var encodedMessage = Encoding.UTF8.GetBytes(message);
                 using var stream = new MemoryStream(encodedMessage);
                 var buffer = stream.ToArray();
-                await context.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+                await context.Response.Body.WriteAsync(buffer);
                 await stream.DisposeAsync();
                 logger.LogError(context, message, new ServiceException((ErrorCode)errorCodes.First(), message, null, null, header.GetTransactionId(requestHeaders)));
                 return;

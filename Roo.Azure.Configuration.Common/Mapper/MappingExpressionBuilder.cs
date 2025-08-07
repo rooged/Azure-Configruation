@@ -132,7 +132,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             return function;
         }
 
-        private static Expression BuildMapCollectionExpression(Expression sourcePropertyExpression, Type destinationCollectionType, Type sourceElementType, Type destinationElementType, object elementMapFunction)
+        private static BlockExpression BuildMapCollectionExpression(Expression sourcePropertyExpression, Type destinationCollectionType, Type sourceElementType, Type destinationElementType, object elementMapFunction)
         {
             var enumerableType = typeof(IEnumerable<>).MakeGenericType(sourceElementType);
             var toListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))!.MakeGenericMethod(sourceElementType);
@@ -193,7 +193,7 @@ namespace Roo.Azure.Configuration.Common.Mapper
             return Expression.Block(new[] { sourceListVariable, destinationListVariable }, assignSourceList, assignDestinationList, Expression.IfThen(Expression.NotEqual(sourceListVariable, Expression.Constant(null, sourceListVariableType)), loop), result);
         }
 
-        private static Expression ForEach(ParameterExpression collection, ParameterExpression loopVariable, Expression body)
+        private static BlockExpression ForEach(ParameterExpression collection, ParameterExpression loopVariable, Expression body)
         {
             var getEnumerator = typeof(IEnumerable<>).MakeGenericType(loopVariable.Type).GetMethod("GetEnumerator")!;
             var enumeratorVariable = Expression.Variable(getEnumerator.ReturnType, "enumerator");

@@ -8,10 +8,10 @@ namespace Roo.Azure.Configuration.UnitTests
     public class RooTelemetryLoggerTests
     {
         //Common
-        private string name = "name";
-        private Dictionary<string, string> properties = new() { { "keyProperties", "valueProperties" } };
-        private Dictionary<string, double> metrics = new() { { "keyMetrics", 1 } };
-        private TelemetryData data = new()
+        private readonly string name = "name";
+        private readonly Dictionary<string, string> properties = new() { { "keyProperties", "valueProperties" } };
+        private readonly Dictionary<string, double> metrics = new() { { "keyMetrics", 1 } };
+        private readonly TelemetryData data = new()
         {
             User = new()
             {
@@ -60,19 +60,18 @@ namespace Roo.Azure.Configuration.UnitTests
         {
             //Arrange
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration());
-            var service = new RooTelemetryLogger(telemetryClient);
-            service.TelemetryData = data;
+            var service = new RooTelemetryLogger(telemetryClient) { TelemetryData = data };
 
             //Act
             service.TrackEvent(name, properties, metrics);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(service.TelemetryData, Is.Not.Null);
                 Assert.That(service.TelemetryData, Is.EqualTo(data));
                 Assert.That(telemetryClient.Context.User.Id, Is.EqualTo(data.User?.Id));
-            });
+            }
         }
 
         [Test]
@@ -86,12 +85,12 @@ namespace Roo.Azure.Configuration.UnitTests
             service.TrackEvent(name, properties, metrics, data);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(service.TelemetryData, Is.Not.Null);
                 Assert.That(service.TelemetryData, Is.EqualTo(data));
                 Assert.That(telemetryClient.Context.User.Id, Is.EqualTo(data.User?.Id));
-            });
+            }
         }
 
         [Test]
@@ -105,11 +104,11 @@ namespace Roo.Azure.Configuration.UnitTests
             service.TrackEvent(name, properties, metrics, data, true);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(service.TelemetryData, Is.Null);
                 Assert.That(service.TelemetryData, Is.Not.EqualTo(data));
-            });
+            }
         }
     }
 }

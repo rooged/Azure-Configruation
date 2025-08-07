@@ -9,7 +9,7 @@ namespace Roo.Azure.Configuration.UnitTests
     public class ServiceExceptionFilterTests
     {
         //Common
-        private string transactionId = "transactionId";
+        private readonly string transactionId = "transactionId";
 
         [Test]
         public async Task ExceptionFilter_Verify()
@@ -36,12 +36,12 @@ namespace Roo.Azure.Configuration.UnitTests
             memoryStream.Dispose();
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(transactionIdHeader.First(), Is.EqualTo(transactionId));
                 Assert.That(context.HttpContext.Response.StatusCode, Is.EqualTo(544));
                 Assert.That(response, Is.EqualTo("{\"Error\":{\"Code\":544,\"CodeName\":\"IndexOutOfRange\",\"Message\":\"Exception Test\",\"Details\":{\"Type\":\"System.IndexOutOfRangeException\",\"BaseMessage\":\"Exception Test\",\"Source\":\"\",\"Method\":\"\",\"StackTrace\":\"\",\"HelpLink\":\"\"},\"TransactionId\":\"transactionId\"},\"InnerException\":{\"ClassName\":\"System.IndexOutOfRangeException\",\"Message\":\"Exception Test\",\"Data\":null,\"InnerException\":null,\"HelpURL\":null,\"StackTraceString\":null,\"RemoteStackTraceString\":null,\"RemoteStackIndex\":0,\"ExceptionMethod\":null,\"HResult\":-2146233080,\"Source\":null,\"WatsonBuckets\":null},\"Message\":\"Exception of type 'Roo.Azure.Configuration.Common.ServiceExceptions.ServiceException' was thrown.\",\"Data\":{},\"HelpLink\":null,\"Source\":null,\"HResult\":-2146233088,\"StackTrace\":null}"));
-            });
+            }
         }
     }
 }

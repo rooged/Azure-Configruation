@@ -8,7 +8,6 @@ using Roo.Azure.Configuration.Common.Http.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using YamlDotNet.Core.Tokens;
 
 namespace Roo.Azure.Configuration.Common.Http.AzureAdAuthentication
 {

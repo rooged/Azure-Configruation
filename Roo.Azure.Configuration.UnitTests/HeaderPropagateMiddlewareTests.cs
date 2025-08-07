@@ -10,12 +10,12 @@ namespace Roo.Azure.Configuration.UnitTests
     public class HeaderPropagateMiddlewareTests
     {
         //Common
-        private string sessionId = "sessionId";
-        private string transactionId = "transactionId";
-        private string channelId = "channelId";
-        private string existingSessionId = "existingSessionId";
-        private string existingTransactionId = "existingTransactionId";
-        private string existingChannelId = "existingChannelId";
+        private readonly string sessionId = "sessionId";
+        private readonly string transactionId = "transactionId";
+        private readonly string channelId = "channelId";
+        private readonly string existingSessionId = "existingSessionId";
+        private readonly string existingTransactionId = "existingTransactionId";
+        private readonly string existingChannelId = "existingChannelId";
         private Mock<IConfiguration> configurationMoq;
         private Mock<IHeaderService> headerServiceMoq;
 
@@ -45,12 +45,12 @@ namespace Roo.Azure.Configuration.UnitTests
             httpRequestMessage.Headers.TryGetValues(Constants.SessionIdHeaderName, out var sessionIdHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Once);
                 Assert.That(sessionIdHeader, Is.Not.Null);
                 Assert.That(sessionIdHeader?.First(), Is.EqualTo(existingSessionId));
-            });
+            }
         }
 
         [Test]
@@ -88,12 +88,12 @@ namespace Roo.Azure.Configuration.UnitTests
             httpRequestMessage.Headers.TryGetValues(Constants.SessionIdHeaderName, out var sessionIdHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 headerService.Verify(x => x.GetSessionId(It.IsAny<IHeaderDictionary>()), Times.Once);
                 Assert.That(sessionIdHeader, Is.Not.Null);
                 Assert.That(sessionIdHeader?.First(), Is.EqualTo(existingSessionId));
-            });
+            }
         }
 
         [Test]
@@ -114,11 +114,11 @@ namespace Roo.Azure.Configuration.UnitTests
             httpRequestMessage.Headers.TryGetValues(Constants.TransactionIdHeaderName, out var transactionIdHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(transactionIdHeader, Is.Not.Null);
                 Assert.That(transactionIdHeader?.First(), Is.Not.EqualTo(existingSessionId));
-            });
+            }
         }
 
         [Test]
@@ -141,11 +141,11 @@ namespace Roo.Azure.Configuration.UnitTests
             httpRequestMessage.Headers.TryGetValues(Constants.ChannelIdHeaderName, out var channelIdHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(channelIdHeader, Is.Not.Null);
                 Assert.That(channelIdHeader?.First(), Is.EqualTo(channelId));
-            });
+            }
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace Roo.Azure.Configuration.UnitTests
             var httpContext = new DefaultHttpContext();
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, "email", ClaimValueTypes.Email)
+                new(ClaimTypes.Email, "email", ClaimValueTypes.Email)
             };
             httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -176,11 +176,11 @@ namespace Roo.Azure.Configuration.UnitTests
             var userInfo = JsonConvert.DeserializeObject<UserInfo?>(userInfoHeader.First());
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(userInfo, Is.Not.Null);
                 Assert.That(userInfo?.LoginId, Is.EqualTo("loginId"));
-            });
+            }
         }
 
         [Test]
@@ -206,11 +206,11 @@ namespace Roo.Azure.Configuration.UnitTests
             httpRequestMessage.Headers.TryGetValues(customHeaderName, out var customHeader);
 
             //Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(customHeader, Is.Not.Null);
                 Assert.That(customHeader?.First(), Is.EqualTo(customHeaderValue));
-            });
+            }
         }
 
         [Test]
@@ -231,10 +231,7 @@ namespace Roo.Azure.Configuration.UnitTests
             service.Run(httpRequestMessage);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(httpContext.Response.StatusCode, Is.EqualTo(200));
-            });
+            Assert.That(httpContext.Response.StatusCode, Is.EqualTo(200));
         }
     }
 }
