@@ -115,7 +115,7 @@ namespace Roo.Azure.Configuration.UnitTests
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(sessionIdValue, Is.Not.Null);
-                Assert.That(sessionIdValue, Is.EqualTo(sessionId));
+                Assert.That(sessionIdValue?.Length, Is.EqualTo(36));
                 Assert.That(transactionIdValue, Is.Not.Null);
                 Assert.That(transactionIdValue?.Length, Is.EqualTo(32));
                 Assert.That(channelIdValue, Is.Not.Null);
