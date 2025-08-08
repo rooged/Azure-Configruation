@@ -38,14 +38,8 @@ namespace Roo.Azure.Configuration.Common.Telemetry
         /// <param name="telemetry"></param>
         public void Initialize(ITelemetry telemetry)
         {
-            var httpContext = HttpContextAccessor.HttpContext;
-            if (httpContext == null)
-            {
-                telemetry.Context.GlobalProperties["HttpContextError"] = "Request made without HttpContext available for telemetry to consume. Custom headers unable to be set correctly, used default values.";
-            }
-
             //Sets "SessionId" default
-            telemetry.Context.GlobalProperties[Constants.SessionIdHeaderName] = httpContext?.Session.GetString(Constants.SessionId) ?? httpContext?.Session.Id ?? Guid.NewGuid().ToString();
+            telemetry.Context.GlobalProperties[Constants.SessionIdHeaderName] = Guid.NewGuid().ToString();
 
             //Sets "TransactionId" default
             telemetry.Context.GlobalProperties[Constants.TransactionIdHeaderName] = Guid.NewGuid().ToString("N");
@@ -56,9 +50,11 @@ namespace Roo.Azure.Configuration.Common.Telemetry
                 telemetry.Context.GlobalProperties[Constants.ChannelIdHeaderName] = Configuration[Constants.ChannelId];
             }
 
-            //Return since headers and user-info aren't available
+            //Get HttpContext and return if headers and user-info aren't available
+            var httpContext = HttpContextAccessor.HttpContext;
             if (httpContext == null)
             {
+                telemetry.Context.GlobalProperties["HttpContextError"] = "Request made without HttpContext available for telemetry to consume. Custom headers unable to be set correctly, used default values.";
                 return;
             }
 

@@ -46,7 +46,7 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <summary>
         /// <inheritdoc cref="Models.SerializationSettings"/>
         /// </summary>
-        public SerializationSettings? SerializationSettings { get; set; }
+        public SerializationSettings SerializationSettings { get; set; }
 
         /// <summary>
         /// GetAsync without object deserialization.

@@ -55,7 +55,7 @@ namespace Roo.Azure.Configuration.Common.Http
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        public SerializationSettings? SerializationSettings { get; set; }
+        public SerializationSettings SerializationSettings { get; set; } = new();
 
         private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
         private readonly string _channelId;
@@ -273,25 +273,14 @@ namespace Roo.Azure.Configuration.Common.Http
             HttpContent? content = null;
             if (data != null)
             {
-                if (data is not HttpContent && data is not MultipartFormDataContent && data is not MultipartContent)
+                if (data is not HttpContent)
                 {
                     content = new StringContent(JsonConvert.SerializeObject(data));
                     content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 }
                 else
                 {
-                    if (data is MultipartFormDataContent)
-                    {
-                        content = (MultipartFormDataContent?)data;
-                    }
-                    else if (data is MultipartContent)
-                    {
-                        content = (MultipartContent?)data;
-                    }
-                    else if (data is HttpContent)
-                    {
-                        content = (HttpContent?)data;
-                    }
+                    content = (HttpContent?)data;
                 }
             }
             if (queryParameters != null)
@@ -383,25 +372,14 @@ namespace Roo.Azure.Configuration.Common.Http
             HttpContent? content = null;
             if (data != null)
             {
-                if (data is not HttpContent && data is not MultipartFormDataContent && data is not MultipartContent)
+                if (data is not HttpContent)
                 {
                     content = new StringContent(JsonConvert.SerializeObject(data));
                     content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 }
                 else
                 {
-                    if (data is MultipartFormDataContent)
-                    {
-                        content = (MultipartFormDataContent?)data;
-                    }
-                    else if (data is MultipartContent)
-                    {
-                        content = (MultipartContent?)data;
-                    }
-                    else if (data is HttpContent)
-                    {
-                        content = (HttpContent?)data;
-                    }
+                    content = (HttpContent?)data;
                 }
             }
             if (queryParameters != null)
@@ -609,16 +587,20 @@ namespace Roo.Azure.Configuration.Common.Http
 
         private async Task<TResult> DeserializeResult<TResult>(HttpResponseMessage response)
         {
-            if (SerializationSettings != null && SerializationSettings.JsonSerializerOptions != null)
+            if (SerializationSettings.JsonSerializerOptions != null || typeof(TResult) == typeof(string))
             {
                 try
                 {
-                    if (SerializationSettings.ReadAsString)
+                    if (SerializationSettings.ReadAsString || typeof(TResult) == typeof(string))
                     {
                         var contentString = await response.Content.SafeReadAsStringAsync().ConfigureAwait(false);
                         if (string.IsNullOrEmpty(contentString))
                         {
                             return default!;
+                        }
+                        if (typeof(TResult) == typeof(string))
+                        {
+                            return (TResult)(object)contentString;
                         }
                         return System.Text.Json.JsonSerializer.Deserialize<TResult>(contentString, SerializationSettings.JsonSerializerOptions) ?? default!;
                     }
@@ -636,7 +618,7 @@ namespace Roo.Azure.Configuration.Common.Http
             }
 
             JsonSerializerSettings? serializerSettings = null;
-            if (SerializationSettings != null && SerializationSettings.UseDefaultSerializationSettings)
+            if (SerializationSettings.UseDefaultSerializationSettings)
             {
                 serializerSettings = new JsonSerializerSettings
                 {
@@ -649,18 +631,22 @@ namespace Roo.Azure.Configuration.Common.Http
 
             try
             {
-                if (SerializationSettings != null && SerializationSettings.ReadAsString)
+                if (typeof(TResult) == typeof(string) || SerializationSettings.ReadAsString)
                 {
                     var contentString = await response.Content.SafeReadAsStringAsync().ConfigureAwait(false);
                     if (string.IsNullOrEmpty(contentString))
                     {
                         return default!;
                     }
+                    if (typeof(TResult) == typeof(string))
+                    {
+                        return (TResult)(object)contentString;
+                    }
                     return JsonConvert.DeserializeObject<TResult>(contentString, SerializationSettings.JsonSerializerSettings ?? serializerSettings) ?? default!;
                 }
                 using (var json = new JsonTextReader(new StreamReader(await response.Content.SafeReadAsStreamAsync().ConfigureAwait(false) ?? default!)))
                 {
-                    var serializer = JsonSerializer.Create(SerializationSettings?.JsonSerializerSettings ?? serializerSettings);
+                    var serializer = JsonSerializer.Create(SerializationSettings.JsonSerializerSettings ?? serializerSettings);
                     return serializer.Deserialize<TResult>(json) ?? default!;
                 }
             }
