@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Roo.Azure.Configuration.Common.Middlewares;
 using Roo.Azure.Configuration.Common.Models;
 
@@ -27,39 +28,32 @@ namespace Roo.Azure.Configuration.Common.Startup
             //Add Swagger
             if (model.SwaggerDefinitionNames != null && model.SwaggerDefinitionNames.Count > 0)
             {
-                if (!string.IsNullOrEmpty(model.SwaggerRoutePrefix))
-                {
-                    app.UseSwagger(options =>
-                    {
-                        options.RouteTemplate = "/swagger/" + model.SwaggerRoutePrefix + "/{documentVersion}/{documentName}/swagger.json";
-                        if (!string.IsNullOrEmpty(model.SwaggerBasePath))
-                        {
-                            options.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-                            {
-                                swaggerDoc.Servers = [new() { Url = $"https://{httpReq.Host.Value}{model.SwaggerBasePath}" }];
-                            });
-                        }
-                    });
-                }
-                else
-                {
-                    app.UseSwagger();
-                }
-
-                app.UseSwaggerUI(options =>
+                app.UseSwagger(options =>
                 {
                     if (!string.IsNullOrEmpty(model.SwaggerRoutePrefix))
                     {
-                        foreach (var definition in model.SwaggerDefinitionNames)
-                        {
-                            options.SwaggerEndpoint($"/swagger/{model.SwaggerRoutePrefix}/v1/{definition}/swagger.json", definition);
-                        }
+                        options.RouteTemplate = $"/swagger/{model.SwaggerRoutePrefix}/{{documentName}}/swagger.json";
                     }
-                    else
+                    if (!string.IsNullOrEmpty(model.BasePath))
                     {
-                        foreach (var definition in model.SwaggerDefinitionNames)
+                        options.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                         {
-                            options.SwaggerEndpoint($"/swagger/v1/{definition}/swagger.json", definition);
+                            swaggerDoc.Servers = new List<OpenApiServer> { new() { Url = $"https://{httpReq.Host.Value}{model.BasePath}" } };
+                        });
+                    }
+                });
+
+                app.UseSwaggerUI(options =>
+                {
+                    foreach (var name in model.SwaggerDefinitionNames)
+                    {
+                        if (!string.IsNullOrEmpty(model.SwaggerRoutePrefix))
+                        {
+                            options.SwaggerEndpoint($"/swagger/{model.SwaggerRoutePrefix}/{name}/swagger.json", name);
+                        }
+                        else
+                        {
+                            options.SwaggerEndpoint($"/swagger/{name}/swagger.json", name);
                         }
                     }
                 });
@@ -102,6 +96,11 @@ namespace Roo.Azure.Configuration.Common.Startup
             else
             {
                 app.MapControllers();
+            }
+
+            if (!string.IsNullOrEmpty(model.BasePath))
+            {
+                app.UsePathBase(model.BasePath);
             }
 
             return app;

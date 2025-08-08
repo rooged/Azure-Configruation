@@ -1,11 +1,11 @@
-﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
-using Microsoft.ApplicationInsights.Extensibility;
+﻿using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Roo.Azure.Configuration.Common.Logging;
 using Roo.Azure.Configuration.Common.Middlewares;
 using Roo.Azure.Configuration.Common.Models;
@@ -32,9 +32,16 @@ namespace Roo.Azure.Configuration.Common.Startup
         public static IServiceCollection AppConfig(this IServiceCollection services, StartupModel model, bool isWebApp = true)
         {
             //Add general services
+            if (isWebApp)
+            {
+                services.AddControllers();
+                services.AddMvcCore().AddApiExplorer();
+            }
             services.AddSession();
             services.AddHttpContextAccessor();
             services.AddOptions();
+            services.AddMemoryCache();
+            services.AddDistributedMemoryCache();
             if (model.UseExceptionFilter)
             {
                 services.AddMvc(options =>
@@ -73,8 +80,8 @@ namespace Roo.Azure.Configuration.Common.Startup
                         options.SwaggerDoc(name, new()
                         {
                             Version = "v1",
-                            Title = model.ChannelId + $" {name}",
-                            Description = model.ChannelId + $" {name}"
+                            Title = $"{model.ChannelId} {name}",
+                            Description = $"{model.ChannelId} {name}"
                         });
                     }
 
@@ -96,11 +103,10 @@ namespace Roo.Azure.Configuration.Common.Startup
             
             if (isWebApp)
             {
-                var appInsightsOptions = new ApplicationInsightsServiceOptions()
+                services.AddApplicationInsightsTelemetry(options =>
                 {
-                    ConnectionString = model.AppInsightsConnectionString
-                };
-                services.AddApplicationInsightsTelemetry(appInsightsOptions);
+                    options.ConnectionString = model.AppInsightsConnectionString;
+                });
             }
             else
             {
@@ -126,13 +132,11 @@ namespace Roo.Azure.Configuration.Common.Startup
             //Add default & App Insights HTTP clients & header propagation
             services.AddTransient<HeaderPropagateMiddleware>();
             services.AddHttpClient(Constants.HTTPClientTelemetry).AddHttpMessageHandler<HeaderPropagateMiddleware>();
-            services.AddHttpClient(Microsoft.Extensions.Options.Options.DefaultName).AddHttpMessageHandler<HeaderPropagateMiddleware>();
+            services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<HeaderPropagateMiddleware>();
 
             //Add custom services
             services.TryAddSingleton<IHeaderService, HeaderService>();
             services.TryAddSingleton<IRooLogger, RooLogger>();
-            services.TryAddSingleton<IRooTelemetryLogger, RooTelemetryLogger>();
-            services.TryAddSingleton<IServiceBusService, ServiceBusService>();
 
             //Add & configure Redis cache
             if (model.RedisConnectionString != null)
